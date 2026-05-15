@@ -9,7 +9,7 @@
 > - `[~]` tarea en progreso (no terminada — actualizar al retomar)
 > - **★** tarea crítica (bloquea la fase)
 >
-> **Última actualización:** Phase 0 — documentación inicial escrita.
+> **Última actualización:** Phase 0 completa — todos los scaffolds, scripts y hooks en su lugar; ambos remotes (`origin`/GitHub + `gitlab`/academia) sincronizados.
 
 ---
 
@@ -17,8 +17,8 @@
 
 | Fase | Estado | DoD alcanzada |
 |---|---|:-:|
-| 0 — Setup, SDD, scaffolding | 🟡 En progreso (60%) | No |
-| 1 — Smart contracts | ⬜ No iniciada | — |
+| 0 — Setup, SDD, scaffolding | ✅ Completa | Sí (`forge build` y `npm run build` verdes; documentación inicial escrita; ambos remotes pusheados) |
+| 1 — Smart contracts | ⬜ No iniciada (próxima) | — |
 | 2 — Frontend scaffold & design system | ⬜ No iniciada | — |
 | 3 — Web3 wiring | ⬜ No iniciada | — |
 | 4 — Core pages (role-based) | ⬜ No iniciada | — |
@@ -42,14 +42,18 @@
 - [x] **★** Escribir `docs/SDD.md` v0.1 (15 secciones, español)
 - [x] Escribir `docs/TRACK.md` (este archivo)
 - [x] Escribir `IA.md` v0.1
-- [ ] **★** Init Foundry: `cd sc && forge init --no-git . && forge install OpenZeppelin/openzeppelin-contracts`
-- [ ] **★** Init Next.js: `npx create-next-app@latest web --typescript --tailwind --app --no-src-dir`
-- [ ] Scaffold `indexer/` (placeholder con package.json)
-- [ ] Scaffold `mcp-server/` (placeholder con package.json)
-- [ ] Crear `LICENSE` (MIT)
-- [ ] Actualizar `.gitignore` (añadir `node_modules/`, `out/`, `cache/`, `broadcast/`, `.env*`)
-- [ ] Commit `chore: scaffold project structure` y push a ambos remotes
-- **DoD:** `forge build` y `npm run build` ambos verdes; SDD ≥ §4 escrito; repo pusheado.
+- [x] **★** Init Foundry: `forge init sc --no-git` + `forge install OpenZeppelin/openzeppelin-contracts@v5.1.0 --no-git` *(commit `5c777f5`)*
+- [x] **★** Init Next.js: `npx create-next-app@latest web --typescript --tailwind --eslint --app --src-dir --import-alias '@/*' --use-npm --turbopack` *(commit `5c777f5`)*
+- [x] Crear `LICENSE` (MIT, con nota sobre adopción estatal argentina)
+- [x] Actualizar `.gitignore` (Obsidian, Foundry, Next.js, indexer, mcp-server, .pids, .logs/)
+- [x] Commit `chore(scaffold): initialize Foundry (sc/) and Next.js (web/) projects` *(commit `5c777f5`)*
+- [x] **Bonus** — `restart.sh` + `stop.sh` para orquestar el stack local *(commit `4b73030`)*
+- [x] **Bonus** — Git hooks: pre-commit (lint), commit-msg (Conventional Commits), pre-push (tests + mirror al otro remote) *(commit `4b73030`)*
+- [x] **Bonus** — `scripts/install-hooks.sh` (activa `core.hooksPath=scripts/hooks`) *(commit `4b73030`)*
+- [x] **Push verificado**: ambos remotes en `4b73030`; el pre-push hook ejecutó `forge test` (2 pass), `npm run lint` (pass) y mirror a `gitlab`
+- [ ] Scaffold `indexer/` — *movido a Phase 7 (innovation layer)*
+- [ ] Scaffold `mcp-server/` — *movido a Phase 7 (innovation layer)*
+- **DoD:** ✅ `forge build` y `npm run build` ambos verdes; SDD ≥ §4 escrito; repo pusheado a ambos remotes.
 
 ---
 
@@ -266,6 +270,13 @@
 ### Sesión 2026-05-15 (inicial)
 - Phase 0 documentación escrita: `README.md`, `docs/SDD.md`, `docs/TRACK.md`, `IA.md`.
 - Próximo paso: scaffolds de Foundry y Next.js, primer commit `chore: scaffold project structure`.
-- Ítems abiertos a decidir:
-  - ¿Iniciar Foundry y Next.js en esta misma sesión o separar?
-  - ¿Push a ambos remotes (`origin`/GitHub y `gitlab`/academia) tras cada commit, o sólo a uno hasta Phase 8?
+
+### Sesión 2026-05-15 (continuación) — Phase 0 cerrada
+- Scaffolds completos: `sc/` (Foundry + OpenZeppelin v5.1.0), `web/` (Next.js 15 + TS + Tailwind v4 + App Router + Turbopack).
+- DevX completo: `restart.sh`, `stop.sh`, hooks (`pre-commit`, `commit-msg`, `pre-push`), `install-hooks.sh` activado via `core.hooksPath`.
+- Tres commits en `main`: `374fffa` (docs) → `5c777f5` (scaffold) → `4b73030` (devx).
+- Push a ambos remotes verificado: `origin` (GitHub) y `gitlab` (academia) en `4b73030`. El pre-push hook hizo el mirror automáticamente al pushear a origin.
+- **Próximo paso al retomar:** Phase 1 — escribir `HemaRegistry.sol` con `AccessControl` + tests TDD. Reemplazar el scaffold de `Counter.sol`/`Counter.t.sol` con los contratos reales.
+- Decisiones pendientes para Phase 1:
+  - ¿`pragma solidity 0.8.24` o `0.8.30` (la que viene por defecto del forge init)? *Recomendación: 0.8.24 con `evm_version = "cancun"` para PUSH0 sin romper compatibilidad con redes pre-Shanghai.*
+  - ¿Empezar por `HemaRegistry` (más simple) o `HemaTraceability` (núcleo del sistema)? *Recomendación: Registry primero — bloquea el resto.*
