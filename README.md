@@ -1,987 +1,347 @@
-Aquí tienes el archivo `README.md` actualizado, incluyendo las cuatro imágenes pedagógicas generadas en las secciones correspondientes para mejorar la comprensión del proyecto.
+# HemaChain · Trazabilidad de Donaciones de Sangre en Blockchain
 
-------
+> **Trabajo Final de Máster — Máster en Blockchain (CodeCrypto Academy, 2026)**
+> TFM 3 — *Trazabilidad Industrial y Certificaciones con Blockchain*
+> Adaptación del enunciado industrial al sector hemoterápico argentino, alineada con la **Resolución 536/2026 del Ministerio de Salud** que exige trazabilidad informatizada en todos los centros de hemoterapia, bancos de sangre y servicios de medicina transfusional del país.
 
-# 🔗 Supply Chain Tracker - Proyecto de Desarrollo Blockchain
+📄 **Documentación técnica completa →** [`docs/SDD.md`](./docs/SDD.md)
+✅ **Seguimiento de fases →** [`docs/TRACK.md`](./docs/TRACK.md)
+🧠 **Retrospectiva de uso de IA →** [`IA.md`](./IA.md)
 
-## 📋 Opciones de Proyectos de Trazabilidad
+---
 
-Este proyecto forma parte del **Trabajo Final de Máster en Blockchain**. Tienes **5 opciones de proyectos de trazabilidad** para elegir:
+## 1. Descripción del proyecto
 
-1.  **[TFM 1: Trazabilidad Alimentaria con Blockchain](./TFM%201%20Trazabilidad%20Alimentaria%20con%20Blockchain%202bf0249c79f78094a6d4cbe2186367d6.md)**
-2.  **[TFM 2: Trazabilidad Logística con Blockchain](./TFM%202%20Trazabilidad%20Log%C3%ADstica%20con%20Blockchain%202bf0249c79f7809595f1f31914e423f6.md)**
-3.  **[TFM 3: Trazabilidad Industrial y Certificaciones con Blockchain](./TFM%203%20Trazabilidad%20Industrial%20y%20Certificaciones%20co%202bf0249c79f78014b080da0447e5f009.md)**
-4.  **[TFM 4: Certificación Académica Digital con Blockchain](./TFM%204%20Certificaci%C3%B3n%20Acad%C3%A9mica%20Digital%20con%20Blockcha%202bf0249c79f78086969fc4a76e23288b.md)**
-5.  **[TFM 5: Energía Renovable y Certificados Verdes con Blockchain](./TFM%205%20Energ%C3%ADa%20Renovable%20y%20Certificados%20Verdes%20con%20%202bf0249c79f78037b0b7d9102ec81108.md)**
+**HemaChain** es una aplicación descentralizada (dApp) que registra de forma inmutable el ciclo completo de vida de una donación de sangre: desde la extracción en un banco de sangre, pasando por el tamizaje serológico, el fraccionamiento en componentes (glóbulos rojos, plasma, plaquetas, crioprecipitado), el almacenamiento y la cadena de frío, hasta la transfusión al paciente. Cada evento queda asentado en un *smart contract* sobre Ethereum, con certificaciones digitales emitidas como NFTs ERC-721 cuyos PDFs originales se anclan en IPFS con verificación criptográfica.
 
-Este README proporciona una guía técnica para implementar el proyecto usando **Supply Chain Tracker** como base de referencia. Consulta los documentos específicos de cada TFM para más detalles sobre cada opción.
+El sistema está diseñado como **implementación de referencia** del marco regulatorio argentino vigente y proyectado:
+- **Ley 22.990** (Ley Nacional de Sangre, 1983) y su Decreto Reglamentario 1338/04
+- **Resolución 865/2006** del Ministerio de Salud — *Normas Técnicas y Administrativas de la Especialidad Hemoterapia*
+- **Resolución 536/2026** del Ministerio de Salud — modernización del Sistema Nacional de Sangre, abril 2026
 
-## 📦 Instrucciones de Entrega
+A escala internacional, HemaChain implementa el estándar global **ISBT 128** (ICCBBA) para identificación de productos sanguíneos, lo que garantiza interoperabilidad transfronteriza con sistemas de MERCOSUR, la Unión Europea (Directiva 2002/98/EC) y otros marcos regulatorios.
 
-Para información detallada sobre los requisitos de entrega, formato, plazos, criterios de evaluación y checklist completo, consulta el documento:
+---
 
-📄 **[Instrucciones Generales de Entrega - TFM](./Instrucciones%20Generales%20de%20Entrega%20-%20TFM%202c00249c79f781e69c36da256cd077f0.md)**
+## 2. Problema que resuelve
 
-## 🎯 Objetivos del Proyecto
+El sistema nacional de sangre argentino — y por extensión cualquier sistema hemoterápico — enfrenta problemas estructurales que el blockchain resuelve naturalmente:
 
-**Supply Chain Tracker** es un proyecto educativo donde desarrollarás desde cero una aplicación descentralizada (DApp) completa para gestionar trazabilidad en cadenas de suministro.
+| Problema | Solución HemaChain |
+|---|---|
+| Registros fragmentados entre instituciones (cada banco / hospital tiene su propio sistema) | Libro mayor compartido — todas las instituciones leen y escriben al mismo contrato, sin contratos bilaterales |
+| Look-back manual y lento ante un donante que da positivo posteriormente | Función on-chain `reportAdverseEvent(donorHash)` que marca atómicamente como *Recalled* todos los componentes derivados |
+| Cadena de frío no verificable post-hoc | Cada `CustodyEvent` registra temperatura; desvíos disparan recall automático |
+| Certificados de acreditación (AAHITC, ISO 15189, ANMAT) en PDF, falsificables | NFTs ERC-721 con `documentHash = keccak256(PDF)` y CID en IPFS |
+| Imposibilidad para el paciente o auditor de verificar el origen de una unidad sin acceso privilegiado | Página pública `/verify/[id]` accesible sin wallet, con datos anonimizados |
+| Datos personales del donante y receptor en sistemas centralizados con riesgo de filtración | Sólo hashes on-chain (`keccak256(DNI + salt institucional)`); PII off-chain bajo control de cada institución (compatible con Ley 25.326) |
+| Trazabilidad regulatoria con retención de 30 años imposible de garantizar técnicamente | Inmutabilidad nativa del ledger satisface el requisito de archivo a largo plazo |
 
-### 📚 Objetivos de Aprendizaje
+**El argumento clave para el video y el README**: la Res. 536/2026 *exige* trazabilidad informatizada a todos los centros del país, con un plazo de 2 años para implementar los cambios tecnológicos. HemaChain es un prototipo de referencia de esa infraestructura, listo para escalar a producción.
 
-1.  **Desarrollo de Smart Contracts**: Programar contratos inteligentes en Solidity desde cero
-2.  **Testing Blockchain**: Escribir y hacer pasar tests unitarios con Foundry
-3.  **Aplicaciones Descentralizadas (DApps)**: Construir un frontend completo que interactúe con blockchain
-4.  **Gestión de Roles y Permisos**: Implementar un sistema de solicitud de roles y aprobación por administrador.
-5.  **Integración Web3**: Conectar aplicaciones web con MetaMask y Ethereum
-6.  **Desarrollo Full-Stack**: Combinar tecnologías frontend modernas con blockchain
+---
 
-### Objetivo relacionado con la IA
+## 3. Tecnologías utilizadas
 
-1.  Uso de la Inteligencia Artificial para el desarrollo del proyecto.
-2.  Retrospectiva del uso de la IA. (HACER UN FICHERO IA.md)
-    2.1. IA usadas
-    2.2. Tiempo consumido aproximado separando el smart contract y el frontend.
-    2.3. Errores mas habituales analizando los chats de la IA.
-    2.4. Ficheros de los chat de la IA.
-3.  Construccion de un MCP que envuelva los cli de foundry anvil, cast, forge.
-4.  Opcional. Manejo del contrato inteligente en la aplicacion con la IA.
+### Blockchain & Smart Contracts
+- **Solidity** 0.8.24+
+- **Foundry** (Forge, Anvil, Cast) — framework de desarrollo, testing y deployment
+- **OpenZeppelin Contracts v5** — `AccessControl`, `Pausable`, `ReentrancyGuard`, `ERC721URIStorage`
+- **Sepolia** (testnet público) para verificación en Etherscan
+- **Anvil** (blockchain local) para desarrollo iterativo
 
-### 🏗️ Objetivos Técnicos
+### Frontend
+- **Next.js 15** (App Router) + **React 19** + **TypeScript**
+- **Tailwind CSS v4** + componentes inspirados en shadcn/ui
+- **ethers.js v6** — librería Web3
+- **MetaMask** — wallet de referencia
+- **lucide-react** — iconografía
+- **next-intl** — internacionalización (es / pt / en)
+- **sonner** — sistema de notificaciones
+- **recharts** + **Leaflet** — visualizaciones (cadena de frío, mapa de instituciones)
 
-Tu aplicación final debe implementar:
+### Off-chain & innovación
+- **IPFS** vía **Pinata** — almacenamiento de PDFs de certificados
+- **Node.js + ethers WS + SQLite** — indexador de eventos con SSE para alertas en vivo
+- **MCP Server** (Model Context Protocol) — envoltorio de Foundry CLI (anvil/cast/forge) para control via lenguaje natural
+- **Claude API** + tool-use — agente "Ask HemaChain" embebido en el dashboard
 
-  - **Sistema transparente y seguro** para rastrear productos desde origen hasta consumidor final
-  - **Tokenización** de materias primas y productos terminados
-  - **Flujo controlado** entre actores: Producer → Factory → Retailer → Consumer
-  - **Gestión de roles** con aprobación por administrador
-  - **Interfaz intuitiva** para todos los roles del sistema
+### Herramientas de IA
+- **Claude Code (Opus 4.7)** — agente principal de desarrollo
+- **ChatGPT** — investigación regulatoria complementaria
+- Documentación detallada en [`IA.md`](./IA.md)
 
-### 🖼️ Vista Previa de la Aplicación
+---
 
-## Implementacion de referencia. (url )
+## 4. Arquitectura del sistema
 
-## 🏭 Actores del Sistema
+### Diagrama C4 — Contenedores
 
-La siguiente imagen ilustra el flujo controlado de la cadena de suministro y el rol de cada actor en el sistema:
+```mermaid
+graph TB
+    Donor["👤 Donante / Receptor<br/>(pseudonimizado)"]
+    Actor["🏥 Personal sanitario<br/>(banco, lab, fraccionamiento,<br/>banco, hospital)"]
+    Auditor["📋 Auditor / ANMAT"]
+    Public["🔍 Público (paciente,<br/>familiar) — verifica QR"]
 
-![Flujo de la Cadena de Suministro y Roles de los Actores](img/Flujo%20de%20la%20Cadena%20de%20Suministro%20y%20Roles%20de%20los%20Actores.png)
+    subgraph HemaChain["🩸 HemaChain"]
+        Web["🌐 Next.js 15<br/>(App Router, ES/PT/EN)"]
+        Indexer["📡 Indexador<br/>(Node + ethers WS + SQLite)"]
+        MCP["🤖 MCP Server<br/>(Foundry CLI wrapper)"]
+        AI["🧠 Agente IA<br/>(Claude API + tool-use)"]
+    end
 
-### 1\. 👨‍🌾 **Producer (Productor)**
+    subgraph Chain["⛓️ Ethereum (Anvil / Sepolia)"]
+        Reg["📇 HemaRegistry.sol"]
+        Trace["🔗 HemaTraceability.sol"]
+        Cert["🏆 HemaCertificate.sol<br/>(ERC-721)"]
+    end
 
-  - **Función**: Registra materias primas en el sistema
-  - **Permisos**: Crear tokens de materias primas, transferir solo a Factory
-  - **Ejemplos**: Granjas, minas, productores agrícolas
+    subgraph Storage["💾 Almacenamiento off-chain"]
+        IPFS["📄 IPFS / Pinata<br/>(PDFs de certificados)"]
+        PII["🔒 Registro PII<br/>(off-chain, por institución)"]
+    end
 
-### 2\. 🏭 **Factory (Fábrica)**
-
-  - **Función**: Transforma materias primas en productos terminados
-  - **Permisos**: Recibir de Producer, crear productos derivados, transferir solo a Retailer
-  - **Ejemplos**: Plantas procesadoras, manufactureras
-
-### 3\. 🏪 **Retailer (Minorista)**
-
-  - **Función**: Distribuye productos a consumidores
-  - **Permisos**: Recibir de Factory, transferir solo a Consumer
-  - **Ejemplos**: Tiendas, supermercados, distribuidores
-
-### 4\. 🛒 **Consumer (Consumidor)**
-
-  - **Función**: Punto final de la cadena
-  - **Permisos**: Recibir productos, consultar trazabilidad completa
-  - **Ejemplos**: Usuarios finales, clientes
-
-### 5\. 👑 **Admin (Administrador)**
-
-  - **Función**: Gestiona el sistema y aprueba usuarios
-  - **Permisos**: Aprobar/rechazar registros, supervisar el sistema
-  - **Nota**: Rol único del creador del contrato
-
------
-
-## 🛠️ Prerequisitos e Instalación
-
-### 📋 Requisitos del Sistema
-
-Antes de comenzar, asegúrate de tener instalado:
-
-1.  **Node.js** (versión 18 o superior)
-
-    ```bash
-    # Verificar versión
-    node --version
-    npm --version
-    ```
-
-2.  **Git**
-
-    ```bash
-    git --version
-    ```
-
-3.  **Foundry** (para smart contracts)
-
-    ```bash
-    # Instalar Foundry
-    curl -L https://foundry.paradigm.xyz | bash
-    foundryup
-
-    # Verificar instalación
-    forge --version
-    anvil --version
-    ```
-
-4.  **MetaMask Browser Extension**
-
-      - Instalar desde [metamask.io](https://metamask.io/)
-      - Crear una wallet de prueba
-
-### 🔧 Configuración del Entorno
-
-El siguiente diagrama muestra cómo interactúan las diferentes herramientas en tu entorno de desarrollo local (Foundry, Anvil, Next.js y MetaMask):
-
-![Arquitectura del Entorno de Desarrollo Local](img/Arquitectura%20del%20Entorno%20de%20Desarrollo%20Local.png)
-
-#### 1\. **Clonar el Repositorio**
-
-```bash
-git clone 98_pfm_traza_2025
-
-cd supply-chain-tracker
+    Actor --> Web
+    Donor -.->|consentimiento off-chain| PII
+    Auditor --> Web
+    Public --> Web
+    Web --> Reg
+    Web --> Trace
+    Web --> Cert
+    Web --> IPFS
+    Indexer --> Chain
+    Web -.->|SSE alertas| Indexer
+    AI --> MCP
+    MCP --> Chain
 ```
 
-#### 2\. **Configurar Smart Contracts (`sc/`)**
+### Flujo de extremo a extremo
+
+```mermaid
+sequenceDiagram
+    actor D as Donante
+    participant BS as Banco de Sangre
+    participant LAB as Laboratorio
+    participant FR as Fraccionamiento
+    participant BB as Banco/Almacén
+    participant H as Hospital
+    actor P as Paciente
+
+    D->>BS: Consentimiento + extracción 450ml
+    BS->>BS: registerDonation(donorHash, abo, rh)
+    BS-->>LAB: transfer custody (envío refrigerado)
+    LAB->>LAB: recordTestResult(HIV, HBV, HCV, sífilis, HTLV, Chagas)
+    LAB->>LAB: releaseUnit() o quarantine()
+    LAB-->>FR: transfer (sólo si Released)
+    FR->>FR: produceComponent(RBC, FFP, PLT)
+    FR-->>BB: transfer cada componente
+    BB->>BB: storeComponent — sensor de temperatura
+    BB-->>H: transfer ante pedido
+    H->>H: crossMatch(pacienteHash, componenteId)
+    H->>H: recordTransfusion()
+    P-->>H: recepción del componente
+
+    Note over D,P: 30 años de retención garantizada<br/>por inmutabilidad del ledger
+```
+
+> **Más diagramas** (modelo de dominio, máquina de estados, matriz de permisos, flujo de look-back) en [`docs/SDD.md`](./docs/SDD.md) §6–§7.
+
+---
+
+## 5. Instalación y configuración
+
+### Prerrequisitos
+- **Node.js** ≥ 20
+- **Foundry** — `curl -L https://foundry.paradigm.xyz | bash && foundryup`
+- **MetaMask** en el navegador
+- **Cuenta en Pinata** (gratuita) — necesaria para IPFS
+
+### Clonar e instalar
 
 ```bash
+# Clonar desde GitHub (espejo público)
+git clone git@github.com:agamezg/hemachain.git
+cd hemachain
+
+# (o bien) desde GitLab de la academia
+# git clone ssh://git@gitlab.codecrypto.academy:2222/ariel.ep91/eth-pfm-chain-tracker.git
+
+# Smart contracts
 cd sc
-
-# Instalar dependencias de Foundry
 forge install
-
-# Compilar contratos
 forge build
-
-# Ejecutar tests (opcional pero recomendado)
 forge test
 
-# Verificar que todo funciona
-ls out/  # Debe mostrar archivos compilados
-```
-
-#### 3\. **Configurar Frontend (`web/`)**
-
-```bash
-npx create-next-app@latest web --typescript 
-
+# Frontend
 cd ../web
-
-# Instalar dependencias de Node.js
 npm install
-
-# Verificar que no hay errores
-npm run build
+cp .env.example .env.local   # editar con direcciones y claves
 ```
 
-#### 4\. **Configurar Blockchain Local**
-
-**Terminal 1 - Ejecutar Anvil:**
+### Desarrollo local — orquestación de 3 terminales
 
 ```bash
-# Iniciar blockchain local
+# Terminal 1 — blockchain local
 anvil
 
-# Copiar las private keys que aparecen
-# Ejemplo de salida:
-# Account #0: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
-# Private Key: 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
-```
-
-**Terminal 2 - Desplegar Contrato:**
-
-```bash
+# Terminal 2 — desplegar contratos + cargar datos demo
 cd sc
+forge script script/Deploy.s.sol --rpc-url http://localhost:8545 --broadcast
+forge script script/Seed.s.sol --rpc-url http://localhost:8545 --broadcast
 
-# Desplegar contrato (usa una private key de Anvil)
-forge script script/Deploy.s.sol \
-  --rpc-url http://localhost:8545 \
-  --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80 \
-  --broadcast
-
-# Copiar la dirección del contrato desplegado
-```
-
-#### 5\. **Configurar MetaMask**
-
-1.  **Agregar Red Local:**
-
-      - Network Name: `Anvil Local`
-      - RPC URL: `http://localhost:8545`
-      - Chain ID: `31337`
-      - Currency Symbol: `ETH`
-
-2.  **Importar Cuentas de Prueba:**
-
-      - Importar private keys de Anvil para testing
-      - Recomendado: al menos 4 cuentas diferentes (
-
-    <!-- end list -->
-
-    ```
-       admin (0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266), 
-       producer (0x70997970C51812dc3A010C7d01b50e0d17dc79C8), 
-       factory (0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC), 
-       retailer (0x90F79bf6EB2c4f870365E785982E1f101E93b906), 
-       consumer (0x15d34AAf54267DB7D7c367839AAf71A00a2C6A65))
-    ```
-
-#### 6\. **Actualizar Configuración**
-
-**Archivo: `web/src/contracts/config.ts`**
-
-```typescript
-export const CONTRACT_CONFIG = {
-  address: "0x...", // Dirección del contrato desplegado
-  abi: SupplyChainABI,
-  adminAddress: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266" // Primera cuenta de Anvil
-};
-```
-
-#### 7\. **Iniciar Aplicación**
-
-```bash
+# Terminal 3 — frontend
 cd web
-
-# Modo desarrollo
 npm run dev
-
-# Abrir http://localhost:3000
+# → http://localhost:3000
 ```
 
------
+### Configurar MetaMask para Anvil
 
-## 🚀 Funcionalidades a Implementar
+| Campo | Valor |
+|---|---|
+| Network Name | `Anvil Local` |
+| RPC URL | `http://localhost:8545` |
+| Chain ID | `31337` |
+| Currency Symbol | `ETH` |
 
-### 🔐 **Sistema de Autenticación Web3**
+Cuentas de Anvil sugeridas por rol (las primeras seis):
 
-Deberás codificar:
+| Rol | Address |
+|---|---|
+| ADMIN | `0xf39Fd35Df6D7...266` |
+| BANCO_SANGRE | `0x70997970...79C8` |
+| LABORATORIO | `0x3C44CdDd...93BC` |
+| FRACCIONAMIENTO | `0x90F79bf6...b906` |
+| MEDICINA_TRANSFUSIONAL | `0x15d34AAf...6A65` |
+| AUDITOR | `0x9965507D...0a4dc` |
 
-  - **Conexión con MetaMask** - **Persistencia en localStorage** - mantiene sesión al recargar
-  - **Desconexión automática** - limpia datos del localStorage
-  - **Detección de cambios de cuenta** - reconecta automáticamente
+---
 
-### 💳 **Gestión de Usuarios**
+## 6. Smart contracts desplegados
 
-Tu implementación debe incluir:
+> ⏳ **Pendiente Phase 8.** Las direcciones definitivas en Sepolia se publican aquí tras la verificación en Etherscan.
 
-  - **Registro por roles** - **Aprobación por administrador** antes de usar el sistema
-  - **Estados**: Pending, Approved, Rejected, Canceled
+| Contrato | Anvil (local) | Sepolia |
+|---|---|---|
+| `HemaRegistry.sol` | `0x...` *(generado en deploy)* | *(Pendiente)* |
+| `HemaTraceability.sol` | `0x...` | *(Pendiente)* |
+| `HemaCertificate.sol` (ERC-721) | `0x...` | *(Pendiente)* |
 
-### 🪙 **Sistema de Tokens**
+Tras el deploy se publicarán enlaces de Etherscan con código fuente verificado.
 
-Desarrollarás:
+---
 
-  - **Creación de tokens** que representan productos/materias primas
-  - **Metadatos JSON** para características del producto
-  - **Sistema de parentesco** - productos derivan de materias primas
-  - **Balance individual** por usuario y token
+## 7. Casos de uso principales
 
-### 📦 **Transferencias Controladas**
+1. **Registro de donación** — el Banco de Sangre asienta la extracción con hash anonimizado del donante, ABO/Rh codificado en ISBT 128 y volumen.
+2. **Tamizaje** — el Laboratorio carga el resultado serológico + NAT (incluido **Chagas**, obligatorio en Argentina) y libera la unidad o la cuarentena.
+3. **Fraccionamiento** — el Centro de Fraccionamiento divide la sangre entera en hasta tres componentes (GR, PFC, CP), cada uno como entidad on-chain con padre trazable.
+4. **Almacenamiento con cadena de frío** — el Banco registra eventos de custodia con temperatura; un desvío fuera de rango dispara el cambio de estado a `Recalled`.
+5. **Transfusión** — el Hospital ejecuta la prueba cruzada (con hash del paciente) y registra la transfusión final.
+6. **Look-back automatizado** — un Auditor reporta un evento adverso (donante positivo posterior); el contrato marca atómicamente como *Recalled* todos los componentes derivados de cualquier donación de ese donante.
+7. **Verificación pública** — un paciente o familiar escanea el QR impreso en la unidad y accede a `/verify/[id]`, viendo la trayectoria anonimizada sin necesidad de wallet.
+8. **Emisión y revocación de certificaciones** — un Certificador (AAHITC, ANMAT) emite un NFT con el PDF anclado en IPFS; puede revocarlo si la acreditación expira o se compromete.
 
-Implementarás:
+---
 
-  - **Flujo dirigido**: Producer → Factory → Retailer → Consumer
-  - **Sistema de aprobación** - el receptor debe aceptar
-  - **Validación automática** de permisos por rol
-  - **Trazabilidad completa** de movimientos
+## 8. Capturas de pantalla
 
-### 🎨 **Interfaz Moderna**
+> ⏳ **Pendiente Phase 6/8.** Carpeta [`screenshots/`](./screenshots/) — mínimo 7 capturas según el plan:
 
-Crearás:
+| # | Archivo | Contenido |
+|---|---|---|
+| 1 | `01-landing.png` | Landing en español con estadísticas en vivo |
+| 2 | `02-dashboard-bank.png` | Dashboard del Banco de Sangre con inventario y alertas |
+| 3 | `03-traceability-timeline.png` | Timeline de trazabilidad de una unidad |
+| 4 | `04-certificate-nft.png` | Detalle de un certificado NFT con QR de verificación |
+| 5 | `05-public-verify.png` | Página pública `/verify/[id]` desde móvil |
+| 6 | `06-cold-chain-alert.png` | Alerta de desvío de cadena de frío en tiempo real |
+| 7 | `07-etherscan-tx.png` | Transacción verificada en Sepolia / Etherscan |
 
-  - **Design responsive** con Tailwind CSS
-  - **Componentes reutilizables** con Shadcn UI
-  - **Navegación intuitiva** según rol del usuario
+---
 
------
+## 9. Diagramas técnicos
 
-## 📱 Estructura de la Aplicación
+Diagramas completos en formato Mermaid (versionables en Git, renderizados automáticamente por GitHub) en:
+- [`docs/SDD.md`](./docs/SDD.md) — todos los diagramas embebidos
+- `docs/diagramas.md` — fuente reutilizable
 
-### 🌐 **Páginas Principales**
+Tipos incluidos: C4 (Contexto, Contenedor, Componente), Secuencias (flujo feliz, look-back), Máquina de estados (`Unit` y `Component`), Modelo de dominio (clases), Matriz de permisos (rol × función).
 
-#### **`/` - Página Principal**
+---
 
-  - **No conectado**: Invitación a conectar MetaMask
-  - **Conectado pero no registrado**: Formulario de registro por rol
-  - **Conectado y pendiente**: Estado de espera de aprobación
-  - **Conectado y aprobado**: Bienvenida con acceso a dashboard
+## 10. Video demo
 
-#### **`/dashboard` - Panel Principal**
+> ⏳ **Pendiente Phase 8.** Loom, ≤ 5 minutos, en español.
 
-  - **Resumen personalizado** según rol
-  - **Estadísticas** de tokens y transferencias
-  - **Accesos rápidos** a funcionalidades principales
+Guion previsto:
+- **0:00–0:30** — introducción: problema, Res. 536/2026 como ancla regulatoria
+- **0:30–1:30** — tecnología y arquitectura (Foundry + Next.js + IPFS + MCP + AI)
+- **1:30–4:00** — demo en vivo: registro → tamizaje → fraccionamiento → almacenamiento → transfusión → verificación pública
+- **4:00–5:00** — innovaciones vs esqueleto, visión de adopción estatal, conclusiones
 
-#### **`/tokens` - Gestión de Tokens**
+Enlace público: *(pendiente)*
 
-  - **Lista de tokens** propiedad del usuario
-  - **Crear token** (`/tokens/create`)
-  - **Detalles** (`/tokens/[id]`)
-  - **Transferir** (`/tokens/[id]/transfer`)
+---
 
-#### **`/transfers` - Transferencias**
+## 11. Innovaciones implementadas (vs. esqueleto)
 
-  - **Pendientes de aceptación**
-  - **Historial completo**
-  - **Acciones**: Aceptar/Rechazar
+El esqueleto del TFM propone una cadena `Producer → Factory → Retailer → Consumer` con tokens fungibles. HemaChain va sustancialmente más allá:
 
-#### **`/admin` - Administración** (solo Admin)
+| Innovación | Impacto | Capa |
+|---|---|---|
+| **Vertical no presente en los 5 ejemplos** (sangre vs. textiles/madera/etc.) | Diferenciación inmediata, contexto regulatorio argentino real | Conceptual |
+| **5 roles especializados** alineados con la Res. 865/2006 (Banco, Lab, Fraccionamiento, Banco, Hospital + Auditor + Certificador + Admin) | Modelo de dominio realista, no genérico | Smart contract |
+| **Tamizaje obligatorio argentino con Chagas** | Especificidad regional, no replicable copiando esqueleto genérico | Smart contract |
+| **Componentes derivados** (sangre entera → GR + PFC + CP + Crio) con propagación de recall | Modelo de transformación industrial real, no trivial | Smart contract |
+| **Look-back automatizado on-chain** | Función única que cumple Art. 14 EU 2002/98/EC y Res. 865/2006 | Smart contract |
+| **Cadena de frío con cambio de estado automático** | Sensores + on-chain enforcement, no sólo registro | Smart contract |
+| **Certificaciones como NFTs ERC-721** con IPFS + verificación de hash | Aplicación real de NFTs no-financieros | Smart contract + frontend |
+| **Página pública de verificación** (`/verify/[id]`) sin wallet | Acceso para paciente / familiar / regulador | Frontend |
+| **QR impreso en la unidad** apuntando a la verificación pública | Puente físico-digital | Frontend |
+| **Indexador de eventos con SSE** para alertas en tiempo real | UX superior vs. polling | Off-chain |
+| **MCP Server envolviendo Foundry CLI** | Control vía lenguaje natural; bonus +5 % del rúbrica | Tooling/IA |
+| **Agente "Ask HemaChain"** con Claude tool-use | Consultas de trazabilidad en lenguaje natural | Frontend/IA |
+| **Multilenguaje** (es / pt / en) con `next-intl` | Apertura MERCOSUR + audiencia internacional | Frontend |
+| **Privacidad por diseño** — sólo hashes on-chain, PII off-chain (Ley 25.326) | Cumplimiento regulatorio de datos personales | Arquitectural |
+| **Datos demo realistas** — 30+ donantes, look-back, excursión térmica, revocación | Demo memorable y reproducible | Tooling |
 
-  - \*\*Panel de administración del sistema
-  - **Gestión de usuarios** (`/admin/users`)
+Detalle técnico completo en [`docs/SDD.md`](./docs/SDD.md) §8 y §10.
 
-#### **`/profile` - Perfil**
+---
 
-  - **Información del usuario**
-  - **Portfolio de tokens**
+## 12. Uso de Inteligencia Artificial
 
-### 🏗️ **Estructura del Proyecto a Crear**
+Retrospectiva detallada (herramientas usadas, horas por fase, errores comunes, valor agregado, MCP) en [`IA.md`](./IA.md).
 
-Tu tarea es crear toda esta estructura desde cero:
+---
 
-```
-📁 supply-chain-tracker/
-├── 📁 sc/                          # Smart Contracts (TU TAREA)
-│   ├── 📁 src/
-│   │   └── SupplyChain.sol         # ⚠️ CONTRATO PRINCIPAL A PROGRAMAR
-│   ├── 📁 script/
-│   │   └── Deploy.s.sol            # ⚠️ SCRIPT DE DESPLIEGUE A CREAR
-│   ├── 📁 test/
-│   │   └── SupplyChain.t.sol       # ⚠️ TESTS A ESCRIBIR Y HACER PASAR
-│   └── foundry.toml                # ⚠️ CONFIGURACIÓN A CREAR
-├── 📁 web/                         # Frontend Next.js (TU TAREA)
-│   ├── 📁 src/
-│   │   ├── 📁 app/                 # ⚠️ TODAS LAS PÁGINAS A IMPLEMENTAR
-│   │   ├── 📁 components/          # ⚠️ COMPONENTES REACT A CREAR
-│   │   ├── 📁 contexts/            # ⚠️ WEB3 PROVIDER A PROGRAMAR
-│   │   ├── 📁 hooks/               # ⚠️ CUSTOM HOOKS A DESARROLLAR
-│   │   ├── 📁 lib/                 # ⚠️ SERVICIOS WEB3 A IMPLEMENTAR
-│   │   └── 📁 contracts/           # ⚠️ ABI Y CONFIGURACIÓN A CREAR
-│   ├── package.json                # ⚠️ DEPENDENCIAS A CONFIGURAR
-│   └── tailwind.config.js          # ⚠️ ESTILOS A CONFIGURAR
-├── 📁 screenshots/                 # Imágenes de referencia (PROPORCIONADAS)
-└── README.md                      # Esta guía (PROPORCIONADA)
-```
-
-> **⚠️ IMPORTANTE**: Solo se proporciona este README.md y las imágenes de referencia. Todo el código debe ser desarrollado por ti.
-
------
-
-## 🔄 Flujos de Trabajo
-
-### 1\. **Registro de Usuario**
-
-```mermaid
-graph TD
-    A[Conectar MetaMask] --> B[Seleccionar Rol]
-    B --> C[Enviar Solicitud]
-    C --> D[Estado: Pending]
-    D --> E[Admin Revisa]
-    E --> F{Aprobación}
-    F -->|Sí| G[Estado: Approved]
-    F -->|No| H[Estado: Rejected]
-    G --> I[Acceso al Sistema]
-```
-
-### 2\. **Creación de Token**
-
-```mermaid
-graph TD
-    A[Usuario Aprobado] --> B["Crear Token"]
-    B --> C{Rol}
-    C -->|Producer| D[Token Materia Prima]
-    C -->|Factory| E[Seleccionar Parent Token]
-    C -->|Retailer| F[Seleccionar Parent Token]
-    E --> G[Token Producto]
-    F --> G
-    D --> H[Token Creado]
-    G --> H
-```
-
-### 3\. **Transferencia**
-
-```mermaid
-graph TD
-    A[Propietario Token] --> B["Transferir Token"]
-    B --> C[Seleccionar Destinatario]
-    C --> D[Especificar Cantidad]
-    D --> E[Enviar Transferencia]
-    E --> F[Estado: Pending]
-    F --> G[Destinatario Revisa]
-    G --> H{Decisión}
-    H -->|Aceptar| I[Transferencia Completada]
-    H -->|Rechazar| J[Transferencia Rechazada]
-```
-
-A continuación se muestra una representación visual detallada del flujo de transferencia, incluyendo las interacciones entre el frontend y el smart contract:
-
-![Flujo de Trabajo de Transferencia de Tokens](img/Flujo%20de%20Trabajo%20de%20Transferencia%20de%20Tokens.png)
-
------
-
-## 📊 Estructuras de Datos a Implementar
-
-### **🔥 PARTE 1: SMART CONTRACT (sc/src/SupplyChain.sol)**
-
-El siguiente diagrama muestra el esquema de la base de datos del contrato inteligente, incluyendo las estructuras (`structs`), enumeraciones (`enums`) y sus relaciones:
-
-![Esquema de la Estructura de Datos del Smart Contract](img/Esquema%20de%20la%20Estructura%20de%20Datos%20del%20Smart%20Contract.png)
-
-#### **Enums a Definir**
-
-```solidity
-// ⚠️ TU TAREA: Definir estos enums
-enum UserStatus { /* Estados del usuario */ Pending, Approved, Rejected, Canceled }
-enum TransferStatus { /* Estados de transferencia */ Pending, Accepted, Rejected }
-```
-
-#### **Structs a Implementar**
-
-```solidity
-    enum UserStatus { Pending, Approved, Rejected, Canceled }
-    enum TransferStatus { Pending, Accepted, Rejected }
-
-    struct Token {
-        uint256 id;
-        address creator;
-        string name;
-        uint256 totalSupply;
-        string features; // JSON string
-        uint256 parentId;
-        uint256 dateCreated;
-        mapping(address => uint256) balance;
-    }
-
-    struct Transfer {
-        uint256 id;
-        address from;
-        address to;
-        uint256 tokenId;
-        uint256 dateCreated;
-        uint256 amount;
-        TransferStatus status;
-    }
-
-    struct User {
-        uint256 id;
-        address userAddress;
-        string role;
-        UserStatus status;
-    }
-
-    address public admin;
-    // contadores para los ids de los tokens, transfers y users
-    uint256 public nextTokenId = 1;
-    uint256 public nextTransferId = 1;
-    uint256 public nextUserId = 1;
-    // mapping para los tokens, transfers y users
-    mapping(uint256 => Token) public tokens;
-    mapping(uint256 => Transfer) public transfers;
-    mapping(uint256 => User) public users;
-    mapping(address => uint256) public addressToUserId;
-
-    // eventos para los tokens, transfers y users
-    event TokenCreated(uint256 indexed tokenId, address indexed creator, string name, uint256 totalSupply);
-    event TransferRequested(uint256 indexed transferId, address indexed from, address indexed to, uint256 tokenId, uint256 amount);
-    event TransferAccepted(uint256 indexed transferId);
-    event TransferRejected(uint256 indexed transferId);
-    event UserRoleRequested(address indexed user, string role);
-    event UserStatusChanged(address indexed user, UserStatus status);
-
-```
-
-#### **Funciones del Contrato a Implementar**
-
-```solidity
-// ⚠️ TU TAREA: Programar estas funciones principales
-
-// Gestión de Usuarios
-function requestUserRole(string memory role) public { }
-function changeStatusUser(address userAddress, UserStatus newStatus) public { }
-function getUserInfo(address userAddress) public view returns (User memory) { }
-function isAdmin(address userAddress) public view returns (bool) { }
-
-// Gestión de Tokens
-function createToken(string memory name, uint totalSupply, string memory features, uint parentId) public { }
-function getToken(uint tokenId) public view returns (Token memory) { }
-function getTokenBalance(uint tokenId, address userAddress) public view returns (uint) { }
-
-// Gestión de Transferencias
-function transfer(address to, uint tokenId, uint amount) public { }
-function acceptTransfer(uint transferId) public { }
-function rejectTransfer(uint transferId) public { }
-function getTransfer(uint transferId) public view returns (Transfer memory) { }
-
-// Funciones auxiliares
-function getUserTokens(address userAddress) public view returns (uint[] memory) { }
-function getUserTransfers(address userAddress) public view returns (uint[] memory) { }
-```
-
-#### **Tests a Escribir (sc/test/SupplyChain.t.sol)**
-
-```solidity
-// ⚠️ TU TAREA: Escribir y hacer pasar estos tests
-contract SupplyChainTest is Test {
-    // Setup y configuración inicial
-    function setUp() public { }
-
-    // Tests de gestión de usuarios
-    function testUserRegistration() public { }
-    function testAdminApproveUser() public { }
-    function testAdminRejectUser() public { }
-    function testUserStatusChanges() public { }
-    function testOnlyApprovedUsersCanOperate() public { }
-    function testGetUserInfo() public { }
-    function testIsAdmin() public { }
-
-    // Tests de creación de tokens
-    function testCreateTokenByProducer() public { }
-    function testCreateTokenByFactory() public { }
-    function testCreateTokenByRetailer() public { }
-    function testTokenWithParentId() public { }
-    function testTokenMetadata() public { }
-    function testTokenBalance() public { }
-    function testGetToken() public { }
-    function testGetUserTokens() public { }
-
-    // Tests de transferencias
-    function testTransferFromProducerToFactory() public { }
-    function testTransferFromFactoryToRetailer() public { }
-    function testTransferFromRetailerToConsumer() public { }
-    function testAcceptTransfer() public { }
-    function testRejectTransfer() public { }
-    function testTransferInsufficientBalance() public { }
-    function testGetTransfer() public { }
-    function testGetUserTransfers() public { }
-
-    // Tests de validaciones y permisos
-    function testInvalidRoleTransfer() public { }
-    function testUnapprovedUserCannotCreateToken() public { }
-    function testUnapprovedUserCannotTransfer() public { }
-    function testOnlyAdminCanChangeStatus() public { }
-    function testConsumerCannotTransfer() public { }
-    function testTransferToSameAddress() public { }
-
-    // Tests de casos edge
-    function testTransferZeroAmount() public { }
-    function testTransferNonExistentToken() public { }
-    function testAcceptNonExistentTransfer() public { }
-    function testDoubleAcceptTransfer() public { }
-    function testTransferAfterRejection() public { }
-
-    // Tests de eventos
-    function testUserRegisteredEvent() public { }
-    function testUserStatusChangedEvent() public { }
-    function testTokenCreatedEvent() public { }
-    function testTransferInitiatedEvent() public { }
-    function testTransferAcceptedEvent() public { }
-    function testTransferRejectedEvent() public { }
-
-    // Tests de flujo completo
-    function testCompleteSupplyChainFlow() public { }
-    function testMultipleTokensFlow() public { }
-    function testTraceabilityFlow() public { }
-}
-```
-
-### **🌐 PARTE 2: FRONTEND (web/)**
-
-#### **Páginas a Crear (app/)**
-
-```typescript
-// ⚠️ TU TAREA: Crear todas estas páginas
-
-app/
-├── page.tsx                     // Landing/Login/Register
-├── layout.tsx                   // Layout principal con Web3Provider
-├── dashboard/page.tsx           // Dashboard según rol
-├── tokens/
-│   ├── page.tsx                // Lista de tokens del usuario
-│   ├── create/page.tsx         // Crear nuevo token
-│   ├── [id]/page.tsx           // Detalles del token
-│   └── [id]/transfer/page.tsx  // Transferir token
-├── transfers/page.tsx           // Gestión de transferencias
-├── admin/
-│   ├── page.tsx                // Panel de administración
-│   └── users/page.tsx          // Gestión de usuarios
-└── profile/page.tsx            // Perfil del usuario
-```
-
-#### **Contextos y Hooks a Programar**
-
-```typescript
-// ⚠️ TU TAREA: Implementar Web3 Provider con localStorage
-// contexts/Web3Context.tsx
-export function Web3Provider({ children }) {
-  // Estado global de conexión
-  // Persistencia en localStorage
-  // Reconexión automática
-  // Gestión de eventos MetaMask
-}
-
-// hooks/useWallet.ts
-export function useWallet() {
-  // Hook que usa Web3Context
-  // Expone funciones de conexión/desconexión
-  // Maneja estado de usuario y tokens
-}
-```
-
-#### **Servicios Web3 a Implementar**
-
-```typescript
-// ⚠️ TU TAREA: Crear servicio de interacción con blockchain
-// lib/web3.ts
-class Web3Service {
-  // Conexión con MetaMask
-  // Interacción con smart contract
-  // Manejo de transacciones
-  // Conversión de datos BigInt
-}
-```
-
-#### **Componentes UI a Desarrollar**
-
-```typescript
-// ⚠️ TU TAREA: Crear componentes base y específicos
-components/
-├── ui/                    // Componentes base (shadcn/ui)
-│   ├── button.tsx
-│   ├── card.tsx
-│   ├── select.tsx
-│   └── label.tsx
-├── Header.tsx             // Navegación principal
-├── TokenCard.tsx          // Tarjeta de token
-├── TransferList.tsx       // Lista de transferencias
-└── UserTable.tsx          // Tabla de usuarios (admin)
-```
-
-#### **Configuración a Crear**
-
-```typescript
-// ⚠️ TU TAREA: Configurar integración blockchain
-// contracts/config.ts
-export const CONTRACT_CONFIG = {
-  address: "0x...", // Dirección de tu contrato desplegado
-  abi: [], // ABI generado por Foundry
-  adminAddress: "0x..." // Admin del sistema
-};
-
-// Configuración de red Anvil
-export const NETWORK_CONFIG = { };
-```
-
------
-
-## ⚠️ Errores Comunes y Soluciones
-
-### 🚨 **Problemas de Conexión**
-
-**Error**: "MetaMask not detected"
-
-```typescript
-// Solución: Verificar que MetaMask esté instalado
-if (typeof window.ethereum === 'undefined') {
-  alert('Please install MetaMask!');
-  return;
-}
-```
-
-**Error**: "Wrong network"
-
-```typescript
-// Solución: Verificar chain ID
-const chainId = await window.ethereum.request({ method: 'eth_chainId' });
-if (parseInt(chainId, 16) !== 31337) {
-  alert('Please connect to Anvil network (Chain ID: 31337)');
-}
-```
-
-### 🚨 **Problemas de Smart Contract**
-
-**Error**: "Contract not deployed"
-
-```bash
-# Solución: Verificar que Anvil esté corriendo y redesplegar
-anvil & # En un terminal
-forge script script/Deploy.s.sol --rpc-url http://localhost:8545 --private-key 0x... --broadcast
-```
-
-**Error**: "Transaction reverted"
-
-```solidity
-// Causa común: Usuario no aprobado
-// Solución: Verificar status del usuario en /admin/users
-```
-
-### 🚨 **Problemas de Frontend**
-
-**Error**: Next.js params Promise
-
-```tsx
-// ❌ Incorrecto en Next.js 15+
-function Page({ params }: { params: { id: string } }) {
-  const id = params.id; // Error
-}
-
-// ✅ Correcto
-import { use } from 'react';
-function Page({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params);
-}
-```
-
-**Error**: "localStorage is not defined"
-
-```typescript
-// Solución: Verificar que estamos en el cliente
-if (typeof window !== 'undefined') {
-  localStorage.setItem('key', 'value');
-}
-```
-
------
-
-## 🧪 Testing y Validación
-
-### **Tests de Smart Contract**
-
-```bash
-cd sc
-
-# Ejecutar todos los tests
-forge test
-
-# Test específico con verbosidad
-forge test --match-test testCreateToken -vvv
-
-# Test con coverage
-forge coverage
-```
-
-### **Validación de Frontend**
-
-```bash
-cd web
-
-# Build de producción (detecta errores de tipos)
-npm run build
-
-# Linting
-npm run lint
-
-# Desarrollo con hot reload
-npm run dev
-```
-
-### **Casos de Prueba Recomendados**
-
-1.  **Flujo completo de usuario**:
-
-      - Registrarse como Producer
-      - Crear token de materia prima
-      - Transferir a Factory
-      - Factory crea producto derivado
-      - Continuar hasta Consumer
-
-2.  **Validación de permisos**:
-
-      - Intentar transferir a rol incorrecto
-      - Crear token sin estar aprobado
-      - Acceder a páginas de admin sin permisos
-
-3.  **Estados de transferencia**:
-
-      - Aceptar transferencia
-      - Rechazar transferencia
-      - Verificar actualización de balances
-
------
-
-## 🎓 Plan de Desarrollo para Estudiantes
-
-### **🚀 FASE 1: FUNDAMENTOS (OBLIGATORIO)**
-
-1.  **Configurar entorno de desarrollo**
-
-      - Instalar Node.js, Foundry, MetaMask
-      - Crear estructura de carpetas del proyecto
-      - Configurar Anvil para blockchain local
-
-2.  **Desarrollar Smart Contract**
-
-      - Programar `SupplyChain.sol` con todas las estructuras
-      - Implementar todas las funciones requeridas
-      - **✅ GOAL**: Todos los tests deben pasar con `forge test`
-
-3.  **Crear Frontend Base**
-
-      - Configurar Next.js con TypeScript y Tailwind
-      - Implementar Web3Provider con localStorage
-      - Crear todas las páginas básicas
-
-### **🔥 FASE 2: FUNCIONALIDAD CORE (OBLIGATORIO)**
-
-4.  **Sistema de Autenticación**
-
-      - Conectar con MetaMask
-      - Registro de usuarios por roles
-      - Panel de admin para aprobaciones
-
-5.  **Gestión de Tokens**
-
-      - Crear tokens con metadatos
-      - Sistema de parentesco (productos de materias primas)
-      - Visualización de tokens por usuario
-
-6.  **Sistema de Transferencias**
-
-      - Transferir tokens entre roles
-      - Sistema de aceptación/rechazo
-      - Trazabilidad completa
-
------
-
-## 📚 Recursos Adicionales
-
-### **Documentación Oficial**
-
-  - [Solidity Docs](https://docs.soliditylang.org/)
-  - [Foundry Book](https://book.getfoundry.sh/)
-  - [Next.js Docs](https://nextjs.org/docs)
-  - [Ethers.js Docs](https://docs.ethers.org/)
-
-### **Tutoriales Recomendados**
-
-  - [CryptoZombies](https://cryptozombies.io/) - Aprender Solidity
-  - [Buildspace](https://buildspace.so/) - Proyectos Web3
-  - [Next.js Tutorial](https://nextjs.org/learn) - React y Next.js
-
-### **Herramientas de Desarrollo**
-
-  - [Remix IDE](https://remix.ethereum.org/) - Editor Solidity online
-  - [Hardhat](https://hardhat.org/) - Alternativa a Foundry
-  - [OpenZeppelin](https://openzeppelin.com/) - Contratos seguros
-
------
-
-## ✅ Checklist de Desarrollo
-
-### **🔧 CONFIGURACIÓN INICIAL**
-
-  - [ ] Node.js (18+) y npm instalados y verificados
-  - [ ] Foundry instalado (`curl -L https://foundry.paradigm.xyz | bash`)
-  - [ ] MetaMask instalado y configurado
-  - [ ] Estructura de carpetas creada desde cero
-  - [ ] Anvil corriendo en puerto 8545
-
-### **⚡ SMART CONTRACT**
-
-  - [ ] `SupplyChain.sol` programado con todas las estructuras
-  - [ ] Enums `UserStatus` y `TransferStatus` definidos
-  - [ ] Structs `Token`, `Transfer`, `User` implementados
-  - [ ] Todas las funciones públicas programadas
-  - [ ] Modificadores de acceso implementados
-  - [ ] Script de deploy `Deploy.s.sol` creado
-  - [ ] Tests unitarios escritos y **TODOS PASANDO** ✅
-  - [ ] Contrato desplegado exitosamente en Anvil
-
-### **🌐 FRONTEND**
-
-  - [ ] Proyecto Next.js inicializado con TypeScript
-  - [ ] Dependencias instaladas (ethers, tailwind, radix-ui)
-  - [ ] `Web3Context` programado con localStorage
-  - [ ] Hook `useWallet` implementado
-  - [ ] Servicio `Web3Service` creado
-  - [ ] Configuración del contrato actualizada
-  - [ ] Todas las páginas creadas y funcionando:
-      - [ ] `/` - Landing con conexión MetaMask
-      - [ ] `/dashboard` - Panel principal
-      - [ ] `/tokens` y `/tokens/create` - Gestión tokens
-      - [ ] `/tokens/[id]` y `/tokens/[id]/transfer` - Detalles y transferencias
-      - [ ] `/transfers` - Transferencias pendientes
-      - [ ] `/admin` y `/admin/users` - Panel administración
-      - [ ] `/profile` - Perfil usuario
-  - [ ] Header con navegación implementado
-  - [ ] Componentes UI base creados
-
-### **🔗 INTEGRACIÓN**
-
-  - [ ] Conexión MetaMask funcionando
-  - [ ] Registro de usuarios por rol implementado
-  - [ ] Aprobación por admin operativa
-  - [ ] Creación de tokens con metadatos
-  - [ ] Sistema de transferencias completo
-  - [ ] Aceptar/rechazar transferencias funcionando
-  - [ ] Trazabilidad de productos visible
-  - [ ] Persistencia en localStorage implementada
-
-### **📱 FUNCIONALIDAD COMPLETA**
-
-  - [ ] Flujo completo Producer→Factory→Retailer→Consumer
-  - [ ] Validaciones de permisos por rol
-  - [ ] Estados visuales correctos (pending, approved, etc.)
-  - [ ] Manejo de errores implementado
-  - [ ] Design responsive funcionando
-  - [ ] Build de producción sin errores
-
-### **🎯 ENTREGA FINAL**
-
-Para información sobre los requisitos de entrega, criterios de evaluación, formato y plazos, consulta:
-📄 **[Instrucciones Generales de Entrega - TFM](./Instrucciones%20Generales%20de%20Entrega%20-%20TFM%202c00249c79f781e69c36da256cd077f0.md)**
-
------
-
-## 🤝 Soporte y Comunidad
-
-### **💡 Tips para el Desarrollo**
-
-  - **Commits frecuentes** con mensajes descriptivos
-  - **Testing exhaustivo** - los tests son tu red de seguridad
-  - **Debugging metódico** - usa console.log y Foundry traces
-  - **Documentar decisiones** en comentarios del código
-  - **Backup de private keys** de prueba (nunca usar en mainnet)
-
-### **🆘 Cuando Necesites Ayuda**
-
-1.  **Revisa este README** - contiene toda la información necesaria
-2.  **Consulta la documentación oficial** de las tecnologías
-3.  **Utiliza los debugging tools** de Foundry y Chrome DevTools
-4.  **Verifica configuraciones** - 90% de los errores son de setup
-5.  **Tests primero** - si el test pasa, el problema está en frontend
-
-### **🏆 Objetivos de Aprendizaje Alcanzados**
-
-Al completar este proyecto habrás aprendido:
-
-  - ✅ **Solidity** - Programación de smart contracts
-  - ✅ **Foundry** - Testing y deployment de contratos
-  - ✅ **Next.js/React** - Desarrollo frontend moderno
-  - ✅ **Web3 Integration** - Conexión blockchain con frontend
-  - ✅ **DApp Architecture** - Diseño de aplicaciones descentralizadas
-  - ✅ **Testing** - Estrategias de testing en blockchain
-  - ✅ **UX/UI** - Diseño de interfaces crypto-friendly
-
------
-
-## 🎉 ¡Comienza tu Desarrollo\!
-
-**Recuerda**: Este es un proyecto desafiante pero muy recompensante. Solo tienes este README y las imágenes de referencia - ¡todo el código debe ser creado por ti\!
-
-**Próximos pasos**:
-
-1.  📋 Estudia bien este README y las imágenes de referencia
-2.  🛠️ Configura tu entorno de desarrollo
-3.  ⚡ Empieza por el smart contract y haz que los tests pasen
-4.  🌐 Construye el frontend paso a paso
-5.  🔗 Integra todo y prueba el flujo completo
-
-¡Feliz programación\! 🚀💻🔗
+## 13. Autor
+
+**Ariel** ([ariel.ep91@gmail.com](mailto:ariel.ep91@gmail.com))
+Máster en Blockchain — *CodeCrypto Academy* — cohorte 2026.
+🇦🇷 Buenos Aires, Argentina.
+
+Repositorios del proyecto:
+- 📦 **GitHub (público):** [`github.com/agamezg/hemachain`](https://github.com/agamezg/hemachain)
+- 📚 **GitLab (entrega académica):** `gitlab.codecrypto.academy:ariel.ep91/eth-pfm-chain-tracker`
+
+---
+
+## 14. Licencia
+
+[MIT](./LICENSE) — uso libre con atribución. La intención explícita del autor es que este código sirva como **semilla de referencia** para una futura adopción por parte del Ministerio de Salud argentino o servicios provinciales de hemoterapia, en el marco de la implementación de la Res. 536/2026.
+
+---
+
+## Documentos de referencia del esqueleto
+
+El presente repositorio mantiene los documentos originales provistos por la academia como contexto del enunciado:
+
+- [📄 Instrucciones Generales de Entrega - TFM](./Instrucciones%20Generales%20de%20Entrega%20-%20TFM%202c00249c79f781e69c36da256cd077f0.md)
+- [📄 TFM 1: Trazabilidad Alimentaria](./TFM%201%20Trazabilidad%20Alimentaria%20con%20Blockchain%202bf0249c79f78094a6d4cbe2186367d6.md)
+- [📄 TFM 2: Trazabilidad Logística](./TFM%202%20Trazabilidad%20Log%C3%ADstica%20con%20Blockchain%202bf0249c79f7809595f1f31914e423f6.md)
+- [📄 **TFM 3: Trazabilidad Industrial y Certificaciones** *(opción elegida)*](./TFM%203%20Trazabilidad%20Industrial%20y%20Certificaciones%20co%202bf0249c79f78014b080da0447e5f009.md)
+- [📄 TFM 4: Certificación Académica Digital](./TFM%204%20Certificaci%C3%B3n%20Acad%C3%A9mica%20Digital%20con%20Blockcha%202bf0249c79f78086969fc4a76e23288b.md)
+- [📄 TFM 5: Energía Renovable y Certificados Verdes](./TFM%205%20Energ%C3%ADa%20Renovable%20y%20Certificados%20Verdes%20con%20%202bf0249c79f78037b0b7d9102ec81108.md)
