@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+# commit-msg — enforce Conventional Commits format on the subject line.
+#
+# Format: <type>(<scope>)!?: <subject>
+# Types : feat | fix | docs | style | refactor | perf | test | build | ci | chore | revert
+#
+# Bypass with SKIP_HOOKS=1 git commit ...
+
+set -euo pipefail
+
+if [ "${SKIP_HOOKS:-0}" = "1" ]; then
+  exit 0
+fi
+
+MSG_FILE="$1"
+FIRST_LINE=$(head -n1 "$MSG_FILE")
+
+# Allow merge / revert / fixup / squash commits (git generates them)
+if echo "$FIRST_LINE" | grep -qE '^(Merge |Revert |fixup!|squash!|amend!)'; then
+  exit 0
+fi
+
+REGEX='^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\([a-z0-9._/-]+\))?!?: .{1,100}$'
+
+if ! echo "$FIRST_LINE" | grep -qE "$REGEX"; then
+  cat <<'EOF'
+✖ Commit message does not follow Conventional Commits.
+
+Expected format:
+  <type>(<scope>)!?: <subject>
+
+Valid types:
+  feat | fix | docs | style | refactor | perf | test | build | ci | chore | revert
+
+Subject: max 100 chars, no trailing period, imperative mood.
+
+Examples:
+  feat(sc): add HemaRegistry role-request flow
+  fix(web): correct chain switch race on Sepolia
+  docs: update SDD §8 with gas table
+  chore(devx)!: switch hooks path from .git/hooks to scripts/hooks
+
+Bypass (not recommended): SKIP_HOOKS=1 git commit ...
+EOF
+  echo ""
+  echo "Got:"
+  echo "  $FIRST_LINE"
+  exit 1
+fi

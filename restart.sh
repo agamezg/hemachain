@@ -1,0 +1,125 @@
+#!/usr/bin/env bash
+# restart.sh — start the full local HemaChain stack.
+#
+# Steps:
+#   1. Stop any leftover processes (calls stop.sh)
+#   2. Start Anvil on :8545
+#   3. Deploy contracts to Anvil (if sc/ is scaffolded)
+#   4. Copy ABIs into web/src/contracts/
+#   5. Start Next.js dev server on :3000
+#   6. Start the indexer (if present)
+#   7. Record every PID to .pids so stop.sh can clean up
+#
+# Override defaults via env vars:
+#   ANVIL_PORT=8545  WEB_PORT=3000  RPC_HOST=127.0.0.1
+#
+# Bypass with SKIP_DEPLOY=1 or SKIP_WEB=1 or SKIP_INDEXER=1.
+
+set -euo pipefail
+
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$REPO_ROOT"
+
+LOG_DIR="$REPO_ROOT/.logs"
+PID_FILE="$REPO_ROOT/.pids"
+mkdir -p "$LOG_DIR"
+
+ANVIL_PORT="${ANVIL_PORT:-8545}"
+WEB_PORT="${WEB_PORT:-3000}"
+RPC_HOST="${RPC_HOST:-127.0.0.1}"
+RPC_URL="http://${RPC_HOST}:${ANVIL_PORT}"
+# Well-known Anvil deployer key (first account, deterministic)
+ANVIL_PK="${ANVIL_PK:-0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80}"
+
+# ── 1. Clean previous state ──────────────────────────────────────────
+echo "→ Cleaning previous processes..."
+bash "$REPO_ROOT/stop.sh" >/dev/null 2>&1 || true
+: > "$PID_FILE"
+
+write_pid() { echo "$1=$2" >> "$PID_FILE"; }
+
+# ── 2. Start Anvil ───────────────────────────────────────────────────
+if ! command -v anvil &>/dev/null; then
+  echo "✖ anvil not found. Install Foundry: curl -L https://foundry.paradigm.xyz | bash && foundryup"
+  exit 1
+fi
+
+echo "→ Starting Anvil on ${RPC_URL}..."
+anvil --host "$RPC_HOST" --port "$ANVIL_PORT" > "$LOG_DIR/anvil.log" 2>&1 &
+ANVIL_PID=$!
+write_pid anvil "$ANVIL_PID"
+
+# Wait for RPC
+for _ in $(seq 1 30); do
+  if curl -sf -X POST -H "Content-Type: application/json" \
+       --data '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}' \
+       "$RPC_URL" > /dev/null; then
+    break
+  fi
+  sleep 0.3
+done
+
+if ! kill -0 "$ANVIL_PID" 2>/dev/null; then
+  echo "✖ Anvil failed to start. See $LOG_DIR/anvil.log"
+  exit 1
+fi
+echo "  ✓ Anvil up (pid $ANVIL_PID)"
+
+# ── 3. Deploy contracts ──────────────────────────────────────────────
+if [ "${SKIP_DEPLOY:-0}" != "1" ] && [ -f "$REPO_ROOT/sc/foundry.toml" ] && [ -f "$REPO_ROOT/sc/script/Deploy.s.sol" ]; then
+  echo "→ Deploying contracts to Anvil..."
+  if ! (cd "$REPO_ROOT/sc" && forge script script/Deploy.s.sol --rpc-url "$RPC_URL" --private-key "$ANVIL_PK" --broadcast > "$LOG_DIR/deploy.log" 2>&1); then
+    echo "✖ Deploy failed. See $LOG_DIR/deploy.log"
+    exit 1
+  fi
+
+  # ── 4. Copy ABIs to web/ ───────────────────────────────────────────
+  if [ -d "$REPO_ROOT/web/src" ]; then
+    mkdir -p "$REPO_ROOT/web/src/contracts"
+    for abi in HemaRegistry HemaTraceability HemaCertificate; do
+      src="$REPO_ROOT/sc/out/${abi}.sol/${abi}.json"
+      if [ -f "$src" ]; then
+        cp "$src" "$REPO_ROOT/web/src/contracts/${abi}.json"
+        echo "  ✓ ABI copied: ${abi}.json"
+      fi
+    done
+  fi
+else
+  echo "ℹ sc/ not scaffolded yet — skipping contract deploy"
+fi
+
+# ── 5. Start Next.js dev server ──────────────────────────────────────
+if [ "${SKIP_WEB:-0}" != "1" ] && [ -f "$REPO_ROOT/web/package.json" ]; then
+  echo "→ Starting Next.js dev server on :${WEB_PORT}..."
+  if [ ! -d "$REPO_ROOT/web/node_modules" ]; then
+    echo "  → installing web/ dependencies (first run)..."
+    (cd "$REPO_ROOT/web" && npm install --silent)
+  fi
+  (cd "$REPO_ROOT/web" && PORT="$WEB_PORT" npm run dev > "$LOG_DIR/web.log" 2>&1) &
+  WEB_PID=$!
+  write_pid web "$WEB_PID"
+  echo "  ✓ Next.js starting (pid $WEB_PID, see $LOG_DIR/web.log)"
+else
+  echo "ℹ web/ not scaffolded yet — skipping dev server"
+fi
+
+# ── 6. Start indexer (optional) ──────────────────────────────────────
+if [ "${SKIP_INDEXER:-0}" != "1" ] && [ -f "$REPO_ROOT/indexer/package.json" ]; then
+  echo "→ Starting indexer..."
+  if [ ! -d "$REPO_ROOT/indexer/node_modules" ]; then
+    (cd "$REPO_ROOT/indexer" && npm install --silent)
+  fi
+  (cd "$REPO_ROOT/indexer" && npm start > "$LOG_DIR/indexer.log" 2>&1) &
+  INDEXER_PID=$!
+  write_pid indexer "$INDEXER_PID"
+  echo "  ✓ Indexer starting (pid $INDEXER_PID)"
+fi
+
+# ── 7. Summary ───────────────────────────────────────────────────────
+echo ""
+echo "✓ HemaChain local stack running:"
+echo "   • Anvil RPC : ${RPC_URL}  (chainId 31337)"
+echo "   • Frontend  : http://localhost:${WEB_PORT}"
+echo "   • Logs      : ${LOG_DIR}/"
+echo "   • PIDs      : ${PID_FILE}"
+echo "   • Stop with : ./stop.sh"

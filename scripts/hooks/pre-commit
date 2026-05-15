@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+# pre-commit — lint staged code.
+#   • sc/  → forge fmt --check on staged .sol files
+#   • web/ → next lint (ESLint) on staged .ts/.tsx/.js/.jsx files
+#
+# Bypass with SKIP_HOOKS=1 git commit ...
+
+set -euo pipefail
+
+if [ "${SKIP_HOOKS:-0}" = "1" ]; then
+  echo "ℹ SKIP_HOOKS=1 — pre-commit bypassed"
+  exit 0
+fi
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+cd "$REPO_ROOT"
+
+STAGED=$(git diff --cached --name-only --diff-filter=ACMR)
+[ -z "$STAGED" ] && exit 0
+
+# ── 1. Solidity formatting (sc/) ─────────────────────────────────────
+SOL=$(echo "$STAGED" | grep -E '^sc/.*\.sol$' || true)
+if [ -n "$SOL" ] && [ -f "sc/foundry.toml" ]; then
+  if command -v forge &>/dev/null; then
+    echo "→ forge fmt --check"
+    if ! (cd sc && forge fmt --check); then
+      echo "✖ Solidity formatting issues. Run 'cd sc && forge fmt' to fix."
+      exit 1
+    fi
+  else
+    echo "ℹ forge not installed — skipping Solidity format check"
+  fi
+fi
+
+# ── 2. TypeScript/JS linting (web/) ──────────────────────────────────
+TS=$(echo "$STAGED" | grep -E '^web/.*\.(ts|tsx|js|jsx|mjs|cjs)$' || true)
+if [ -n "$TS" ] && [ -f "web/package.json" ]; then
+  echo "→ npm run lint (web/)"
+  if ! (cd web && npm run -s lint); then
+    echo "✖ ESLint failures in web/."
+    exit 1
+  fi
+fi
+
+echo "✓ pre-commit OK"

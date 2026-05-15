@@ -1,0 +1,125 @@
+#!/usr/bin/env bash
+# pre-push — run tests for any project that changed, then mirror the push
+# to the other configured remote (origin ↔ gitlab).
+#
+# Stdin format (per git docs): "<local_ref> <local_sha> <remote_ref> <remote_sha>" lines
+# Args: $1 = remote name, $2 = remote URL
+#
+# Bypass with:
+#   SKIP_HOOKS=1     skip everything
+#   SKIP_TESTS=1     skip test runs (still mirrors)
+#   SKIP_MIRROR=1    skip the cross-remote mirror push
+
+set -uo pipefail   # not -e: we want explicit error handling
+
+if [ "${SKIP_HOOKS:-0}" = "1" ]; then
+  echo "ℹ SKIP_HOOKS=1 — pre-push bypassed"
+  exit 0
+fi
+
+REMOTE="${1:-}"
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+cd "$REPO_ROOT"
+
+# Buffer stdin (we read it twice: once to diff, once to mirror)
+REFS=$(cat)
+[ -z "$REFS" ] && exit 0
+
+NULL_SHA="0000000000000000000000000000000000000000"
+
+# Determine the diff range to know which projects changed
+LOCAL_SHA=$(echo "$REFS"  | head -n1 | awk '{print $2}')
+REMOTE_SHA=$(echo "$REFS" | head -n1 | awk '{print $4}')
+
+if [ -z "$REMOTE_SHA" ] || [ "$REMOTE_SHA" = "$NULL_SHA" ]; then
+  # New branch on remote → diff against parent of LOCAL_SHA (or whole tree)
+  CHANGED=$(git diff --name-only "${LOCAL_SHA}^" "$LOCAL_SHA" 2>/dev/null \
+            || git ls-tree -r --name-only "$LOCAL_SHA")
+else
+  CHANGED=$(git diff --name-only "$REMOTE_SHA" "$LOCAL_SHA")
+fi
+
+# ── 1. sc/ tests ─────────────────────────────────────────────────────
+if [ "${SKIP_TESTS:-0}" != "1" ]; then
+  if echo "$CHANGED" | grep -qE '^sc/(src|test|script|lib)/' && [ -f sc/foundry.toml ]; then
+    if command -v forge &>/dev/null; then
+      echo "→ forge test (sc/)"
+      if ! (cd sc && forge test); then
+        echo "✖ Solidity tests failed. Bypass with SKIP_TESTS=1 (NOT recommended)."
+        exit 1
+      fi
+    else
+      echo "ℹ forge not installed — skipping sc/ tests"
+    fi
+  fi
+
+  # ── 2. web/ lint + tests + e2e ─────────────────────────────────────
+  if echo "$CHANGED" | grep -qE '^web/' && [ -f web/package.json ]; then
+    echo "→ npm run lint (web/)"
+    if ! (cd web && npm run -s lint); then
+      echo "✖ web/ lint failed."
+      exit 1
+    fi
+
+    # Unit tests (jest/vitest), if the project defines `npm test`
+    if node -e "const p=require('./web/package.json'); process.exit(p.scripts && p.scripts.test ? 0 : 1)" 2>/dev/null; then
+      echo "→ npm test (web/)"
+      if ! (cd web && npm test --silent --passWithNoTests 2>/dev/null || npm test --silent); then
+        echo "✖ web/ unit tests failed."
+        exit 1
+      fi
+    fi
+
+    # E2E with Playwright if configured
+    if compgen -G "web/playwright.config.*" > /dev/null; then
+      echo "→ npx playwright test (web/)"
+      if ! (cd web && npx --no-install playwright test); then
+        echo "✖ Playwright E2E failed."
+        exit 1
+      fi
+    fi
+  fi
+fi
+
+# ── 3. Mirror to the OTHER remote ────────────────────────────────────
+if [ "${SKIP_MIRROR:-0}" != "1" ]; then
+  case "$REMOTE" in
+    origin) OTHER="gitlab" ;;
+    gitlab) OTHER="origin" ;;
+    *)      OTHER="" ;;
+  esac
+
+  if [ -n "$OTHER" ] && git remote get-url "$OTHER" &>/dev/null; then
+    echo ""
+    echo "→ Mirroring push to '$OTHER'..."
+    fail=0
+    while IFS= read -r line; do
+      [ -z "$line" ] && continue
+      local_ref=$(echo "$line"  | awk '{print $1}')
+      local_sha=$(echo "$line"  | awk '{print $2}')
+      remote_ref=$(echo "$line" | awk '{print $3}')
+      [ -z "$local_sha" ] || [ "$local_sha" = "$NULL_SHA" ] && continue
+
+      # --no-verify on the secondary push prevents this hook from re-firing
+      if ! git push --no-verify "$OTHER" "${local_sha}:${remote_ref}"; then
+        fail=1
+        echo "  ✖ failed: $local_ref → $OTHER:$remote_ref"
+      else
+        echo "  ✓ mirrored: ${remote_ref#refs/heads/}"
+      fi
+    done <<EOF
+$REFS
+EOF
+
+    if [ "$fail" = "1" ]; then
+      echo ""
+      echo "✖ Mirror to '$OTHER' incomplete. The primary push to '$REMOTE' is blocked."
+      echo "  Recover: SKIP_MIRROR=1 git push $REMOTE && git push $OTHER"
+      exit 1
+    fi
+  else
+    echo "ℹ No counterpart remote (expected origin/gitlab pair) — skipping mirror"
+  fi
+fi
+
+echo "✓ pre-push OK"
