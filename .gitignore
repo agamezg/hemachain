@@ -74,3 +74,34 @@ env/
 # Archivos de respaldo
 *.bak
 *.backup
+
+# ─── HemaChain additions ────────────────────────────────────────────
+# Obsidian editor metadata (don't ship personal editor config)
+.obsidian/
+**/.obsidian/
+
+# Foundry
+sc/lib/
+sc/out/
+sc/cache/
+sc/broadcast/
+sc/gas-snapshot.tmp
+
+# Local dev orchestration (restart.sh / stop.sh)
+.pids
+.logs/
+
+# Frontend (Next.js)
+web/.next/
+web/.turbo/
+web/next-env.d.ts.bak
+
+# Indexer
+indexer/*.db
+indexer/*.sqlite
+
+# MCP server
+mcp-server/dist/
+
+# package-lock noise from create-next-app in temp dirs
+.npm/
