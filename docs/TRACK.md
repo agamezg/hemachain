@@ -51,8 +51,9 @@
 - [x] **Bonus** — Git hooks: pre-commit (lint), commit-msg (Conventional Commits), pre-push (tests + mirror al otro remote) *(commit `4b73030`)*
 - [x] **Bonus** — `scripts/install-hooks.sh` (activa `core.hooksPath=scripts/hooks`) *(commit `4b73030`)*
 - [x] **Push verificado**: ambos remotes en `4b73030`; el pre-push hook ejecutó `forge test` (2 pass), `npm run lint` (pass) y mirror a `gitlab`
-- [ ] Scaffold `indexer/` — *movido a Phase 7 (innovation layer)*
-- [ ] Scaffold `mcp-server/` — *movido a Phase 7 (innovation layer)*
+- [x] Scaffold `indexer/` — package.json + README.md (placeholder, contenido en Phase 7)
+- [x] Scaffold `mcp-server/` — package.json + README.md (placeholder, contenido en Phase 7)
+- [x] **Verificación DoD:** `forge build` ✓ (`No files changed, compilation skipped`) y `npm run build` ✓ (Next.js 16.2.6 Turbopack, 4 páginas estáticas)
 - **DoD:** ✅ `forge build` y `npm run build` ambos verdes; SDD ≥ §4 escrito; repo pusheado a ambos remotes.
 
 ---
@@ -271,12 +272,20 @@
 - Phase 0 documentación escrita: `README.md`, `docs/SDD.md`, `docs/TRACK.md`, `IA.md`.
 - Próximo paso: scaffolds de Foundry y Next.js, primer commit `chore: scaffold project structure`.
 
-### Sesión 2026-05-15 (continuación) — Phase 0 cerrada
+### Sesión 2026-05-15 (continuación) — Phase 0 al 95 %
 - Scaffolds completos: `sc/` (Foundry + OpenZeppelin v5.1.0), `web/` (Next.js 15 + TS + Tailwind v4 + App Router + Turbopack).
 - DevX completo: `restart.sh`, `stop.sh`, hooks (`pre-commit`, `commit-msg`, `pre-push`), `install-hooks.sh` activado via `core.hooksPath`.
 - Tres commits en `main`: `374fffa` (docs) → `5c777f5` (scaffold) → `4b73030` (devx).
 - Push a ambos remotes verificado: `origin` (GitHub) y `gitlab` (academia) en `4b73030`. El pre-push hook hizo el mirror automáticamente al pushear a origin.
-- **Próximo paso al retomar:** Phase 1 — escribir `HemaRegistry.sol` con `AccessControl` + tests TDD. Reemplazar el scaffold de `Counter.sol`/`Counter.t.sol` con los contratos reales.
+
+### Sesión 2026-05-17 — Phase 0 sellada ✅
+- Agregados `indexer/` y `mcp-server/` como placeholders (package.json + README cada uno) — la estructura del monorepo queda visible desde el día 1 sin necesidad de "movido a Phase 7" en el tracker.
+- Verificación de DoD ejecutada y verde:
+  - `cd sc && forge build` → `compilation skipped` (todo OK).
+  - `cd web && npm run build` → Next.js 16.2.6 (Turbopack), 4 páginas estáticas generadas.
+- Memoria del agente actualizada (6 archivos en `~/.claude/projects/.../memory/`) para arranque rápido en próximas sesiones.
+- **Próximo paso al retomar:** **Phase 1 — Smart contracts**. Empezar por `HemaRegistry.sol` (gates el resto), TDD con `forge test`. Reemplazar `sc/src/Counter.sol`, `sc/test/Counter.t.sol`, `sc/script/Counter.s.sol` con los contratos reales.
 - Decisiones pendientes para Phase 1:
-  - ¿`pragma solidity 0.8.24` o `0.8.30` (la que viene por defecto del forge init)? *Recomendación: 0.8.24 con `evm_version = "cancun"` para PUSH0 sin romper compatibilidad con redes pre-Shanghai.*
-  - ¿Empezar por `HemaRegistry` (más simple) o `HemaTraceability` (núcleo del sistema)? *Recomendación: Registry primero — bloquea el resto.*
+  - **pragma**: `0.8.24` (PUSH0, EVM Shanghai+) o `0.8.30` (default actual de Forge). Recomendación: `0.8.24` + `evm_version = "cancun"` en `foundry.toml` para máxima compatibilidad y disponibilidad en Sepolia/Anvil.
+  - **Orden**: `HemaRegistry` → `HemaTraceability` → `HemaCertificate`. Registry primero porque sin roles no funciona nada más.
+  - **OZ AccessControl**: usar `AccessControl` plano o `AccessControlEnumerable` (más caro pero permite listar holders por rol — útil para el admin dashboard).

@@ -1,0 +1,12 @@
+{
+  "name": "@hemachain/indexer",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Event indexer for HemaChain contracts — placeholder, implementation in Phase 7 (innovation layer)",
+  "scripts": {
+    "start": "echo 'indexer/ — not yet implemented. See ../docs/TRACK.md Phase 7.' && exit 0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
