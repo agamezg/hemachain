@@ -9,7 +9,7 @@
 > - `[~]` tarea en progreso (no terminada — actualizar al retomar)
 > - **★** tarea crítica (bloquea la fase)
 >
-> **Última actualización:** Phase 0 completa — todos los scaffolds, scripts y hooks en su lugar; ambos remotes (`origin`/GitHub + `gitlab`/academia) sincronizados.
+> **Última actualización:** Phase 1 completa — 3 contratos (`HemaRegistry`, `HemaTraceability`, `HemaCertificate`) + 1 librería (`Codes`), 110 tests verdes (incluye invariantes + fuzz), Deploy/Seed scripts probados end-to-end contra Anvil, gas snapshot capturado.
 
 ---
 
@@ -18,8 +18,8 @@
 | Fase | Estado | DoD alcanzada |
 |---|---|:-:|
 | 0 — Setup, SDD, scaffolding | ✅ Completa | Sí (`forge build` y `npm run build` verdes; documentación inicial escrita; ambos remotes pusheados) |
-| 1 — Smart contracts | ⬜ No iniciada (próxima) | — |
-| 2 — Frontend scaffold & design system | ⬜ No iniciada | — |
+| 1 — Smart contracts | ✅ Completa | Sí (`forge test` 110/110 verdes; invariantes + fuzz; Deploy/Seed smoke-tested en Anvil; gas snapshot capturado) |
+| 2 — Frontend scaffold & design system | ⬜ No iniciada (próxima) | — |
 | 3 — Web3 wiring | ⬜ No iniciada | — |
 | 4 — Core pages (role-based) | ⬜ No iniciada | — |
 | 5 — Certificates + IPFS | ⬜ No iniciada | — |
@@ -61,63 +61,65 @@
 ## Phase 1 — Smart contracts (Foundry, TDD) *(2–3 sesiones)*
 
 ### 1.1. `HemaRegistry.sol`
-- [ ] **★** Estructura básica con `AccessControl` y constantes de roles
-- [ ] **★** `requestRole(role, name, country)`
-- [ ] **★** `approveRole(actor)` / `rejectRole(actor)` / `revokeRole(role, actor)`
-- [ ] `actorOf(addr)` / `isActive(addr)`
-- [ ] Eventos: `ActorRegistered`, `RoleRequested`, `RoleApproved`, `RoleRejected`, `RoleRevoked`
-- [ ] Custom errors
-- [ ] NatSpec completo
-- [ ] Tests `HemaRegistry.t.sol` (≥ 15 tests, happy + unhappy)
+- [x] **★** Estructura básica con `AccessControlEnumerable` y constantes de roles
+- [x] **★** `requestRole(role, name, country)`
+- [x] **★** `approveRole(actor)` / `rejectRole(actor)` / `revokeRole(role, actor)` (inherited)
+- [x] `actorOf(addr)` / `isActive(addr)` (derived from `hasRole` to stay consistent on revoke)
+- [x] Eventos: `RoleRequested`, `RoleApproved`, `RoleRejected`, `ActorRegistered` (+ `RoleGranted`/`RoleRevoked` from AccessControl)
+- [x] Custom errors (`InvalidRole`, `AlreadyRegistered`, `RequestAlreadyExists`, `NoPendingRequest`)
+- [x] NatSpec completo
+- [x] Tests `HemaRegistry.t.sol` — **26 tests** (happy + unhappy + enumerable)
 
 ### 1.2. `HemaTraceability.sol`
-- [ ] **★** Structs: `DonationUnit`, `TestResult`, `Component`, `ProcessRecord`, `CustodyEvent`, `AdverseEvent`
-- [ ] **★** Enums: `UnitStatus`, `ComponentStatus`, `ComponentType`, `AdverseKind`
-- [ ] **★** `registerDonation(donorIdHash, volumeMl, aboRhCode)`
-- [ ] **★** `recordTestResult(unitId, hiv, hbv, hcv, syphilis, htlv, chagas, abo)`
-- [ ] **★** `releaseUnit(unitId)` / `quarantineUnit(unitId, reason)`
-- [ ] **★** `produceComponent(parentUnitId, type, volumeMl)` — incluye expiresAt automático
-- [ ] **★** `transferCustody(componentId, to, temperatureC, gpsHash, signedHandoffHash)` — incluye cold-chain gate
-- [ ] **★** `crossMatch(componentId, patientHash)`
-- [ ] **★** `recordTransfusion(componentId)`
-- [ ] **★** `reportAdverseEvent(kind, triggerHash)` — propagación de recall O(n)
-- [ ] Funciones de lectura: `getUnit`, `getComponent`, `getFullTraceability(id)`
-- [ ] Custom errors
-- [ ] NatSpec completo
-- [ ] Tests `HemaTraceability.t.sol` (≥ 30 tests)
+- [x] **★** Structs: `DonationUnit`, `TestResult`, `Component` (decidido NO almacenar `CustodyEvent`/`ProcessRecord` on-chain — se reconstruyen del indexador, SDD §10.2)
+- [x] **★** Enums: `UnitStatus`, `ComponentStatus`, `ReleaseStatus`, `AdverseKind` (`ComponentType` vive en `lib/Codes.sol`)
+- [x] **★** `registerDonation(donorIdHash, volumeMl, aboRhCode)`
+- [x] **★** `recordTestResult(unitId, hiv, hbv, hcv, syphilis, htlv, chagas, abo)`
+- [x] **★** `releaseUnit(unitId)` / `quarantineUnit(unitId, reason)`
+- [x] **★** `produceComponent(parentUnitId, type, volumeMl)` — `expiresAt` automático vía `Codes.expiryAt`
+- [x] **★** `transferComponentCustody(componentId, to, temperatureC, gpsHash, signedHandoffHash)` — cold-chain gate
+- [x] **★** `crossMatch(componentId, patientHash)`
+- [x] **★** `recordTransfusion(componentId)`
+- [x] **★** `reportAdverseEvent(kind, triggerHash)` — propagación O(n) sobre `_unitsByDonor` + `_componentsByUnit`
+- [x] Funciones de lectura: `getUnit`, `getTestResult`, `getComponent`, `getUnitsByDonor`, `getComponentsByUnit`, `splitVolumeOf`
+- [x] Custom errors (15 errors específicos)
+- [x] NatSpec completo (con tabla de invariantes en el `@dev` de la clase)
+- [x] Tests `HemaTraceability.t.sol` — **37 tests** (lifecycle completo + look-back idempotencia + Chagas + temp excursion + volume conservation)
+- [~] `transferUnitCustody` — diferido: el flujo demo usa transferencias implícitas al cambiar de rol; agregar en Phase 4 si la UI lo necesita
 
 ### 1.3. `HemaCertificate.sol`
-- [ ] **★** Hereda `ERC721URIStorage` + `AccessControl`
-- [ ] **★** `issueCertificate(subject, type, expiresAt, documentHash, ipfsCID)`
-- [ ] **★** `revokeCertificate(tokenId, reason)`
-- [ ] `statusOf(tokenId)` — Valid/Expired/Revoked
-- [ ] `tokenURI(tokenId)` con JSON compatible OpenSea
-- [ ] Custom errors
-- [ ] NatSpec completo
-- [ ] Tests `HemaCertificate.t.sol` (≥ 12 tests)
+- [x] **★** Hereda `ERC721URIStorage`; roles delegados a `HemaRegistry` (no AccessControl local)
+- [x] **★** `issueCertificate(subject, type, expiresAt, documentHash, ipfsCID)`
+- [x] **★** `revokeCertificate(tokenId, reason)` — rechaza si ya `Expired` (monotonía)
+- [x] `statusOf(tokenId)` — `Valid` / `Expired` / `Revoked` derivado de (`revoked`, `expiresAt`, `block.timestamp`)
+- [x] `tokenURI(tokenId)` — apunta a `ipfs://<CID>`; el JSON OpenSea-compatible vive en IPFS (más estándar que generar on-chain)
+- [x] Custom errors (8 errors)
+- [x] NatSpec completo
+- [x] Tests `HemaCertificate.t.sol` — **20 tests** (issuance + monotonic transitions + ERC-721 transferability)
 
 ### 1.4. Test suite — invariantes y fuzz
-- [ ] `INV_VolumeConserved`
-- [ ] `INV_RecallPropagates`
-- [ ] `INV_NoExpiredTransfusion`
-- [ ] `INV_ColdChainGate`
-- [ ] `INV_RoleScoping` (uno por rol × función)
-- [ ] `INV_DonorHashImmutable`
-- [ ] `INV_CertificateMonotonic`
-- [ ] Fuzz tests para state transitions
+- [x] `INV_VolumeConserved` — invariant test handler-driven (3840 calls/run, 256 runs)
+- [x] `INV_RecallPropagates` — unit-tested en `test_LookBack_RecallsAllDerivedComponents`
+- [x] `INV_NoExpiredTransfusion` — unit-tested en `test_CrossMatch_RevertsAfterExpiry`
+- [x] `INV_ColdChainGate` — unit-tested en `test_TransferComponentCustody_TempExcursionRecalls`
+- [x] `INV_RoleScoping` — unit-tested vía `_RevertsForNon*` por función
+- [x] `INV_DonorHashImmutable` — invariant test handler-driven
+- [x] `INV_CertificateMonotonic` — fuzz tests `testFuzz_RevokedDominatesTimeWarp` + `testFuzz_CannotRevokeExpired`
+- [x] Fuzz tests para state transitions (vía handler de invariantes)
 
 ### 1.5. `lib/Codes.sol`
-- [ ] Constantes ISBT 128 (ABO/Rh codes)
-- [ ] Helpers `daysToExpiry(componentType)` (RBC 42 / FFP 365 / PLT 5 / CRYO 365)
-- [ ] Helpers de validación de rangos de temperatura por tipo
+- [x] Constantes ISBT 128 (8 códigos ABO/Rh packed en `bytes8`)
+- [x] Helpers `shelfLifeDays(componentType)` (RBC 42 / FFP 365 / PLT 5 / CRYO 365) + `expiryAt(ct, producedAt)`
+- [x] Helpers de validación de rangos de temperatura por tipo (`isTempInRange`)
+- [x] Tests `Codes.t.sol` — **22 tests**
 
 ### 1.6. Deployment
-- [ ] **★** `script/Deploy.s.sol` (deploya los 3 + cablea roles iniciales)
-- [ ] **★** `script/Seed.s.sol` (carga datos demo: 30 donantes, 50 donaciones, 1 look-back, 1 excursión, 1 revocación)
-- [ ] Deploy a Anvil + smoke test con `cast`
-- [ ] Tabla de gas en SDD §8.3
+- [x] **★** `script/Deploy.s.sol` (deploya los 3 con admin = broadcaster; default a Anvil PK#0)
+- [x] **★** `script/Seed.s.sol` (carga demo: 6 actores, 3 donaciones, 3 componentes, 1 look-back, 1 excursión, 1 cert revocada — versión reducida vs. 30 donantes; suficiente para video)
+- [x] Deploy a Anvil + smoke test con `cast` (banco activo, componente 1 recalled, componente 3 transfundido, cert 1 revocada)
+- [x] Tabla de gas en SDD §8.3 (capturada en `sc/.gas-snapshot`)
 
-- **DoD:** `forge test` 100 % verde; ≥ 60 tests; invariant + fuzz suites pasan; tabla de gas en SDD §8.
+- **DoD:** ✅ `forge test` 110/110 verde; **105 unit + 3 invariant + 2 fuzz**; tabla de gas y notas en SDD §8.3; Deploy/Seed smoke-tested.
 
 ---
 
@@ -289,3 +291,24 @@
   - **pragma**: `0.8.24` (PUSH0, EVM Shanghai+) o `0.8.30` (default actual de Forge). Recomendación: `0.8.24` + `evm_version = "cancun"` en `foundry.toml` para máxima compatibilidad y disponibilidad en Sepolia/Anvil.
   - **Orden**: `HemaRegistry` → `HemaTraceability` → `HemaCertificate`. Registry primero porque sin roles no funciona nada más.
   - **OZ AccessControl**: usar `AccessControl` plano o `AccessControlEnumerable` (más caro pero permite listar holders por rol — útil para el admin dashboard).
+
+### Sesión 2026-05-21 — Phase 1 sellada ✅
+- **Decisiones tomadas:** `0.8.24 + cancun`, `AccessControlEnumerable`, orden Registry → Codes → Traceability → Certificate → Invariants → Deploy/Seed.
+- **Commits landed (8):** `e292e0c` (CLAUDE.md), `abe1084` (foundry.toml), `e45d6d4` (HemaRegistry + 26 tests, Counter borrado), `f6a915f` (Codes lib + 22 tests), `8b3c831` (HemaTraceability + 37 tests), `fea1c32` (HemaCertificate + 20 tests), `683ca8b` (Invariants + fuzz), `6072bbf` (Deploy/Seed + gas snapshot). **No pusheado** todavía — el usuario revisa antes del primer push.
+- **Test count final:** 110/110 verde — 26 Registry + 22 Codes + 37 Traceability + 20 Certificate + 3 invariants + 2 fuzz. Cada commit pasa el pre-commit hook (`forge fmt --check`).
+- **Decisiones de diseño que se apartaron del SDD (con justificación):**
+  - `CustodyEvent` no se persiste on-chain — toda la info se emite vía eventos (`ComponentCustodyTransferred`) y el indexador de Phase 7 reconstruye historia. Ahorra ~80k gas por handoff.
+  - `transferUnitCustody` diferido — la custodia de la unidad se actualiza implícitamente cuando el lab toma el control en `recordTestResult`. Si la UI de Phase 4 necesita el evento explícito, se agrega entonces.
+  - `tokenURI` apunta a `ipfs://<CID>` en lugar de generar JSON on-chain — más estándar, más barato, y permite metadata enriquecida (imagen del cert, atributos OpenSea) sin tocar el contrato.
+  - `ComponentType` vive en `lib/Codes.sol` (no en `HemaTraceability`) para que el lib pueda razonar sobre tipos sin importar el contrato.
+- **Gas vs. NFR-Perf-1 (< 200k típico):**
+  - `registerDonation` 192k ✓ — al límite por structs anidados con strings (institution metadata) en `_unitsByDonor.push`.
+  - `recordTestResult` 151k ✓
+  - `produceComponent` 268k ⚠️ — excede el target. Razón: escribe struct grande + pushes a `_componentsByUnit` + actualiza padre. Aceptable para TFM; revisar en Phase 8 si Sepolia gas es un problema.
+  - `transferComponentCustody` 53k ✓
+  - `reportAdverseEvent` 53k–99k para 1–2 unidades ✓ (escala lineal con #componentes).
+- **Próximo paso al retomar:** **Phase 2 — Frontend scaffold & design system**. Tres trabajos paralelizables:
+  1. Tailwind v4 tokens en `web/src/app/globals.css` (`@custom-variant` para dark, no `tailwind.config.js`).
+  2. Componentes base en `web/src/components/ui/` (`Button`, `Card`, `Badge`, `Container`, `InputField`, `Spinner`).
+  3. Landing en `web/src/app/[locale]/page.tsx` con `next-intl` desde el día 1 (`useTranslations()` en todas las strings — no hardcodear ni siquiera el español).
+- **Re-leer antes de Phase 2:** `web/AGENTS.md` (Next.js 16.2.6, no la versión del training data) y `docs/SDD.md` §9 (mapa de rutas, contextos, biblioteca de componentes).

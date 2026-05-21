@@ -548,15 +548,25 @@ error TemperatureOutOfRange(int16 temp, int16 min, int16 max);
 error CertificateRevokedError(uint256 tokenId);
 ```
 
-**Tabla de gas — pendiente de Phase 1**
+**Tabla de gas — captura Phase 1 (2026-05-21)**
 
-| Función | Gas estimado | Notas |
-|---|---|---|
-| `registerDonation` | TBD | Una escritura de struct + un evento |
-| `recordTestResult` | TBD | Una escritura de struct |
-| `produceComponent` | TBD | Una escritura + actualización de padre |
-| `transferCustody` | TBD | Una escritura + condicional recall |
-| `reportAdverseEvent` | TBD | Loop sobre componentes derivados — O(n) |
+Medido sobre Solidity 0.8.24 + cancun + optimizer (runs=200). Snapshot completo en `sc/.gas-snapshot`.
+
+| Función | Min | Avg | Mediana | Max | NFR-Perf-1 (< 200k) |
+|---|---:|---:|---:|---:|:-:|
+| `registerDonation` | 28,621 | 177,906 | 192,067 | 192,067 | ✓ |
+| `recordTestResult` | 29,326 | 139,076 | 151,028 | 151,040 | ✓ |
+| `releaseUnit` | 32,157 | 43,663 | 44,848 | 44,848 | ✓ |
+| `quarantineUnit` | 35,332 | 40,687 | 40,687 | 46,042 | ✓ |
+| `produceComponent` | 28,231 | 234,464 | 268,501 | 268,513 | ⚠ excede |
+| `transferComponentCustody` | 28,040 | 47,453 | 53,150 | 53,757 | ✓ |
+| `crossMatch` | 32,941 | 36,836 | 37,343 | 39,720 | ✓ |
+| `recordTransfusion` | 34,710 | 36,847 | 36,847 | 38,985 | ✓ |
+| `reportAdverseEvent` (1 unit, 1 cmp) | 28,411 | 56,444 | 53,142 | 99,537 | ✓ |
+
+`produceComponent` excede el target NFR-Perf-1: combina escritura de struct grande (`Component`), `push` a `_componentsByUnit`, actualización del padre `_units[parentUnitId].status`, y cómputo de `expiresAt` vía `Codes.expiryAt`. Aceptable para Anvil/Sepolia en el alcance del TFM; optimización (packing más agresivo, struct hash en vez de copia) queda fuera de Phase 1.
+
+`reportAdverseEvent` escala linealmente con el número de componentes derivados. Para el caso peor (cientos de componentes en una sola donación de donor con look-back), considerar chunking en Phase 8.
 
 ### 8.4. `HemaCertificate`
 
