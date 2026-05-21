@@ -2,5 +2,45 @@
 src = "src"
 out = "out"
 libs = ["lib"]
+test = "test"
+script = "script"
+
+solc = "0.8.24"
+evm_version = "cancun"
+optimizer = true
+optimizer_runs = 200
+
+# Bytecode for ERC-721 + AccessControl is sizeable; default 24576 is fine but pin explicitly.
+bytecode_hash = "none"
+cbor_metadata = false
+
+# Track gas with `forge snapshot`; surfaced in SDD §8.3.
+gas_reports = ["HemaRegistry", "HemaTraceability", "HemaCertificate"]
+
+remappings = [
+    "@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/",
+    "forge-std/=lib/forge-std/src/",
+]
+
+[fmt]
+line_length = 120
+tab_width = 4
+bracket_spacing = false
+int_types = "long"
+quote_style = "double"
+number_underscore = "thousands"
+
+[invariant]
+runs = 256
+depth = 15
+fail_on_revert = false
+call_override = false
+dictionary_weight = 80
+include_storage = true
+include_push_bytes = true
+
+[fuzz]
+runs = 256
+max_test_rejects = 65536
 
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
