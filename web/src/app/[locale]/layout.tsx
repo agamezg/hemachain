@@ -7,8 +7,11 @@ import { notFound } from "next/navigation";
 import { Toaster } from "sonner";
 import { routing } from "@/i18n/routing";
 import { ThemeProvider } from "@/providers/ThemeProvider";
+import { Web3Provider } from "@/providers/Web3Provider";
+import { RoleProvider } from "@/providers/RoleProvider";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
+import { WrongNetworkBanner } from "@/components/site/WrongNetworkBanner";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -61,10 +64,15 @@ export default async function LocaleLayout({
       <body className="min-h-screen flex flex-col">
         <ThemeProvider>
           <NextIntlClientProvider>
-            <SiteHeader locale={locale} />
-            <main className="flex-1">{children}</main>
-            <SiteFooter />
-            <Toaster richColors position="bottom-right" />
+            <Web3Provider>
+              <RoleProvider>
+                <WrongNetworkBanner />
+                <SiteHeader locale={locale} />
+                <main className="flex-1">{children}</main>
+                <SiteFooter />
+                <Toaster richColors position="bottom-right" />
+              </RoleProvider>
+            </Web3Provider>
           </NextIntlClientProvider>
         </ThemeProvider>
       </body>

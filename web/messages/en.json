@@ -20,7 +20,32 @@
   "wallet": {
     "connect": "Conectar wallet",
     "connecting": "Conectando…",
-    "noWallet": "MetaMask no detectada"
+    "noWallet": "MetaMask no detectada",
+    "disconnect": "Desconectar",
+    "copyAddress": "Copiar dirección",
+    "copied": "Copiado",
+    "address": "Dirección"
+  },
+  "network": {
+    "anvil": "Anvil · 31337",
+    "sepolia": "Sepolia",
+    "unknown": "Red desconocida",
+    "disconnected": "Sin red"
+  },
+  "role": {
+    "NONE": "Sin rol",
+    "ADMIN": "Administrador",
+    "BANCO_SANGRE": "Banco de Sangre",
+    "LABORATORIO": "Laboratorio",
+    "FRACCIONAMIENTO": "Fraccionamiento",
+    "MEDICINA_TRANSFUSIONAL": "Medicina Transfusional",
+    "AUDITOR": "Auditor",
+    "CERTIFICADOR": "Certificador"
+  },
+  "banner": {
+    "wrongNetwork": "Estás en una red distinta a {expected}.",
+    "switch": "Cambiar a {network}",
+    "noInjected": "No detectamos MetaMask u otra wallet inyectada. Instalá una extensión Ethereum para conectarte."
   },
   "locale": {
     "label": "Idioma",
