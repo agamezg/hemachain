@@ -1,0 +1,101 @@
+{
+  "metadata": {
+    "title": "HemaChain · Trazabilidad de donaciones de sangre",
+    "description": "Trazabilidad inmutable, auditable e interoperable de donaciones de sangre sobre Ethereum. Implementación de referencia de la Resolución 536/2026 del Ministerio de Salud argentino."
+  },
+  "nav": {
+    "home": "Inicio",
+    "verify": "Verificar unidad",
+    "dashboard": "Panel",
+    "connect": "Conectar wallet",
+    "github": "GitHub"
+  },
+  "header": {
+    "brand": "HemaChain",
+    "networkLocal": "Anvil · 31337",
+    "networkSepolia": "Sepolia · 11155111",
+    "themeToggle": "Cambiar tema",
+    "roleStub": "Sin rol"
+  },
+  "wallet": {
+    "connect": "Conectar wallet",
+    "connecting": "Conectando…",
+    "noWallet": "MetaMask no detectada"
+  },
+  "locale": {
+    "label": "Idioma",
+    "es": "Español",
+    "pt": "Português",
+    "en": "English"
+  },
+  "landing": {
+    "hero": {
+      "eyebrow": "Trabajo Final de Máster · CodeCrypto Academy 2026",
+      "title": "Trazabilidad de donaciones de sangre en Ethereum.",
+      "subtitle": "Del donante al receptor, cada evento queda asentado en un contrato inmutable. Look-back automatizado, cadena de frío auditada, certificaciones como NFTs.",
+      "ctaPrimary": "Verificar una unidad",
+      "ctaSecondary": "Conectar wallet"
+    },
+    "stats": {
+      "title": "Estado del sistema",
+      "subtitle": "Valores de demostración (Anvil local). En producción se actualizan en tiempo real vía indexador.",
+      "donations": "Donaciones registradas",
+      "components": "Componentes en custodia",
+      "certificates": "Certificados emitidos",
+      "lookbacks": "Look-back ejecutados"
+    },
+    "innovation": {
+      "title": "Por qué HemaChain",
+      "subtitle": "Diferenciadores vs. un sistema legacy o un esqueleto genérico de trazabilidad.",
+      "cards": {
+        "lookback": {
+          "title": "Look-back automatizado",
+          "body": "Una sola llamada on-chain marca como Recalled todos los componentes derivados de un donante con resultado adverso posterior."
+        },
+        "coldChain": {
+          "title": "Cadena de frío auditada",
+          "body": "Cada transferencia registra temperatura; un desvío fuera de rango dispara el cambio automático a estado Recalled."
+        },
+        "certificates": {
+          "title": "Certificados como NFTs",
+          "body": "ERC-721 con hash del PDF anclado en IPFS. Verificación criptográfica antes de renderizar."
+        },
+        "privacy": {
+          "title": "Privacidad por diseño",
+          "body": "Ninguna PII on-chain. Sólo hashes (keccak256 con salt institucional). Compatible con la Ley 25.326."
+        },
+        "chagas": {
+          "title": "Tamizaje argentino",
+          "body": "Chagas obligatorio en el panel serológico. Especificidad regional, no replicable copiando un modelo genérico."
+        },
+        "public": {
+          "title": "Verificación pública",
+          "body": "QR impreso en la unidad apunta a /verify/[id] — accesible sin wallet, sin login, en cualquier dispositivo."
+        }
+      }
+    },
+    "regulatory": {
+      "title": "Anclada en la Resolución 536/2026",
+      "body": "El Ministerio de Salud argentino moderniza el Sistema Nacional de Sangre y exige trazabilidad informatizada en todos los centros de hemoterapia, con un plazo de implementación de dos años. HemaChain constituye una implementación de referencia técnica, compatible con el estándar global ISBT 128.",
+      "link": "Ver fuentes en el SDD"
+    },
+    "cta": {
+      "title": "¿Listo para explorar?",
+      "body": "Conectá tu wallet, pedí un rol y empezá a recorrer el ciclo de vida completo de una unidad de sangre.",
+      "primary": "Conectar wallet",
+      "secondary": "Leer el SDD"
+    }
+  },
+  "footer": {
+    "tagline": "Implementación de referencia · MIT · adaptable a cualquier servicio de hemoterapia.",
+    "academy": "CodeCrypto Academy · Cohorte 2026",
+    "links": {
+      "github": "Código en GitHub",
+      "sdd": "Diseño técnico (SDD)",
+      "readme": "README"
+    }
+  },
+  "verify": {
+    "label": "Verificar"
+  }
+}
