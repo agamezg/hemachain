@@ -9,7 +9,7 @@
 > - `[~]` tarea en progreso (no terminada — actualizar al retomar)
 > - **★** tarea crítica (bloquea la fase)
 >
-> **Última actualización:** Phase 2 completa — frontend Next.js 16.2.6 con App Router localizado (`/[locale]/`, es/pt/en), next-intl 4.12 (proxy.ts middleware + messages + getRequestConfig), design system Tailwind v4 (tokens SDD §9.5), 6 componentes UI base, header sticky + footer, landing con 5 secciones, lint + build verdes (`67da936`).
+> **Última actualización:** Phase 3 completa — Web3 wiring sobre ethers v6.16. `Web3Provider` + `RoleProvider` montados en el layout; `useWallet`/`useContract`/`useRole` hooks; ABIs + addresses por chainId (Anvil deterministas, Sepolia env-var); `WalletPill`/`NetworkBadge`/`RoleBadge` reales + `WrongNetworkBanner` con switch chain. Lint + build verdes contra Anvil deployado (`4026897`).
 
 ---
 
@@ -20,8 +20,8 @@
 | 0 — Setup, SDD, scaffolding | ✅ Completa | Sí (`forge build` y `npm run build` verdes; documentación inicial escrita; ambos remotes pusheados) | ~120k | ~180k† |
 | 1 — Smart contracts | ✅ Completa | Sí (`forge test` 110/110 verdes; invariantes + fuzz; Deploy/Seed smoke-tested en Anvil; gas snapshot capturado) | ~400k | ~550k† |
 | 2 — Frontend scaffold & design system | ✅ Completa | Sí (`npm run lint` y `npm run build` verdes; 6 páginas estáticas — `/_not-found`, `/es`, `/pt`, `/en` × layout — + proxy middleware; design tokens + UI lib + header/footer + landing con i18n día 1) | ~150k | ~140k |
-| 3 — Web3 wiring | ⬜ No iniciada (próxima) | — | ~100k | — |
-| 4 — Core pages (role-based) | ⬜ No iniciada | — | ~300k | — |
+| 3 — Web3 wiring | ✅ Completa | Sí (`npm run lint` + `npm run build` verdes; Web3Provider + RoleProvider; `useWallet`/`useContract`/`useRole`; ABIs por chainId + addresses Anvil deterministas verificadas con `cast`; UI: WalletPill, NetworkBadge, RoleBadge, WrongNetworkBanner) | ~100k | ~110k |
+| 4 — Core pages (role-based) | ⬜ No iniciada (próxima) | — | ~300k | — |
 | 5 — Certificates + IPFS | ⬜ No iniciada | — | ~100k | — |
 | 6 — Traceability visualization & public verify | ⬜ No iniciada | — | ~150k | — |
 | 7 — Innovation layer (indexer, MCP, AI) | ⬜ No iniciada | — | ~250k | — |
@@ -149,15 +149,15 @@
 
 ## Phase 3 — Web3 wiring *(1 sesión)*
 
-- [ ] **★** `Web3Context` (BrowserProvider + JsonRpcProvider fallback)
-- [ ] **★** `useWallet` hook (connect, disconnect, account, chainId)
-- [ ] **★** `useContract` hook genérico
-- [ ] Helper de chain switching (Anvil 31337 ↔ Sepolia 11155111)
-- [ ] Auto-generación de ABIs + addresses a `web/src/contracts/` desde `sc/out/` post-deploy
-- [ ] Persistence en localStorage
-- [ ] Banner de "wrong network"
-- [ ] `RoleContext` derivado de `HemaRegistry.actorOf()`
-- **DoD:** Connect a Anvil, leer `actorOf(account)`, renderizar badge de rol.
+- [x] **★** `Web3Provider` (BrowserProvider + JsonRpcProvider fallback) — `src/providers/Web3Provider.tsx`
+- [x] **★** `useWallet` hook (connect, disconnect, account, chainId, switchChain, signer)
+- [x] **★** `useContract(name, { withSigner? })` hook genérico — read vía readProvider, write vía signer cuando se pide y la red coincide
+- [x] Helper de chain switching (Anvil 31337 ↔ Sepolia 11155111) con manejo del code 4902 (`wallet_addEthereumChain`)
+- [x] Auto-generación de ABIs + addresses a `web/src/contracts/` desde `sc/out/` post-deploy — `restart.sh` ya lo hace; ABIs commiteados como baseline
+- [x] Persistence en localStorage (`hemachain.wallet=connected`) + auto-reconnect silencioso en mount
+- [x] Banner de "wrong network" con switch chain — `WrongNetworkBanner.tsx`
+- [x] `RoleProvider` derivado de `HemaRegistry.actorOf()` — `src/providers/RoleProvider.tsx`; reset de estado en render-phase (patrón endosado por React 19) para sortear `react-hooks/set-state-in-effect`
+- **DoD:** ✅ Connect a Anvil verifica direcciones deterministas (cast call coincide), `actorOf(account)` retorna struct tipada, `RoleBadge` renderiza i18n del rol activo. Lint + build verdes. Commit `4026897`.
 
 ---
 
@@ -346,3 +346,37 @@
   4. Conectar `WalletPill` real reemplazando el stub; banner de "wrong network".
   5. `RoleContext` derivado de `HemaRegistry.actorOf()` — usa los ABIs reales del commit `6072bbf`.
 - **Re-leer antes de Phase 3:** `docs/SDD.md` §9.3 (contextos), `web/AGENTS.md` (Next 16 caveats — esp. `set-state-in-effect`), y el ABI en `sc/out/HemaRegistry.sol/HemaRegistry.json` para confirmar las firmas que vamos a consumir.
+
+### Sesión 2026-05-22 — Phase 3 sellada ✅
+- **Stack Web3 cableado en un commit (`4026897`).** Una sesión, ~110k tokens reales vs. ~100k estimados — bastante en línea.
+- **Decisiones de arquitectura:**
+  - **Direcciones de contratos hardcodeadas para Anvil** (`0x5FbDB…`, `0xe7f1725E…`, `0x9fE46736…`) — son las salidas determinísticas de `Deploy.s.sol` desde la cuenta 0 a nonces 0/1/2. Verificadas en vivo con `cast call` post-`restart.sh`. Anvil + nuestro deploy script son deterministas, así que esto funciona sin lookup dinámico; si en algún momento el script cambia de orden, se overridea con `NEXT_PUBLIC_*_ADDRESS` desde `.env.local`.
+  - **`Web3Provider` no usa `eth_requestAccounts` en mount.** Sólo lee `eth_accounts` (silencioso) y reconstruye state si MetaMask ya tiene la cuenta autorizada. Esto evita el popup al primer load. Sólo cuando el usuario aprieta `Conectar` se dispara `eth_requestAccounts`.
+  - **Readonly por defecto.** `useContract(name)` retorna un Contract conectado al `JsonRpcProvider` del default chain, sin importar si el usuario está conectado o no. Para escritura se pide `{ withSigner: true }` y se verifica `isCorrectChain`. Esto permite que el landing/verify funcionen sin wallet (cumple SDD §9 — `/verify` es wallet-less).
+  - **ABIs commiteados a `web/src/contracts/`.** No están gitignored. `restart.sh` los refresca en cada deploy; el commit baseline asegura builds en CI sin necesidad de Anvil corriendo.
+  - **`!.env.example` exception en `web/.gitignore`** — la regla `.env*` de create-next-app es muy agresiva.
+- **Trampa Next 16 vol. 2 — `react-hooks/set-state-in-effect` (segunda vez).**
+  Cualquier `useEffect` que llame a setState sincrónicamente (incluso indirectamente vía una función) se rechaza. La primera vez (Phase 2 ThemeToggle) salimos por la nullability de `resolvedTheme`. Esta vez, `RoleProvider` necesita resetear estado cuando cambia la cuenta — solución limpia: **comparar inputs y resetear en render-phase** (patrón del docs de React 19), con el efecto sólo escribiendo setState dentro de `.then`/`.catch` (que la regla acepta como "subscribe-and-update-in-callback"):
+  ```ts
+  const [tracked, setTracked] = useState({ account: null, hasContract: false });
+  if (tracked.account !== account || tracked.hasContract !== hasContract) {
+    setTracked({ account, hasContract });
+    setState(initial);  // reset en render-phase, no en efecto
+  }
+  useEffect(() => { /* sólo fetches con setState dentro de .then/.catch */ }, [...]);
+  ```
+  Vale la pena recordar el patrón — todo provider futuro que sincronice con cambios de cuenta/chain lo va a necesitar.
+- **`tsconfig.json` bumped ES2017 → ES2020.** BigInt literals (`0n`) son necesarios para comparar `actor.registeredAt`. Sin esto el typecheck falla aunque el code compile en runtime (Node 22). No bumpear más alto innecesariamente; algunas libs de proveedores RPC todavía publican code targeting ES2020.
+- **Smoke checklist Phase 3** (re-correrla al inicio de Phase 4):
+  1. `./restart.sh` arranca Anvil + deploya.
+  2. `cast call $REGISTRY 'BANCO_SANGRE_ROLE()(bytes32)'` retorna `0x3edb176…` (= `keccak256("BANCO_SANGRE")`).
+  3. `cd web && npm run dev` levanta sin errores; `/es` renderiza con providers montados.
+  4. MetaMask en `http://localhost:8545` chainId 31337 + importar PK#1 → click `Conectar` → WalletPill muestra short-address con dot verde.
+  5. Importar PK#0 (admin) → RoleBadge muestra `Sin rol` (admin sólo tiene DEFAULT_ADMIN_ROLE, no es un actor registrado). Esto es **comportamiento esperado** y confirma que el flujo request/approve de Phase 4 va a ser el primer onboarding real de actores.
+- **Próximo paso al retomar:** **Phase 4 — Core pages role-based**. Foco:
+  1. `/[locale]/connect` — formulario `requestRole(role, name, country)` con dropdown de roles, validación, tx flow (pending → success → toast).
+  2. `/[locale]/dashboard` — router que lee `useRole()` y redirige al sub-dashboard según `roleKey`.
+  3. `/[locale]/dashboard/admin` — cola de `RoleRequested` events pendientes con botón approve/reject (usa events del indexador en Phase 7; en Phase 4 hace `getLogs` directo).
+  4. Sub-dashboards uno por rol con la acción principal de cada uno (banco: registrar donación; lab: cargar resultado; frac: producir componente; banco/almacén: ver inventario; hospital: prueba cruzada + transfundir; auditor: report adverse event).
+  5. Páginas `/units/[id]` y `/components/[id]` con detalle + timeline (los datos vienen de `getUnit`/`getComponent` + `getLogs` para custody chain).
+- **Re-leer antes de Phase 4:** `docs/SDD.md` §9.2 (mapa completo de rutas + permisos), §4 (FR-5 a FR-18 — cada función one-to-one con una acción de UI), y el ABI de `HemaTraceability` para confirmar todas las firmas de write.
