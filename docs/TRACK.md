@@ -15,17 +15,24 @@
 
 ## Resumen ejecutivo del estado
 
-| Fase | Estado | DoD alcanzada |
-|---|---|:-:|
-| 0 — Setup, SDD, scaffolding | ✅ Completa | Sí (`forge build` y `npm run build` verdes; documentación inicial escrita; ambos remotes pusheados) |
-| 1 — Smart contracts | ✅ Completa | Sí (`forge test` 110/110 verdes; invariantes + fuzz; Deploy/Seed smoke-tested en Anvil; gas snapshot capturado) |
-| 2 — Frontend scaffold & design system | ✅ Completa | Sí (`npm run lint` y `npm run build` verdes; 6 páginas estáticas — `/_not-found`, `/es`, `/pt`, `/en` × layout — + proxy middleware; design tokens + UI lib + header/footer + landing con i18n día 1) |
-| 3 — Web3 wiring | ⬜ No iniciada (próxima) | — |
-| 4 — Core pages (role-based) | ⬜ No iniciada | — |
-| 5 — Certificates + IPFS | ⬜ No iniciada | — |
-| 6 — Traceability visualization & public verify | ⬜ No iniciada | — |
-| 7 — Innovation layer (indexer, MCP, AI) | ⬜ No iniciada | — |
-| 8 — Polish, test, i18n, deploy, record | ⬜ No iniciada | — |
+| Fase | Estado | DoD alcanzada | Tokens estim. | Tokens reales |
+|---|---|:-:|---:|---:|
+| 0 — Setup, SDD, scaffolding | ✅ Completa | Sí (`forge build` y `npm run build` verdes; documentación inicial escrita; ambos remotes pusheados) | ~120k | ~180k† |
+| 1 — Smart contracts | ✅ Completa | Sí (`forge test` 110/110 verdes; invariantes + fuzz; Deploy/Seed smoke-tested en Anvil; gas snapshot capturado) | ~400k | ~550k† |
+| 2 — Frontend scaffold & design system | ✅ Completa | Sí (`npm run lint` y `npm run build` verdes; 6 páginas estáticas — `/_not-found`, `/es`, `/pt`, `/en` × layout — + proxy middleware; design tokens + UI lib + header/footer + landing con i18n día 1) | ~150k | ~140k |
+| 3 — Web3 wiring | ⬜ No iniciada (próxima) | — | ~100k | — |
+| 4 — Core pages (role-based) | ⬜ No iniciada | — | ~300k | — |
+| 5 — Certificates + IPFS | ⬜ No iniciada | — | ~100k | — |
+| 6 — Traceability visualization & public verify | ⬜ No iniciada | — | ~150k | — |
+| 7 — Innovation layer (indexer, MCP, AI) | ⬜ No iniciada | — | ~250k | — |
+| 8 — Polish, test, i18n, deploy, record | ⬜ No iniciada | — | ~200k | — |
+
+> **Notas sobre las columnas de tokens.**
+> - "Tokens estim." es el presupuesto forward que vamos a apuntar por fase (input + output sumados, en miles de tokens del modelo principal — Opus 4.7).
+> - "Tokens reales" es el consumo real **post-DoD** de la fase.
+> - † Valores marcados con cruz son **reconstrucciones post-hoc** (no hay telemetría guardada de las sesiones previas a 2026-05-22); se conservan como orden de magnitud, no como cifra exacta.
+> - Phase 2 es el primer registro tomado con sesión completa visible. Phase 3+ se actualizan al cierre real de cada fase, no antes.
+> - Total estimado del TFM: **~1,770k tokens** (≈ 1.77 M). Insumo para `IA.md` §"horas y costo".
 
 ---
 
