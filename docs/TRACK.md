@@ -9,7 +9,7 @@
 > - `[~]` tarea en progreso (no terminada — actualizar al retomar)
 > - **★** tarea crítica (bloquea la fase)
 >
-> **Última actualización:** Phase 1 completa — 3 contratos (`HemaRegistry`, `HemaTraceability`, `HemaCertificate`) + 1 librería (`Codes`), 110 tests verdes (incluye invariantes + fuzz), Deploy/Seed scripts probados end-to-end contra Anvil, gas snapshot capturado.
+> **Última actualización:** Phase 2 completa — frontend Next.js 16.2.6 con App Router localizado (`/[locale]/`, es/pt/en), next-intl 4.12 (proxy.ts middleware + messages + getRequestConfig), design system Tailwind v4 (tokens SDD §9.5), 6 componentes UI base, header sticky + footer, landing con 5 secciones, lint + build verdes (`67da936`).
 
 ---
 
@@ -19,8 +19,8 @@
 |---|---|:-:|
 | 0 — Setup, SDD, scaffolding | ✅ Completa | Sí (`forge build` y `npm run build` verdes; documentación inicial escrita; ambos remotes pusheados) |
 | 1 — Smart contracts | ✅ Completa | Sí (`forge test` 110/110 verdes; invariantes + fuzz; Deploy/Seed smoke-tested en Anvil; gas snapshot capturado) |
-| 2 — Frontend scaffold & design system | ⬜ No iniciada (próxima) | — |
-| 3 — Web3 wiring | ⬜ No iniciada | — |
+| 2 — Frontend scaffold & design system | ✅ Completa | Sí (`npm run lint` y `npm run build` verdes; 6 páginas estáticas — `/_not-found`, `/es`, `/pt`, `/en` × layout — + proxy middleware; design tokens + UI lib + header/footer + landing con i18n día 1) |
+| 3 — Web3 wiring | ⬜ No iniciada (próxima) | — |
 | 4 — Core pages (role-based) | ⬜ No iniciada | — |
 | 5 — Certificates + IPFS | ⬜ No iniciada | — |
 | 6 — Traceability visualization & public verify | ⬜ No iniciada | — |
@@ -125,17 +125,18 @@
 
 ## Phase 2 — Frontend scaffold & design system *(1–2 sesiones)*
 
-- [ ] **★** Configurar Tailwind v4 con tokens del SDD §9.5
-- [ ] **★** Crear `components/ui/`: `Button`, `Card`, `Badge`, `Container`, `InputField`, `Spinner`
-- [ ] Instalar y configurar `sonner` (Toast provider)
-- [ ] Instalar `next-themes` (dark mode toggle)
-- [ ] Crear `app/[locale]/layout.tsx` con todos los providers
-- [ ] **★** Sticky header con `WalletPill`, indicador de red, theme toggle, badge de rol
-- [ ] **★** Landing page con hero + estadísticas placeholder
-- [ ] **★** Externalizar **todas** las strings desde el día 1 (`useTranslations()`), aunque sólo `es.json` exista
-- [ ] Footer simple con licencia y enlace a GitHub
-- [ ] Commit `feat(web): design system + landing`
-- **DoD:** Paridad visual con escrow (indigo/slate, JetBrains Mono); dark mode funciona; Lighthouse ≥ 90.
+- [x] **★** Configurar Tailwind v4 con tokens del SDD §9.5 (`@theme` + `@custom-variant dark`)
+- [x] **★** Crear `components/ui/`: `Button`, `Card`, `Badge`, `Container`, `InputField`, `Spinner`
+- [x] Instalar y configurar `sonner` (Toaster montado en `[locale]/layout.tsx`)
+- [x] Instalar `next-themes` (dark mode toggle vía `resolvedTheme` nullability — Next 16 prohíbe `useEffect→setState`)
+- [x] Crear `app/[locale]/layout.tsx` con todos los providers (Theme + NextIntlClient + Toaster + Header/Footer)
+- [x] **★** Sticky header con `WalletPill` (stub), `NetworkBadge`, `ThemeToggle`, `RoleBadge`, `LocaleSwitch`
+- [x] **★** Landing page con hero + estadísticas placeholder + sección de innovaciones + bloque regulatorio + CTA
+- [x] **★** Externalizar **todas** las strings desde el día 1 (`useTranslations()`); `es.json` completo, `pt.json` y `en.json` con las mismas claves para que Phase 8 sólo traduzca
+- [x] Footer simple con licencia y enlaces a GitHub / SDD / README
+- [x] Commit `feat(web): design system + landing` *(commit `67da936`)*
+- [x] **Bonus** — `next-intl` middleware adelantado (Phase 8) — `src/proxy.ts` con `createMiddleware(routing)`; `/` → 307 `/es` con cookie `NEXT_LOCALE`
+- **DoD:** ✅ `npm run lint` y `npm run build` verdes (Next 16.2.6 Turbopack); dark mode toggle visible; 6 páginas estáticas + proxy middleware compilados; smoke test dev en `:3001` redirige `/` a `/es` y sirve `/pt`/`/en` con código 200.
 
 ---
 
@@ -312,3 +313,29 @@
   2. Componentes base en `web/src/components/ui/` (`Button`, `Card`, `Badge`, `Container`, `InputField`, `Spinner`).
   3. Landing en `web/src/app/[locale]/page.tsx` con `next-intl` desde el día 1 (`useTranslations()` en todas las strings — no hardcodear ni siquiera el español).
 - **Re-leer antes de Phase 2:** `web/AGENTS.md` (Next.js 16.2.6, no la versión del training data) y `docs/SDD.md` §9 (mapa de rutas, contextos, biblioteca de componentes).
+
+### Sesión 2026-05-22 — Phase 2 sellada ✅
+- **Comando-pivot:** Next 16 renombró `middleware.js` → `proxy.js` (file convention oficial, doc en `node_modules/next/dist/docs/01-app/03-api-reference/03-file-conventions/proxy.md`). El export se llama igual (`proxy` o `default`), pero el archivo es `src/proxy.ts` y `next-intl`'s `createMiddleware` se exporta vía esa ruta sin cambios.
+- **Lint trap nuevo en Next 16:** la regla `react-hooks/set-state-in-effect` rechaza el patrón canónico `useEffect(() => setMounted(true), [])` que se usaba para diferir la hidratación. Solución limpia con `next-themes`: chequear `resolvedTheme !== undefined` como proxy de "ya hidrató" (ver `src/components/site/ThemeToggle.tsx`).
+- **Decisiones de arquitectura:**
+  - **Sin root `app/layout.tsx`.** Patrón canónico de next-intl 4: `<html>`/`<body>` viven en `app/[locale]/layout.tsx`. Cuando Phase 6 agregue `/verify/[id]` (locale-less), se usa un route group `app/(public)/` con su propio layout.
+  - **Proxy matcher**: `'/((?!api|_next|_vercel|.*\\..*).*)'` excluye assets estáticos. Sin esto, el proxy intercepta el favicon y rompe.
+  - **`localePrefix: 'always'`** — todas las rutas localizadas requieren prefijo (`/es/...`). Mantiene previsibilidad para Phase 6 (la única ruta sin prefijo es `/verify`).
+  - **`pt.json` y `en.json` con copias del español, no vacíos.** Phase 8 traduce, no agrega claves — esto evita que cualquier render anticipado en pt/en explote por keys faltantes.
+  - **Tokens Tailwind v4 con `color-mix(in srgb, …)`** para tonos suaves en badges (ej. `bg-color-mix(...primary 15%, transparent)`). Cero declaraciones extra de colores, todo derivado del primary.
+- **Build / lint / smoke:**
+  - `npm run build` → 6 páginas estáticas (`/_not-found`, `/[locale]` × 3) + proxy middleware. ~1.4s compile, ~1.7s typecheck.
+  - `npm run lint` → 0 errores.
+  - Dev smoke en `:3001`: `/` → 307 `/es` con cookie `NEXT_LOCALE=es`; `/pt` y `/en` → 200; título y contenido aparecen en HTML server-rendered.
+  - **Warning conocido** (no bloqueante): Turbopack detecta dos lockfiles (`/home/kratos/package-lock.json` y `web/package-lock.json`) y elige el de arriba como root. Si llega a molestar, se silencia en Phase 3 con `turbopack: { root: import.meta.dirname }` en `next.config.ts`.
+- **Diferido conscientemente:**
+  - `tailwind.config.js`: **no existe ni debe existir en v4**. La regla la garantiza el SDD §9 y el `AGENTS.md`.
+  - `WalletPill`, `NetworkBadge`, `RoleBadge` son **stubs** (gris, disabled, con `title="Phase 3"`). Se llenan en Phase 3 cuando llegue Web3 wiring.
+  - Hero CTA apunta a `connect` (relativo a la página actual) — la ruta `/[locale]/connect` no existe todavía; Phase 4 la agrega.
+- **Próximo paso al retomar:** **Phase 3 — Web3 wiring**. Foco:
+  1. `src/providers/Web3Provider.tsx` (BrowserProvider + JsonRpcProvider fallback) + `useWallet` hook.
+  2. `useContract` genérico tipado contra los ABIs auto-copiados a `web/src/contracts/` por `restart.sh`.
+  3. Chain switching (Anvil 31337 ↔ Sepolia 11155111) + persistence localStorage.
+  4. Conectar `WalletPill` real reemplazando el stub; banner de "wrong network".
+  5. `RoleContext` derivado de `HemaRegistry.actorOf()` — usa los ABIs reales del commit `6072bbf`.
+- **Re-leer antes de Phase 3:** `docs/SDD.md` §9.3 (contextos), `web/AGENTS.md` (Next 16 caveats — esp. `set-state-in-effect`), y el ABI en `sc/out/HemaRegistry.sol/HemaRegistry.json` para confirmar las firmas que vamos a consumir.
