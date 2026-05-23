@@ -9,7 +9,7 @@
 > - `[~]` tarea en progreso (no terminada — actualizar al retomar)
 > - **★** tarea crítica (bloquea la fase)
 >
-> **Última actualización:** Phase 3 completa — Web3 wiring sobre ethers v6.16. `Web3Provider` + `RoleProvider` montados en el layout; `useWallet`/`useContract`/`useRole` hooks; ABIs + addresses por chainId (Anvil deterministas, Sepolia env-var); `WalletPill`/`NetworkBadge`/`RoleBadge` reales + `WrongNetworkBanner` con switch chain. Lint + build verdes contra Anvil deployado (`4026897`).
+> **Última actualización:** Phase 4 Capa A completa (`b170da8`) — onboarding end-to-end: `/connect` (requestRole), `/dashboard` (router por rol), `/dashboard/admin` (cola de aprobaciones derivada de logs). `useTransaction` hook con sonner; `RoleProvider` ahora chequea `hasRole(DEFAULT_ADMIN_ROLE)` además de `actorOf`. Pendiente Capa B (sub-dashboards por rol) y Capa C (detalle de unidad/componente).
 
 ---
 
@@ -21,7 +21,7 @@
 | 1 — Smart contracts | ✅ Completa | Sí (`forge test` 110/110 verdes; invariantes + fuzz; Deploy/Seed smoke-tested en Anvil; gas snapshot capturado) | ~400k | ~550k† |
 | 2 — Frontend scaffold & design system | ✅ Completa | Sí (`npm run lint` y `npm run build` verdes; 6 páginas estáticas — `/_not-found`, `/es`, `/pt`, `/en` × layout — + proxy middleware; design tokens + UI lib + header/footer + landing con i18n día 1) | ~150k | ~140k |
 | 3 — Web3 wiring | ✅ Completa | Sí (`npm run lint` + `npm run build` verdes; Web3Provider + RoleProvider; `useWallet`/`useContract`/`useRole`; ABIs por chainId + addresses Anvil deterministas verificadas con `cast`; UI: WalletPill, NetworkBadge, RoleBadge, WrongNetworkBanner) | ~100k | ~110k |
-| 4 — Core pages (role-based) | ⬜ No iniciada (próxima) | — | ~300k | — |
+| 4 — Core pages (role-based) | 🟡 Capa A completa (B+C pendientes) | Capa A: `/connect` + `/dashboard` router + `/dashboard/admin` cola, `useTransaction`, isAdmin en RoleProvider, 12 rutas estáticas en build | ~300k | parcial ~120k |
 | 5 — Certificates + IPFS | ⬜ No iniciada | — | ~100k | — |
 | 6 — Traceability visualization & public verify | ⬜ No iniciada | — | ~150k | — |
 | 7 — Innovation layer (indexer, MCP, AI) | ⬜ No iniciada | — | ~250k | — |
@@ -161,21 +161,32 @@
 
 ---
 
-## Phase 4 — Core pages (role-based) *(2–3 sesiones)*
+## Phase 4 — Core pages (role-based) *(2–3 sesiones, ahora cortada en Capas A/B/C)*
 
-- [ ] **★** `/connect` — flujo de solicitud de rol → evento `RoleRequested`
-- [ ] **★** `/dashboard` — router por rol
-- [ ] **★** `/dashboard/banco-sangre` — registrar donación
-- [ ] **★** `/dashboard/laboratorio` — listar pendientes + cargar resultado de tamizaje + liberar/cuarentena
-- [ ] **★** `/dashboard/fraccionamiento` — formulario de split en componentes
+### Capa A — Onboarding + admin (✅ commit `b170da8`)
+
+- [x] **★** `/connect` — flujo de solicitud de rol → evento `RoleRequested`, validación form + tx UX
+- [x] **★** `/dashboard` — router por rol (hasInjected → connect → noRole → admin → roleAssigned)
+- [x] `/dashboard/admin` — cola de aprobaciones derivada de logs (RoleRequested/Approved/Rejected fold)
+- [x] Validación en formularios + toasts tx-pending / success / error — `useTransaction` hook con sonner
+- [x] `RoleProvider` extendido con `isAdmin` (constructor-granted role no aparece en `actorOf`)
+- [x] CTAs de `Hero` y `CtaSection` usan `useLocale()` y resuelven `/{locale}/connect`
+
+### Capa B — Sub-dashboards por rol (⬜ próxima)
+
+- [ ] **★** `/dashboard/banco-sangre` — registrar donación (`registerDonation(donorHash, volumeMl, aboRhCode)`)
+- [ ] **★** `/dashboard/laboratorio` — listar unidades en estado `UnderTest`, cargar resultado de tamizaje (HIV/HBV/HCV/sífilis/HTLV/Chagas/ABO), liberar o cuarentenar
+- [ ] **★** `/dashboard/fraccionamiento` — formulario de split en componentes (`produceComponent(unitId, type, volume)`)
 - [ ] **★** `/dashboard/banco` — grid de inventario, expiry, cadena de frío
 - [ ] **★** `/dashboard/hospital` — prueba cruzada y transfusión
-- [ ] `/dashboard/auditor` — sólo lectura + formulario de evento adverso
-- [ ] `/dashboard/admin` — cola de aprobaciones de rol
-- [ ] Validación en formularios + toasts tx-pending / success / error
-- [ ] `/units/[id]` — detalle de unidad con timeline
-- [ ] `/components/[id]` — detalle con cadena de custodia
-- **DoD:** Un usuario puede recorrer una unidad de extremo a extremo en Anvil desde el navegador.
+- [ ] `/dashboard/auditor` — sólo lectura + formulario de evento adverso (`reportAdverseEvent`)
+
+### Capa C — Detalle + trazabilidad pública (⬜ tras Capa B)
+
+- [ ] `/units/[id]` — detalle de unidad con timeline (consume `getUnit` + `getLogs` para custody chain)
+- [ ] `/components/[id]` — detalle con cadena de custodia y referencia al padre
+
+- **DoD Phase 4:** Un usuario puede recorrer una unidad de extremo a extremo en Anvil desde el navegador.
 
 ---
 
@@ -380,3 +391,23 @@
   4. Sub-dashboards uno por rol con la acción principal de cada uno (banco: registrar donación; lab: cargar resultado; frac: producir componente; banco/almacén: ver inventario; hospital: prueba cruzada + transfundir; auditor: report adverse event).
   5. Páginas `/units/[id]` y `/components/[id]` con detalle + timeline (los datos vienen de `getUnit`/`getComponent` + `getLogs` para custody chain).
 - **Re-leer antes de Phase 4:** `docs/SDD.md` §9.2 (mapa completo de rutas + permisos), §4 (FR-5 a FR-18 — cada función one-to-one con una acción de UI), y el ABI de `HemaTraceability` para confirmar todas las firmas de write.
+
+### Sesión 2026-05-23 — Phase 4 Capa A sellada ✅ (B+C pendientes)
+- **Decisión de cadencia:** Phase 4 era ~300k estimados; la cortamos en 3 capas (A: onboarding+admin, B: sub-dashboards, C: detalle) para no quedarse sin contexto. Capa A consumió **~120k** y rinde un end-to-end manejable.
+- **Patrones que se asentaron y reutilizamos en B/C:**
+  - **`useTransaction` es el patrón canónico de write.** Toda acción on-chain pasa por él: dispara loading toast, espera receipt, devuelve `receipt | null`. Si retorna null la UI no avanza (no `router.push`, no refresh). Capa B va a llamarlo decenas de veces — la API estabilizó.
+  - **El form "guard-then-form" — manejar primero los no-happy paths.** RoleRequestForm tiene 4 estados pre-form (no-injected / not-connected / wrong-network indirecto vía `disabled` / already-has-role). Sólo cuando todo está OK aparece el form. Esto se repite literal en todos los dashboards de Capa B.
+  - **`useRoleRequests` es el patrón para "queue derivada de logs"**. `queryFilter([requested, approved, rejected])` ordenado cronológicamente y reducido a un `Map<key, request>` por (actor, role). El mismo patrón sirve para inventory queues en `/dashboard/banco` y pending screenings en `/dashboard/laboratorio` en Capa B.
+  - **Logs sin block range (= "desde el génesis").** Anvil aguanta sin problema; Sepolia con muchos eventos puede pedir `fromBlock`. Phase 7 (indexer) lo resuelve definitivamente, pero como mitigación se puede pasar `fromBlock: deployBlock` cuando llegue Sepolia.
+- **Trampa Next 16 detalle:** `useLocale()` en server components funciona (next-intl v4 lo exporta vía el path `react-server` automáticamente al importar de `next-intl`). Confirmado en `Hero.tsx` y `CtaSection.tsx`. No hay que importar de `next-intl/server` salvo para APIs async como `getTranslations`.
+- **Smoke checklist Phase 4 Capa A** (rerun antes de Capa B):
+  1. `./restart.sh` (anvil + deploy con direcciones determinísticas verificadas en Phase 3).
+  2. MetaMask: importar PK#1 → conectar.
+  3. Navegar `/[locale]/connect` → form aparece → pedir rol `LABORATORIO` "Test Lab" "AR" → tx confirmada (toast verde) → redirige a `/dashboard` y muestra el rol como NONE todavía (porque no aprobaron).
+  4. Cambiar a PK#0 en MetaMask (admin) → `/dashboard` muestra "Sos Administrador" → entrar a `/dashboard/admin` → ver la solicitud → aprobar → toast verde.
+  5. Volver a PK#1 → `/dashboard` ahora muestra `LABORATORIO` como rol activo.
+- **Próximo paso (Capa B):**
+  1. Empezar por `/dashboard/banco-sangre` porque inicia el lifecycle (sin donaciones no hay nada que tamizar). Form: `donorIdHash` (calcular con `keccak256(DNI + saltInstitucional)` en el cliente — UI ayuda al usuario), `volumeMl`, `aboRhCode` (ISBT 128, dropdown con 8 valores de `lib/Codes.sol`).
+  2. Después `/dashboard/laboratorio` que necesita inventario de unidades `UnderTest`. La query es por logs `DonationCollected` + state read `getUnit().status`.
+  3. Cada sub-dashboard reusa: `useTransaction` para writes + el patrón "guard-then-form" + un `useXxxList` hook tipo `useRoleRequests` para queues.
+- **Re-leer antes de Capa B:** `docs/SDD.md` §8.3 (cada función crítica de `HemaTraceability` y su semántica), §7.2 (máquina de estados de `DonationUnit` — qué transiciones son válidas), y el ABI completo de `HemaTraceability` (events DonationCollected/TestResultRecorded/UnitReleased/UnitQuarantined/ComponentProduced/ComponentCustodyTransferred/ComponentRecalled/Transfusion/AdverseEventReported).
