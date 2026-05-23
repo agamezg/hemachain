@@ -31,37 +31,37 @@ export function FractionationQueue() {
   const [remaining, setRemaining] = useState<RemainingMap>({});
 
   const fetchRemaining = useCallback(async () => {
-    if (!traceabilityRead || units.length === 0) {
-      setRemaining({});
-      return;
-    }
+    if (!traceabilityRead || units.length === 0) return;
     const entries = await Promise.all(
       units.map(async (u) => {
-        const value = (await traceabilityRead.splitVolumeOf(u.id)) as bigint;
-        return [u.id.toString(), Number(value)] as const;
+        // splitVolumeOf returns the ALREADY PRODUCED volume (accumulator).
+        // Remaining = parent volume - already produced.
+        const produced = Number(
+          (await traceabilityRead.splitVolumeOf(u.id)) as bigint,
+        );
+        return [u.id.toString(), Math.max(0, u.volumeMl - produced)] as const;
       }),
     );
-    setRemaining(Object.fromEntries(entries));
+    setRemaining((prev) => ({ ...prev, ...Object.fromEntries(entries) }));
   }, [traceabilityRead, units]);
 
   useEffect(() => {
+    if (!traceabilityRead || units.length === 0) return;
     let cancelled = false;
     void (async () => {
       try {
-        if (!traceabilityRead || units.length === 0) {
-          if (!cancelled) setRemaining({});
-          return;
-        }
         const entries = await Promise.all(
           units.map(async (u) => {
-            const value = (await traceabilityRead.splitVolumeOf(u.id)) as bigint;
-            return [u.id.toString(), Number(value)] as const;
+            const produced = Number(
+              (await traceabilityRead.splitVolumeOf(u.id)) as bigint,
+            );
+            return [u.id.toString(), Math.max(0, u.volumeMl - produced)] as const;
           }),
         );
         if (cancelled) return;
-        setRemaining(Object.fromEntries(entries));
+        setRemaining((prev) => ({ ...prev, ...Object.fromEntries(entries) }));
       } catch {
-        if (!cancelled) setRemaining({});
+        // stale entries persist harmlessly — UI keys lookups by current id.
       }
     })();
     return () => {
