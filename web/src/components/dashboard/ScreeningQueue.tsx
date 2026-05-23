@@ -2,7 +2,7 @@
 
 import { Check, RefreshCw, ShieldAlert } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/Card";
@@ -15,13 +15,73 @@ import { shortAddress } from "@/lib/eth";
 const SCREEN_KEYS = ["hiv", "hbv", "hcv", "syphilis", "htlv", "chagas"] as const;
 type ScreenKey = (typeof SCREEN_KEYS)[number];
 
+interface TestResultView {
+  hiv: boolean;
+  hbv: boolean;
+  hcv: boolean;
+  syphilis: boolean;
+  htlv: boolean;
+  chagas: boolean;
+}
+
+function positives(result: TestResultView): ScreenKey[] {
+  return SCREEN_KEYS.filter((k) => result[k]);
+}
+
 export function ScreeningQueue() {
   const t = useTranslations("laboratorio");
   const traceability = useContract("HemaTraceability", { withSigner: true });
+  const traceabilityRead = useContract("HemaTraceability");
   const { run, isPending } = useTransaction();
 
   const collected = useDonations({ statuses: ["Collected"] });
   const underTest = useDonations({ statuses: ["UnderTest"] });
+
+  const [results, setResults] = useState<Record<string, TestResultView>>({});
+
+  useEffect(() => {
+    if (!traceabilityRead || underTest.units.length === 0) return;
+    let cancelled = false;
+    void (async () => {
+      try {
+        const entries = await Promise.all(
+          underTest.units.map(async (u) => {
+            const raw = (await traceabilityRead.getTestResult(u.id)) as readonly [
+              bigint,
+              string,
+              bigint,
+              boolean,
+              boolean,
+              boolean,
+              boolean,
+              boolean,
+              boolean,
+              string,
+              bigint,
+            ];
+            return [
+              u.id.toString(),
+              {
+                hiv: raw[3],
+                hbv: raw[4],
+                hcv: raw[5],
+                syphilis: raw[6],
+                htlv: raw[7],
+                chagas: raw[8],
+              } as TestResultView,
+            ] as const;
+          }),
+        );
+        if (cancelled) return;
+        setResults((prev) => ({ ...prev, ...Object.fromEntries(entries) }));
+      } catch {
+        // Stale entries remain harmlessly — lookup is gated by current unit IDs.
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [traceabilityRead, underTest.units]);
 
   async function refreshAll() {
     await Promise.all([collected.refresh(), underTest.refresh()]);
@@ -108,65 +168,95 @@ export function ScreeningQueue() {
           </p>
         ) : (
           <ul className="flex flex-col gap-2">
-            {underTest.units.map((u) => (
-              <li
-                key={u.id.toString()}
-                className="rounded-2xl border border-[var(--color-border)] p-3 flex flex-wrap items-center justify-between gap-2"
-              >
-                <div className="flex items-center gap-3 text-sm">
-                  <span className="font-mono text-[var(--color-fg-muted)]">
-                    #{u.id.toString()}
-                  </span>
-                  <Badge tone="primary">{t("decisions.underTest")}</Badge>
-                  <span className="font-mono">{bytes8ToAboRh(u.aboRhCode)}</span>
-                  <span className="font-mono text-xs text-[var(--color-fg-subtle)]">
-                    {shortAddress(u.donorIdHash, 8, 6)}
-                  </span>
-                </div>
-                <div className="flex gap-2">
-                  <Button
-                    size="sm"
-                    variant="secondary"
-                    disabled={!traceability || isPending}
-                    onClick={async () => {
-                      const reason = window.prompt(t("decisions.reasonPrompt"));
-                      if (!reason) return;
-                      const ok = await run(
-                        () => traceability!.quarantineUnit(u.id, reason),
-                        {
-                          messages: {
-                            pending: t("toast.quarantinePending"),
-                            success: t("toast.quarantineSuccess"),
-                            errorPrefix: t("toast.quarantineError"),
+            {underTest.units.map((u) => {
+              const result = results[u.id.toString()];
+              const pos = result ? positives(result) : null;
+              const allNegative = pos !== null && pos.length === 0;
+              return (
+                <li
+                  key={u.id.toString()}
+                  className="rounded-2xl border border-[var(--color-border)] p-3 flex flex-col gap-3"
+                >
+                  <div className="flex flex-wrap items-center gap-3 text-sm">
+                    <span className="font-mono text-[var(--color-fg-muted)]">
+                      #{u.id.toString()}
+                    </span>
+                    <Badge tone="primary">{t("decisions.underTest")}</Badge>
+                    <span className="font-mono">{bytes8ToAboRh(u.aboRhCode)}</span>
+                    <span className="font-mono text-xs text-[var(--color-fg-subtle)]">
+                      {shortAddress(u.donorIdHash, 8, 6)}
+                    </span>
+                    {pos === null ? (
+                      <Badge tone="neutral">{t("decisions.loadingResult")}</Badge>
+                    ) : allNegative ? (
+                      <Badge tone="ok">{t("decisions.allNegative")}</Badge>
+                    ) : (
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        {pos.map((k) => (
+                          <Badge key={k} tone="critical">
+                            {t(`screen.flag.${k}`)}+
+                          </Badge>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {pos !== null && !allNegative ? (
+                    <p className="text-xs text-[var(--color-accent-warn)]">
+                      {t("decisions.mustQuarantine")}
+                    </p>
+                  ) : null}
+
+                  <div className="flex flex-wrap gap-2 justify-end">
+                    <Button
+                      size="sm"
+                      variant="secondary"
+                      disabled={!traceability || isPending}
+                      onClick={async () => {
+                        const reason = window.prompt(t("decisions.reasonPrompt"));
+                        if (!reason) return;
+                        const ok = await run(
+                          () => traceability!.quarantineUnit(u.id, reason),
+                          {
+                            messages: {
+                              pending: t("toast.quarantinePending"),
+                              success: t("toast.quarantineSuccess"),
+                              errorPrefix: t("toast.quarantineError"),
+                            },
                           },
-                        },
-                      );
-                      if (ok) await refreshAll();
-                    }}
-                  >
-                    <ShieldAlert className="h-4 w-4" />
-                    {t("decisions.quarantine")}
-                  </Button>
-                  <Button
-                    size="sm"
-                    disabled={!traceability || isPending}
-                    onClick={async () => {
-                      const ok = await run(() => traceability!.releaseUnit(u.id), {
-                        messages: {
-                          pending: t("toast.releasePending"),
-                          success: t("toast.releaseSuccess"),
-                          errorPrefix: t("toast.releaseError"),
-                        },
-                      });
-                      if (ok) await refreshAll();
-                    }}
-                  >
-                    <Check className="h-4 w-4" />
-                    {t("decisions.release")}
-                  </Button>
-                </div>
-              </li>
-            ))}
+                        );
+                        if (ok) await refreshAll();
+                      }}
+                    >
+                      <ShieldAlert className="h-4 w-4" />
+                      {t("decisions.quarantine")}
+                    </Button>
+                    {allNegative ? (
+                      <Button
+                        size="sm"
+                        disabled={!traceability || isPending}
+                        onClick={async () => {
+                          const ok = await run(
+                            () => traceability!.releaseUnit(u.id),
+                            {
+                              messages: {
+                                pending: t("toast.releasePending"),
+                                success: t("toast.releaseSuccess"),
+                                errorPrefix: t("toast.releaseError"),
+                              },
+                            },
+                          );
+                          if (ok) await refreshAll();
+                        }}
+                      >
+                        <Check className="h-4 w-4" />
+                        {t("decisions.release")}
+                      </Button>
+                    ) : null}
+                  </div>
+                </li>
+              );
+            })}
           </ul>
         )}
       </Card>

@@ -275,7 +275,10 @@
       "underTest": "En revisión",
       "release": "Liberar",
       "quarantine": "Cuarentenar",
-      "reasonPrompt": "Motivo de cuarentena (queda on-chain en el evento):"
+      "reasonPrompt": "Motivo de cuarentena (queda on-chain en el evento):",
+      "loadingResult": "Cargando resultado…",
+      "allNegative": "Todos negativos",
+      "mustQuarantine": "Hay marcadores positivos: el contrato bloquea la liberación, sólo se puede cuarentenar."
     },
     "toast": {
       "recordPending": "Registrando resultado…",
