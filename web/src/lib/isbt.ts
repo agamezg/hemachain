@@ -71,9 +71,28 @@ export function unitStatusOf(idx: number | bigint): UnitStatusKey {
 /** ReleaseStatus enum. */
 export const RELEASE_STATUS = ["Pending", "Released", "Quarantined"] as const;
 
+/** Component status enum from HemaTraceability.ComponentStatus. */
+export const COMPONENT_STATUS = [
+  "None",
+  "Produced",
+  "InStorage",
+  "Reserved",
+  "Transfused",
+  "Recalled",
+] as const;
+
+export type ComponentStatusKey = (typeof COMPONENT_STATUS)[number];
+
+export function componentStatusOf(idx: number | bigint): ComponentStatusKey {
+  const i = typeof idx === "bigint" ? Number(idx) : idx;
+  return COMPONENT_STATUS[i] ?? "None";
+}
+
 /** AdverseKind enum. */
 export const ADVERSE_KIND = [
   "DonorPositive",
   "RecipientReaction",
   "EquipmentFailure",
 ] as const;
+
+export type AdverseKindKey = (typeof ADVERSE_KIND)[number];

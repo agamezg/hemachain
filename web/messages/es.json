@@ -244,7 +244,8 @@
       "refresh": "Refrescar",
       "loading": "Consultando logs…",
       "empty": "Todavía no registraste donaciones."
-    }
+    },
+    "navStorage": "Ir al inventario de componentes →"
   },
   "laboratorio": {
     "title": "Laboratorio de tamizaje",
@@ -290,6 +291,132 @@
       "quarantinePending": "Cuarentenando unidad…",
       "quarantineSuccess": "Unidad cuarentenada.",
       "quarantineError": "No se pudo cuarentenar"
+    }
+  },
+  "componentStatus": {
+    "None": "—",
+    "Produced": "Producido",
+    "InStorage": "En almacén",
+    "Reserved": "Reservado",
+    "Transfused": "Transfundido",
+    "Recalled": "Retirado"
+  },
+  "inventory": {
+    "refresh": "Refrescar",
+    "loading": "Consultando componentes…",
+    "empty": "No hay componentes en tu custodia.",
+    "expired": "Vencido",
+    "expiresOn": "Vence {date}"
+  },
+  "banco": {
+    "title": "Banco / Almacén",
+    "subtitle": "Inventario de componentes en custodia y despacho con cadena de frío.",
+    "navDonations": "← Volver a donaciones",
+    "inventory": {
+      "title": "Inventario en custodia",
+      "subtitle": "Componentes cuya custodia actual es tu wallet."
+    },
+    "transfer": {
+      "title": "Transferir custodia",
+      "subtitle": "El contrato registra la temperatura. Fuera de rango → la unidad pasa automáticamente a Recalled (cadena de frío rota).",
+      "component": "Componente",
+      "componentPlaceholder": "Elegí un componente…",
+      "to": "Destino",
+      "toHint": "Address de otra institución registrada y activa.",
+      "temperature": "Temperatura (°C)",
+      "location": "Ubicación",
+      "locationHint": "Se hashea en client → gpsHash (demo).",
+      "handoff": "Nota de entrega",
+      "handoffHint": "Se hashea en client → signedHandoffHash (demo).",
+      "submit": "Transferir",
+      "submitRecall": "Transferir (forzará recall)",
+      "tempWarning": "Temperatura fuera del rango admitido — el contrato disparará un recall.",
+      "errors": {
+        "componentId": "Elegí un componente.",
+        "to": "Address inválida (0x… 40 hex)."
+      },
+      "toast": {
+        "pending": "Transfiriendo custodia…",
+        "success": "Custodia transferida.",
+        "successButRecalled": "Transferencia OK pero la temperatura disparó un recall.",
+        "error": "No se pudo transferir"
+      }
+    }
+  },
+  "hospital": {
+    "title": "Medicina Transfusional",
+    "subtitle": "Prueba cruzada y registro de transfusiones.",
+    "inventory": {
+      "title": "Componentes recibidos",
+      "subtitle": "Componentes cuya custodia actual es este hospital."
+    },
+    "crossMatch": {
+      "title": "Prueba cruzada",
+      "subtitle": "Reserva un componente Produced/InStorage para un paciente identificado por hash.",
+      "component": "Componente",
+      "componentPlaceholder": "Elegí un componente disponible…",
+      "noneAvailable": "Sin componentes disponibles. Pedile al banco que transfiera la custodia.",
+      "patient": "Identificador del paciente",
+      "patientHint": "Historia clínica o DNI. Se hashea en client (producción: + sal institucional).",
+      "submit": "Reservar para paciente",
+      "errors": {
+        "componentId": "Elegí un componente.",
+        "patient": "El identificador debe tener al menos 4 caracteres."
+      },
+      "toast": {
+        "pending": "Reservando componente…",
+        "success": "Componente reservado para el paciente.",
+        "error": "No se pudo reservar"
+      }
+    },
+    "transfuse": {
+      "title": "Componentes reservados",
+      "subtitle": "Listos para transfundir.",
+      "reserved": "Reservado",
+      "empty": "No hay componentes reservados.",
+      "cta": "Registrar transfusión",
+      "toast": {
+        "pending": "Registrando transfusión…",
+        "success": "Transfusión registrada para componente #{id}.",
+        "error": "No se pudo registrar la transfusión"
+      }
+    }
+  },
+  "auditor": {
+    "title": "Hemovigilancia",
+    "subtitle": "Reportar eventos adversos y auditar la actividad on-chain.",
+    "form": {
+      "title": "Reportar evento adverso",
+      "subtitle": "Para DonorPositive, el contrato dispara look-back y marca como Recalled todas las unidades/componentes derivados.",
+      "kind": "Tipo de evento",
+      "kinds": {
+        "DonorPositive": "Donante positivo (post-donación)",
+        "RecipientReaction": "Reacción del receptor",
+        "EquipmentFailure": "Fallo de equipamiento"
+      },
+      "trigger": "Identificador del trigger",
+      "triggerPlaceholder": "DNI del donante o referencia",
+      "triggerHints": {
+        "DonorPositive": "DNI del donante — el hash debe coincidir con los donorIdHash de las donaciones a recall-ear.",
+        "RecipientReaction": "Referencia del paciente (sólo se loguea on-chain, sin recall propagado).",
+        "EquipmentFailure": "ID del equipamiento o serie (sólo log, sin recall propagado)."
+      },
+      "submit": "Reportar evento",
+      "errors": {
+        "trigger": "El identificador debe tener al menos 4 caracteres."
+      },
+      "toast": {
+        "pending": "Reportando evento…",
+        "success": "Evento adverso registrado.",
+        "error": "No se pudo reportar"
+      }
+    },
+    "timeline": {
+      "title": "Timeline reciente",
+      "subtitle": "Últimos 40 eventos del contrato, ordenados desde el bloque más reciente.",
+      "refresh": "Refrescar",
+      "loading": "Consultando logs…",
+      "empty": "Sin actividad on-chain todavía."
     }
   },
   "fraccionamiento": {

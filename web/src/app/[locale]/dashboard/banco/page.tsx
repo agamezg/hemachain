@@ -6,11 +6,11 @@ import { useLocale, useTranslations } from "next-intl";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { RoleGate } from "@/components/dashboard/RoleGate";
-import { DonationForm } from "@/components/dashboard/DonationForm";
-import { DonationList } from "@/components/dashboard/DonationList";
+import { ComponentInventory } from "@/components/dashboard/ComponentInventory";
+import { TransferCustodyForm } from "@/components/dashboard/TransferCustodyForm";
 
-export default function BancoSangrePage() {
-  const t = useTranslations("bancoSangre");
+export default function BancoStoragePage() {
+  const t = useTranslations("banco");
   const locale = useLocale();
   const [refreshKey, setRefreshKey] = useState(0);
 
@@ -22,18 +22,23 @@ export default function BancoSangrePage() {
         </h1>
         <p className="text-sm text-[var(--color-fg-muted)]">{t("subtitle")}</p>
         <nav className="flex gap-2 text-sm">
-          <Link href={`/${locale}/dashboard/banco`}>
+          <Link href={`/${locale}/dashboard/banco-sangre`}>
             <Button variant="secondary" size="sm">
-              {t("navStorage")}
+              {t("navDonations")}
             </Button>
           </Link>
         </nav>
       </header>
 
       <RoleGate requiredRole="BANCO_SANGRE">
-        <div className="grid lg:grid-cols-[1fr,1.2fr] gap-6 items-start">
-          <DonationForm onRegistered={() => setRefreshKey((k) => k + 1)} />
-          <DonationList key={refreshKey} />
+        <div key={refreshKey} className="flex flex-col gap-6">
+          <ComponentInventory
+            title={t("inventory.title")}
+            subtitle={t("inventory.subtitle")}
+          />
+          <TransferCustodyForm
+            onTransferred={() => setRefreshKey((k) => k + 1)}
+          />
         </div>
       </RoleGate>
     </Container>

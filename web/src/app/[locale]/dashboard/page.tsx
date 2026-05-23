@@ -16,9 +16,9 @@ const ROLE_LANDING: Partial<Record<RoleKey | "NONE", { path: string } | null>> =
   BANCO_SANGRE: { path: "/dashboard/banco-sangre" },
   LABORATORIO: { path: "/dashboard/laboratorio" },
   FRACCIONAMIENTO: { path: "/dashboard/fraccionamiento" },
-  // Capa B.2 pendientes:
-  MEDICINA_TRANSFUSIONAL: null,
-  AUDITOR: null,
+  MEDICINA_TRANSFUSIONAL: { path: "/dashboard/hospital" },
+  AUDITOR: { path: "/dashboard/auditor" },
+  // Certificador llega en Phase 5 (NFTs):
   CERTIFICADOR: null,
 };
 
