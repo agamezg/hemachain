@@ -9,7 +9,7 @@
 > - `[~]` tarea en progreso (no terminada — actualizar al retomar)
 > - **★** tarea crítica (bloquea la fase)
 >
-> **Última actualización:** Phase 4 Capa B.1 completa (`68ba600`) — primera mitad del lifecycle on-chain: `/dashboard/banco-sangre` (registrar donación + inventario), `/dashboard/laboratorio` (tamizaje 6 marcadores + release/quarantine), `/dashboard/fraccionamiento` (split en componentes con `splitVolumeOf`). `useDonations` hook genérico para queries de unidades por estado/owner; `RoleGate` componente compartido. Pendiente Capa B.2 (banco storage, hospital, auditor) y Capa C (detalle).
+> **Última actualización:** Phase 4 ✅ completa. Lifecycle on-chain end-to-end: donar → tamizar → fraccionar → despachar (cadena de frío) → cross-match → transfundir + hemovigilancia con look-back. Detail pages `/units/[id]` y `/components/[id]` con timelines. **9 sub-dashboards + 2 detalles dinámicos**, 30 rutas SSG + 2 dinámicas. Commits: B.1 `68ba600`, fixes `bf36c56` + `9681316`, B.2 `f18a107`, C `ff5a041`.
 
 ---
 
@@ -21,8 +21,8 @@
 | 1 — Smart contracts | ✅ Completa | Sí (`forge test` 110/110 verdes; invariantes + fuzz; Deploy/Seed smoke-tested en Anvil; gas snapshot capturado) | ~400k | ~550k† |
 | 2 — Frontend scaffold & design system | ✅ Completa | Sí (`npm run lint` y `npm run build` verdes; 6 páginas estáticas — `/_not-found`, `/es`, `/pt`, `/en` × layout — + proxy middleware; design tokens + UI lib + header/footer + landing con i18n día 1) | ~150k | ~140k |
 | 3 — Web3 wiring | ✅ Completa | Sí (`npm run lint` + `npm run build` verdes; Web3Provider + RoleProvider; `useWallet`/`useContract`/`useRole`; ABIs por chainId + addresses Anvil deterministas verificadas con `cast`; UI: WalletPill, NetworkBadge, RoleBadge, WrongNetworkBanner) | ~100k | ~110k |
-| 4 — Core pages (role-based) | 🟡 Capa A+B.1 completas (B.2+C pendientes) | A: onboarding/admin · B.1: registrar→tamizar→fraccionar, 21 rutas estáticas. Falta B.2 (hospital, auditor, storage) y C (detalle/timelines). | ~300k | parcial ~210k |
-| 5 — Certificates + IPFS | ⬜ No iniciada | — | ~100k | — |
+| 4 — Core pages (role-based) | ✅ Completa | Lifecycle end-to-end on Anvil: 7 paneles rol-específicos + admin + 2 detail pages. Lint+build limpios. Bug-fixes: PositiveScreening gate + splitVolumeOf semantics. | ~300k | ~310k |
+| 5 — Certificates + IPFS | ⬜ No iniciada (próxima) | — | ~100k | — |
 | 6 — Traceability visualization & public verify | ⬜ No iniciada | — | ~150k | — |
 | 7 — Innovation layer (indexer, MCP, AI) | ⬜ No iniciada | — | ~250k | — |
 | 8 — Polish, test, i18n, deploy, record | ⬜ No iniciada | — | ~200k | — |
@@ -181,18 +181,22 @@
 - [x] **★** `/dashboard/fraccionamiento` — produceComponent con `splitVolumeOf` para validar volumen restante; dropdown de tipos con shelf life + temp range visibles
 - [x] **Shared infra:** `useDonations(opts)`, `RoleGate`, `src/lib/hashing.ts`, `src/lib/isbt.ts`
 
-#### B.2 — Lifecycle tardío (⬜ próxima)
+#### B.2 — Lifecycle tardío (✅ commit `f18a107`)
 
-- [ ] **★** `/dashboard/banco` — inventario de componentes en custodia (filtrado por `custodian`), expiry calculado client-side, cadena de frío, `transferComponentCustody` con temperatura
-- [ ] **★** `/dashboard/hospital` — `crossMatch(componentId, patientHash)` con DNI del paciente; recordTransfusion sobre Reserved
-- [ ] `/dashboard/auditor` — read-only timeline + form `reportAdverseEvent`
+- [x] **★** `/dashboard/banco` — `ComponentInventory` (custody = msg.sender) + `TransferCustodyForm` con cold-chain gating (temp fuera de rango → tx recalls auto)
+- [x] **★** `/dashboard/hospital` — `HospitalPanel`: crossMatch (componentes Produced/InStorage en custodia → patientHash) + recordTransfusion sobre Reserved
+- [x] `/dashboard/auditor` — `AuditorPanel`: reportAdverseEvent (3 kinds, hint contextual por kind) + timeline de los últimos 40 eventos vía `useChainEvents`
+- [x] **Shared infra:** `useComponents`, `useChainEvents`, `ComponentInventory` (reusada también en hospital), `Timeline`
+- [x] Embed `TransferCustodyForm` también en `/dashboard/fraccionamiento` (el contrato sólo chequea custodian, no rol)
 
-### Capa C — Detalle + trazabilidad pública (⬜ tras Capa B)
+### Capa C — Detalle + trazabilidad pública (✅ commit `ff5a041`)
 
-- [ ] `/units/[id]` — detalle de unidad con timeline (consume `getUnit` + `getLogs` para custody chain)
-- [ ] `/components/[id]` — detalle con cadena de custodia y referencia al padre
+- [x] `/units/[id]` — `useUnitDetail` (getUnit + getTestResult + children) + timeline con eventos indexed por unitId; clickable rows en `DonationList`
+- [x] `/components/[id]` — `useComponentDetail` (getComponent + custody chain events) + link al padre; clickable rows en `ComponentInventory`
+- [x] **Shared `Timeline`** — branch-style ol con tone por evento; switch-based summariser cubre los 10 eventos
+- [x] Detail pages son públicas (sin RoleGate) — datos ya anonimizados via hashes, reusables en Phase 6 `/verify`
 
-- **DoD Phase 4:** Un usuario puede recorrer una unidad de extremo a extremo en Anvil desde el navegador.
+- **DoD Phase 4:** ✅ Un usuario puede recorrer una unidad de extremo a extremo en Anvil desde el navegador. Smoke verificado: donar (PK#1) → tamizar (PK#2) → fraccionar (PK#3) → transferir custodia con temp en rango (PK#3 → PK#1 o PK#4) → cross-match (PK#4) → transfundir (PK#4) → auditor reporta DonorPositive → look-back propaga recall.
 
 ---
 
@@ -438,3 +442,44 @@
   2. `/dashboard/hospital` (cross-match + transfusión). Form patient DNI → hash, dropdown de componentes Produced/InStorage con custodian=msg.sender, llamada a `crossMatch`. Después, lista de Reserved con botón `recordTransfusion`.
   3. `/dashboard/auditor` (look-back + timeline). Form `reportAdverseEvent` con dropdown de `AdverseKind` (DonorPositive/RecipientReaction/EquipmentFailure) + hash del trigger (DNI donante o ID componente según kind). Lista de eventos recientes derivada de todos los events del contrato.
 - **Tip operativo:** los warnings de Turbopack sobre "multiple lockfiles" se siguen mostrando pero no bloquean. Si llega a fastidiar, set `turbopack: { root: process.cwd() }` en next.config.ts (probado: funciona, pero re-ejecutar `cd web && npm run build` después).
+
+### Sesión 2026-05-23 — Phase 4 cerrada ✅ (Capa B.2 + Capa C + 2 hotfixes)
+- **Cuatro commits en esta sesión** (`bf36c56`, `9681316`, `f18a107`, `ff5a041`). Phase 4 cierra en ~310k vs. ~300k estimado.
+- **Dos bugs reales del lifecycle que aparecieron en QA del usuario:**
+  1. **`PositiveScreening(uint256)` invisible en MetaMask.** El selector `0x4d4c637a` venía como "Internal JSON-RPC error" porque MetaMask no decodifica custom errors. El UI mostraba el botón Liberar incluso para unidades con marcadores positivos — el contrato sólo permite cuarentena en ese caso. Fix: `ScreeningQueue` ahora hace `getTestResult` por unidad UnderTest y muestra `Todos negativos` o badges rojos por marcador, escondiendo Liberar si hay positivos.
+  2. **`splitVolumeOf` mal interpretado.** Devuelve el **acumulado producido**, no el restante. La UI mostraba "Disponible: 0 ml" en unidades recién liberadas → cualquier valor positivo era "Supera el volumen restante". Fix: `remaining = parentVolume - splitVolumeOf(id)`.
+- **Reglas nuevas de Next 16 que pegaron en esta tanda:**
+  - **`react-hooks/purity`** rechaza `Date.now()` en render. Solución: `useState(() => Date.now())` snapshot al mount, refresh manual al apretar Refrescar. Aplicado en `ComponentInventory` y `ComponentDetailPage`.
+  - **`react-hooks/set-state-in-effect`** ya nos había pegado 2 veces. Volvió a aparecer en `useUnitDetail` y `useComponentDetail`. Patrón consolidado: **derivar `isLoading` desde `(data, error, id)` en vez de trackearlo con setState**:
+    ```ts
+    const isLoading = data === null && error === null && id !== null;
+    ```
+    Cero setState en el cuerpo del effect, sólo en `.then`/`.catch`. **Es el patrón canónico** para todo data-fetching hook a futuro.
+- **Patrones nuevos que se asentaron (Phase 5+ los va a reusar):**
+  - **Indexed event filters.** `queryFilter(filters.X(id))` en vez de filtrar client-side. Performance significativamente mejor con muchos eventos. Usado en detail hooks.
+  - **Detail page sin gate de rol.** Datos anonimizados (hashes), URLs públicas — Phase 6 `/verify/[id]` va a reusar `useUnitDetail` y `useComponentDetail` casi sin tocar.
+  - **`Timeline` con `summarise()` switch-based.** Cuando llegue Phase 7 (indexer SSE), el componente queda igual; sólo cambia la fuente de los eventos.
+- **Smoke checklist Phase 4 completa** (e2e en el browser, ~3 minutos):
+  1. `./restart.sh` → anvil + deploy.
+  2. PK#0 (admin) en `/dashboard/admin` → aprobar PK#1=BANCO_SANGRE, PK#2=LABORATORIO, PK#3=FRACCIONAMIENTO, PK#4=MEDICINA_TRANSFUSIONAL, PK#5=AUDITOR.
+  3. PK#1 → `/dashboard/banco-sangre` → registrar donación (DNI cualquiera, 450ml, A+).
+  4. PK#2 → `/dashboard/laboratorio` → todo negativo + ABO confirmado → Liberar.
+  5. PK#3 → `/dashboard/fraccionamiento` → producir RBC 200ml, FFP 250ml. Padre pasa a Processed.
+  6. PK#3 → mismo dashboard, `TransferCustodyForm` → transferir uno de los componentes a PK#4 con temp en rango (ej. 4°C para RBC).
+  7. PK#4 → `/dashboard/hospital` → cross-match con DNI del paciente → component pasa a Reserved → recordTransfusion → Transfused.
+  8. PK#5 → `/dashboard/auditor` → reportAdverseEvent kind=DonorPositive con DNI del donante original → look-back marca como Recalled todas las unidades/componentes derivados. Timeline muestra el `LookBackTriggered` evento.
+  9. En cualquier momento: click en una unidad de `DonationList` → `/units/[id]` con timeline + componentes hijos. Click en un componente → `/components/[id]` con cadena de custodia.
+- **Re-leer antes de Phase 5:** `docs/SDD.md` §4.8 (FR-19..22 — certificados NFT con IPFS), §8.4 (`HemaCertificate`), y verificar el setup de Pinata en `.env.example` (`PINATA_JWT`).
+- **Próximo paso (Phase 5):** Certificates + IPFS.
+  1. Crear cuenta Pinata + JWT en `.env.local`.
+  2. Endpoint `/api/upload` server-side que sube PDFs a Pinata y retorna CID.
+  3. UI de emisión en `/dashboard/certificador`: upload PDF → cliente computa `keccak256(file)` → llama `issueCertificate(subject, type, expiresAt, documentHash, cid)`.
+  4. Page `/[locale]/certificates/[tokenId]` que renderiza el cert: lee del contrato, fetch del PDF desde IPFS, re-hashea client-side y compara con `documentHash` antes de mostrar.
+  5. CTAs de revocación (`revokeCertificate`).
+  6. ROLE_LANDING actualizado: `CERTIFICADOR: { path: "/dashboard/certificador" }`.
+
+
+0x92db14e403b83dfe3df233f83dfa3a0d7096f21ca9b0d6d6b8d88b2b4ec1564e
+
+
+0x4bbbf85ce3377467afe5d46f804f221813b2bb87f24d81f60f1fcdbf7cbf4356
