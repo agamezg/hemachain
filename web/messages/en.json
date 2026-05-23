@@ -293,6 +293,52 @@
       "quarantineError": "No se pudo cuarentenar"
     }
   },
+  "unitDetail": {
+    "title": "Unidad #{id}",
+    "subtitle": "Trazabilidad completa de la donación.",
+    "loading": "Cargando estado…",
+    "invalidId": "Identificador inválido",
+    "invalidIdBody": "El ID de unidad debe ser numérico.",
+    "notFound": "Unidad no encontrada",
+    "notFoundBody": "No existe ninguna unidad con id #{id}.",
+    "summary": "{volume} ml · recolectada {collected}",
+    "donorHash": "Hash del donante",
+    "collection": "Banco de recolección",
+    "custodian": "Custodia actual",
+    "test": {
+      "title": "Resultado de tamizaje",
+      "byLab": "Procesado por {lab} el {at}"
+    },
+    "children": {
+      "title": "Componentes derivados",
+      "subtitle": "{n} componente(s) generados por fraccionamiento."
+    },
+    "timeline": "Timeline on-chain",
+    "timelineEmpty": "Sin eventos."
+  },
+  "componentDetail": {
+    "title": "Componente #{id}",
+    "subtitle": "Cadena de custodia, expiración y trazabilidad inversa.",
+    "loading": "Cargando estado…",
+    "invalidId": "Identificador inválido",
+    "invalidIdBody": "El ID de componente debe ser numérico.",
+    "notFound": "Componente no encontrado",
+    "notFoundBody": "No existe ningún componente con id #{id}.",
+    "summary": "{volume} ml · derivado de unidad #{parent}",
+    "parent": "Unidad madre",
+    "processor": "Fraccionador",
+    "custodian": "Custodia actual",
+    "tempRange": "Rango de temperatura",
+    "shelfLife": "Vida útil",
+    "days": "días",
+    "expired": "Vencido",
+    "expiresOn": "Vence {date}",
+    "timeline": "Cadena de custodia",
+    "timelineEmpty": "Sin eventos."
+  },
+  "timeline": {
+    "hidden": "Lista de eventos"
+  },
   "componentStatus": {
     "None": "—",
     "Produced": "Producido",

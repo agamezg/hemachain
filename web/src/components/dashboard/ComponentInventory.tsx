@@ -1,7 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { RefreshCw } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
 import { Badge } from "@/components/ui/Badge";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/Card";
@@ -42,6 +43,7 @@ export function ComponentInventory({
 }: Props) {
   const t = useTranslations("inventory");
   const tStatus = useTranslations("componentStatus");
+  const locale = useLocale();
   const { account } = useWallet();
   const filter = custodian ?? account ?? undefined;
   const { components, isLoading, refresh } = useComponents({
@@ -95,9 +97,12 @@ export function ComponentInventory({
             return (
               <li
                 key={c.id.toString()}
-                className="rounded-2xl border border-[var(--color-border)] p-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between"
+                className="rounded-2xl border border-[var(--color-border)] p-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between hover:border-[var(--color-border-strong)]"
               >
-                <div className="flex items-center gap-3 flex-wrap text-sm">
+                <Link
+                  href={`/${locale}/components/${c.id.toString()}`}
+                  className="flex items-center gap-3 flex-wrap text-sm flex-1"
+                >
                   <span className="font-mono text-[var(--color-fg-muted)]">
                     #{c.id.toString()}
                   </span>
@@ -120,7 +125,7 @@ export function ComponentInventory({
                     parent #{c.parentUnitId.toString()} · custody{" "}
                     {shortAddress(c.custodian)}
                   </span>
-                </div>
+                </Link>
                 {renderActions ? (
                   <div className="flex gap-2 shrink-0">{renderActions(c)}</div>
                 ) : null}

@@ -1,7 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { RefreshCw } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Badge } from "@/components/ui/Badge";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/Card";
 import { useDonations, type UnitView } from "@/hooks/useDonations";
@@ -27,6 +28,7 @@ interface Props {
 export function DonationList({ collectionCenter }: Props) {
   const t = useTranslations("bancoSangre.list");
   const tStatus = useTranslations("unitStatus");
+  const locale = useLocale();
   const { account } = useWallet();
   const filter = collectionCenter ?? account ?? undefined;
   const { units, isLoading, refresh } = useDonations({
@@ -61,7 +63,12 @@ export function DonationList({ collectionCenter }: Props) {
       ) : (
         <ul className="flex flex-col gap-2">
           {units.map((u) => (
-            <UnitRow key={u.id.toString()} unit={u} tStatus={tStatus} />
+            <UnitRow
+              key={u.id.toString()}
+              unit={u}
+              tStatus={tStatus}
+              locale={locale}
+            />
           ))}
         </ul>
       )}
@@ -72,23 +79,30 @@ export function DonationList({ collectionCenter }: Props) {
 function UnitRow({
   unit,
   tStatus,
+  locale,
 }: {
   unit: UnitView;
   tStatus: (key: string) => string;
+  locale: string;
 }) {
   return (
-    <li className="rounded-2xl border border-[var(--color-border)] p-3 flex flex-wrap items-center justify-between gap-2 text-sm">
-      <div className="flex items-center gap-3">
-        <span className="font-mono text-[var(--color-fg-muted)]">
-          #{unit.id.toString()}
+    <li>
+      <Link
+        href={`/${locale}/units/${unit.id.toString()}`}
+        className="rounded-2xl border border-[var(--color-border)] p-3 flex flex-wrap items-center justify-between gap-2 text-sm hover:border-[var(--color-border-strong)]"
+      >
+        <div className="flex items-center gap-3">
+          <span className="font-mono text-[var(--color-fg-muted)]">
+            #{unit.id.toString()}
+          </span>
+          <Badge tone={STATUS_TONE[unit.status]}>{tStatus(unit.status)}</Badge>
+          <span className="font-mono">{bytes8ToAboRh(unit.aboRhCode)}</span>
+          <span className="text-[var(--color-fg-muted)]">{unit.volumeMl} ml</span>
+        </div>
+        <span className="font-mono text-xs text-[var(--color-fg-subtle)]">
+          donor {shortAddress(unit.donorIdHash, 8, 6)}
         </span>
-        <Badge tone={STATUS_TONE[unit.status]}>{tStatus(unit.status)}</Badge>
-        <span className="font-mono">{bytes8ToAboRh(unit.aboRhCode)}</span>
-        <span className="text-[var(--color-fg-muted)]">{unit.volumeMl} ml</span>
-      </div>
-      <span className="font-mono text-xs text-[var(--color-fg-subtle)]">
-        donor {shortAddress(unit.donorIdHash, 8, 6)}
-      </span>
+      </Link>
     </li>
   );
 }
