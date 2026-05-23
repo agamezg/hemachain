@@ -1,10 +1,11 @@
 import Link from "next/link";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 
 export function CtaSection() {
   const t = useTranslations("landing.cta");
+  const locale = useLocale();
   return (
     <section className="pb-24">
       <Container>
@@ -16,7 +17,7 @@ export function CtaSection() {
             <p className="text-sm text-[var(--color-fg-muted)]">{t("body")}</p>
           </div>
           <div className="flex flex-wrap gap-3">
-            <Link href="connect">
+            <Link href={`/${locale}/connect`}>
               <Button size="lg" variant="primary">
                 {t("primary")}
               </Button>

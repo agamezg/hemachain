@@ -10,7 +10,7 @@ import {
 } from "react";
 import { useContract } from "@/hooks/useContract";
 import { useWallet } from "@/hooks/useWallet";
-import { roleKeyFromHash, type RoleKey } from "@/config/roles";
+import { ZERO_ROLE, roleKeyFromHash, type RoleKey } from "@/config/roles";
 
 export interface Actor {
   addr: string;
@@ -23,6 +23,7 @@ export interface Actor {
 interface RoleState {
   roleKey: RoleKey | "NONE";
   actor: Actor | null;
+  isAdmin: boolean;
   isLoading: boolean;
   error: string | null;
 }
@@ -34,12 +35,14 @@ interface RoleContext extends RoleState {
 const initial: RoleState = {
   roleKey: "NONE",
   actor: null,
+  isAdmin: false,
   isLoading: false,
   error: null,
 };
 
-function buildActor(
+function buildState(
   raw: readonly [string, string, string, string, bigint],
+  isAdmin: boolean,
 ): RoleState {
   const actor: Actor = {
     addr: raw[0],
@@ -52,6 +55,7 @@ function buildActor(
   return {
     roleKey: registered ? roleKeyFromHash(actor.role) : "NONE",
     actor: registered ? actor : null,
+    isAdmin,
     isLoading: false,
     error: null,
   };
@@ -81,17 +85,25 @@ export function RoleProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!account || !registry) return;
     let cancelled = false;
-    registry
-      .actorOf(account)
-      .then((raw: unknown) => {
+    Promise.all([
+      registry.actorOf(account) as Promise<unknown>,
+      registry.hasRole(ZERO_ROLE, account) as Promise<boolean>,
+    ])
+      .then(([raw, isAdmin]) => {
         if (cancelled) return;
-        setState(buildActor(raw as readonly [string, string, string, string, bigint]));
+        setState(
+          buildState(
+            raw as readonly [string, string, string, string, bigint],
+            isAdmin,
+          ),
+        );
       })
       .catch((err: Error) => {
         if (cancelled) return;
         setState({
           roleKey: "NONE",
           actor: null,
+          isAdmin: false,
           isLoading: false,
           error: err.message,
         });
@@ -107,18 +119,18 @@ export function RoleProvider({ children }: { children: ReactNode }) {
       return;
     }
     try {
-      const raw = (await registry.actorOf(account)) as readonly [
-        string,
-        string,
-        string,
-        string,
-        bigint,
-      ];
-      setState(buildActor(raw));
+      const [raw, isAdmin] = await Promise.all([
+        registry.actorOf(account) as Promise<
+          readonly [string, string, string, string, bigint]
+        >,
+        registry.hasRole(ZERO_ROLE, account) as Promise<boolean>,
+      ]);
+      setState(buildState(raw, isAdmin));
     } catch (err) {
       setState({
         roleKey: "NONE",
         actor: null,
+        isAdmin: false,
         isLoading: false,
         error: (err as Error).message,
       });

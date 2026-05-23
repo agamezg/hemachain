@@ -1,11 +1,12 @@
 import Link from "next/link";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 
 export function Hero() {
   const t = useTranslations("landing.hero");
+  const locale = useLocale();
   return (
     <section className="relative overflow-hidden pt-16 sm:pt-24 pb-20">
       <div
@@ -26,7 +27,7 @@ export function Hero() {
               {t("ctaPrimary")}
             </Button>
           </Link>
-          <Link href="connect">
+          <Link href={`/${locale}/connect`}>
             <Button size="lg" variant="secondary">
               {t("ctaSecondary")}
             </Button>

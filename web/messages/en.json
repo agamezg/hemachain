@@ -122,5 +122,113 @@
   },
   "verify": {
     "label": "Verificar"
+  },
+  "tx": {
+    "waiting": "Esperando confirmación on-chain…",
+    "unknown": "Error desconocido en la transacción"
+  },
+  "connect": {
+    "hero": {
+      "title": "Solicitá tu rol en HemaChain",
+      "subtitle": "Identificate como Banco de Sangre, Laboratorio u otra institución. Un Administrador revisa tu solicitud y aprueba el rol. Una vez aprobado, accedés al panel correspondiente."
+    },
+    "form": {
+      "title": "Solicitud de rol institucional",
+      "subtitle": "La solicitud queda registrada on-chain. Sólo el Admin puede aprobarla.",
+      "role": "Rol solicitado",
+      "name": "Nombre de la institución",
+      "namePlaceholder": "Hospital de Clínicas — CABA",
+      "country": "País (ISO-2)",
+      "countryHint": "Código de dos letras, ej. AR, BR, UY.",
+      "submit": "Enviar solicitud",
+      "networkOk": "Conectado a la red correcta.",
+      "networkWarning": "Cambiá a la red configurada antes de enviar."
+    },
+    "errors": {
+      "name": "El nombre debe tener al menos 2 caracteres.",
+      "country": "Usá exactamente dos letras (ISO-3166 alfa-2)."
+    },
+    "toast": {
+      "pending": "Enviando solicitud…",
+      "success": "Solicitud registrada. Esperá la aprobación.",
+      "errorPrefix": "No se pudo solicitar el rol"
+    },
+    "blocked": {
+      "noInjected": {
+        "title": "Wallet no detectada",
+        "body": "Instalá MetaMask u otra extensión Ethereum para solicitar un rol."
+      },
+      "notConnected": {
+        "title": "Conectá tu wallet",
+        "body": "Necesitamos tu dirección para registrar la solicitud on-chain.",
+        "cta": "Conectar wallet"
+      },
+      "alreadyHasRole": {
+        "title": "Ya tenés un rol asignado",
+        "body": "Tu rol actual es {role}. No podés solicitar otro mientras éste esté activo.",
+        "cta": "Ir al panel"
+      }
+    }
+  },
+  "dashboard": {
+    "title": "Panel",
+    "subtitle": "Acciones disponibles según tu rol activo.",
+    "loading": "Resolviendo rol…",
+    "wrongNetworkHint": "Estás en una red distinta a la configurada — algunas acciones quedan bloqueadas hasta cambiar.",
+    "noInjected": {
+      "title": "Wallet no detectada",
+      "body": "Instalá MetaMask u otra extensión Ethereum para usar el panel."
+    },
+    "connect": {
+      "title": "Conectá tu wallet",
+      "body": "Necesitamos tu dirección para resolver tu rol on-chain.",
+      "cta": "Conectar wallet"
+    },
+    "noRole": {
+      "title": "Aún no tenés un rol",
+      "body": "Solicitá uno y esperá que el Admin lo apruebe.",
+      "cta": "Solicitar un rol"
+    },
+    "admin": {
+      "title": "Sos Administrador",
+      "body": "Podés aprobar o rechazar solicitudes de rol pendientes.",
+      "cta": "Abrir cola de aprobación"
+    },
+    "roleAssigned": {
+      "title": "Tu rol está activo",
+      "body": "El panel especializado para tu rol estará disponible en la próxima entrega.",
+      "bodyWithName": "Institución registrada: {name} ({country}). El panel especializado para tu rol estará disponible en la próxima entrega.",
+      "placeholder": "Próximamente: acciones específicas del rol (registrar donación, tamizaje, fraccionamiento, custodia, transfusión, hemovigilancia, certificaciones)."
+    }
+  },
+  "admin": {
+    "title": "Panel del Administrador",
+    "subtitle": "Aprobación y revocación de roles institucionales.",
+    "loading": "Cargando estado…",
+    "denied": {
+      "title": "Acceso restringido",
+      "body": "Sólo direcciones con DEFAULT_ADMIN_ROLE pueden acceder a esta pantalla.",
+      "connect": "Conectá tu wallet de administrador para continuar.",
+      "cta": "Conectar wallet",
+      "back": "Volver al panel"
+    },
+    "queue": {
+      "title": "Solicitudes pendientes",
+      "subtitle": "Se construye desde los eventos RoleRequested/Approved/Rejected (Phase 7 lo cambiará por SSE del indexador).",
+      "refresh": "Refrescar",
+      "loading": "Consultando logs…",
+      "empty": "No hay solicitudes pendientes.",
+      "country": "País: {country}",
+      "approve": "Aprobar",
+      "reject": "Rechazar"
+    },
+    "toast": {
+      "approvePending": "Aprobando rol…",
+      "approveSuccess": "Aprobado: {name}",
+      "approveError": "No se pudo aprobar",
+      "rejectPending": "Rechazando solicitud…",
+      "rejectSuccess": "Rechazado: {name}",
+      "rejectError": "No se pudo rechazar"
+    }
   }
 }
