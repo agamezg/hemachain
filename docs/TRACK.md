@@ -9,7 +9,7 @@
 > - `[~]` tarea en progreso (no terminada — actualizar al retomar)
 > - **★** tarea crítica (bloquea la fase)
 >
-> **Última actualización:** Phase 4 Capa A completa (`b170da8`) — onboarding end-to-end: `/connect` (requestRole), `/dashboard` (router por rol), `/dashboard/admin` (cola de aprobaciones derivada de logs). `useTransaction` hook con sonner; `RoleProvider` ahora chequea `hasRole(DEFAULT_ADMIN_ROLE)` además de `actorOf`. Pendiente Capa B (sub-dashboards por rol) y Capa C (detalle de unidad/componente).
+> **Última actualización:** Phase 4 Capa B.1 completa (`68ba600`) — primera mitad del lifecycle on-chain: `/dashboard/banco-sangre` (registrar donación + inventario), `/dashboard/laboratorio` (tamizaje 6 marcadores + release/quarantine), `/dashboard/fraccionamiento` (split en componentes con `splitVolumeOf`). `useDonations` hook genérico para queries de unidades por estado/owner; `RoleGate` componente compartido. Pendiente Capa B.2 (banco storage, hospital, auditor) y Capa C (detalle).
 
 ---
 
@@ -21,7 +21,7 @@
 | 1 — Smart contracts | ✅ Completa | Sí (`forge test` 110/110 verdes; invariantes + fuzz; Deploy/Seed smoke-tested en Anvil; gas snapshot capturado) | ~400k | ~550k† |
 | 2 — Frontend scaffold & design system | ✅ Completa | Sí (`npm run lint` y `npm run build` verdes; 6 páginas estáticas — `/_not-found`, `/es`, `/pt`, `/en` × layout — + proxy middleware; design tokens + UI lib + header/footer + landing con i18n día 1) | ~150k | ~140k |
 | 3 — Web3 wiring | ✅ Completa | Sí (`npm run lint` + `npm run build` verdes; Web3Provider + RoleProvider; `useWallet`/`useContract`/`useRole`; ABIs por chainId + addresses Anvil deterministas verificadas con `cast`; UI: WalletPill, NetworkBadge, RoleBadge, WrongNetworkBanner) | ~100k | ~110k |
-| 4 — Core pages (role-based) | 🟡 Capa A completa (B+C pendientes) | Capa A: `/connect` + `/dashboard` router + `/dashboard/admin` cola, `useTransaction`, isAdmin en RoleProvider, 12 rutas estáticas en build | ~300k | parcial ~120k |
+| 4 — Core pages (role-based) | 🟡 Capa A+B.1 completas (B.2+C pendientes) | A: onboarding/admin · B.1: registrar→tamizar→fraccionar, 21 rutas estáticas. Falta B.2 (hospital, auditor, storage) y C (detalle/timelines). | ~300k | parcial ~210k |
 | 5 — Certificates + IPFS | ⬜ No iniciada | — | ~100k | — |
 | 6 — Traceability visualization & public verify | ⬜ No iniciada | — | ~150k | — |
 | 7 — Innovation layer (indexer, MCP, AI) | ⬜ No iniciada | — | ~250k | — |
@@ -172,14 +172,20 @@
 - [x] `RoleProvider` extendido con `isAdmin` (constructor-granted role no aparece en `actorOf`)
 - [x] CTAs de `Hero` y `CtaSection` usan `useLocale()` y resuelven `/{locale}/connect`
 
-### Capa B — Sub-dashboards por rol (⬜ próxima)
+### Capa B — Sub-dashboards por rol
 
-- [ ] **★** `/dashboard/banco-sangre` — registrar donación (`registerDonation(donorHash, volumeMl, aboRhCode)`)
-- [ ] **★** `/dashboard/laboratorio` — listar unidades en estado `UnderTest`, cargar resultado de tamizaje (HIV/HBV/HCV/sífilis/HTLV/Chagas/ABO), liberar o cuarentenar
-- [ ] **★** `/dashboard/fraccionamiento` — formulario de split en componentes (`produceComponent(unitId, type, volume)`)
-- [ ] **★** `/dashboard/banco` — grid de inventario, expiry, cadena de frío
-- [ ] **★** `/dashboard/hospital` — prueba cruzada y transfusión
-- [ ] `/dashboard/auditor` — sólo lectura + formulario de evento adverso (`reportAdverseEvent`)
+#### B.1 — Mitad inicial del lifecycle (✅ commit `68ba600`)
+
+- [x] **★** `/dashboard/banco-sangre` — registrar donación + lista de mis donaciones (filtrada por collectionCenter)
+- [x] **★** `/dashboard/laboratorio` — cola Collected → recordTestResult con 6 marcadores + ABO; cola UnderTest → release / quarantine con reason
+- [x] **★** `/dashboard/fraccionamiento` — produceComponent con `splitVolumeOf` para validar volumen restante; dropdown de tipos con shelf life + temp range visibles
+- [x] **Shared infra:** `useDonations(opts)`, `RoleGate`, `src/lib/hashing.ts`, `src/lib/isbt.ts`
+
+#### B.2 — Lifecycle tardío (⬜ próxima)
+
+- [ ] **★** `/dashboard/banco` — inventario de componentes en custodia (filtrado por `custodian`), expiry calculado client-side, cadena de frío, `transferComponentCustody` con temperatura
+- [ ] **★** `/dashboard/hospital` — `crossMatch(componentId, patientHash)` con DNI del paciente; recordTransfusion sobre Reserved
+- [ ] `/dashboard/auditor` — read-only timeline + form `reportAdverseEvent`
 
 ### Capa C — Detalle + trazabilidad pública (⬜ tras Capa B)
 
@@ -411,3 +417,24 @@
   2. Después `/dashboard/laboratorio` que necesita inventario de unidades `UnderTest`. La query es por logs `DonationCollected` + state read `getUnit().status`.
   3. Cada sub-dashboard reusa: `useTransaction` para writes + el patrón "guard-then-form" + un `useXxxList` hook tipo `useRoleRequests` para queues.
 - **Re-leer antes de Capa B:** `docs/SDD.md` §8.3 (cada función crítica de `HemaTraceability` y su semántica), §7.2 (máquina de estados de `DonationUnit` — qué transiciones son válidas), y el ABI completo de `HemaTraceability` (events DonationCollected/TestResultRecorded/UnitReleased/UnitQuarantined/ComponentProduced/ComponentCustodyTransferred/ComponentRecalled/Transfusion/AdverseEventReported).
+
+### Sesión 2026-05-23 — Phase 4 Capa B.1 sellada ✅ (B.2+C pendientes)
+- **Tres sub-dashboards en un commit** (`68ba600`). Capa B.1 consumió **~90k** sobre los ~120k de Capa A, total Phase 4 parcial ~210k de los ~300k estimados.
+- **State machine real (≠ SDD)** — el SDD §7.2 dibuja `Collected → InTransit → UnderTest`, pero el contrato salta directo `Collected → UnderTest` al llamar `recordTestResult`. No hay `transferUnitCustody`. Los dashboards reflejan el contrato, no el SDD diagram. Decisión consciente, documentada en el commit de Phase 1 (`8b3c831`).
+- **Patrones que se asentaron y se reusan en B.2/C:**
+  - **`useDonations(opts)` con keys stringificadas en deps** (`opts.collectionCenter` + `opts.statuses.join(",")`) — la firma del hook usa arrays/strings que no son referencias estables; convertirlas a strings antes de las deps del effect evita re-fetches infinitos. Aplicable a cualquier futuro `useComponents`, `useCertificates`, etc.
+  - **`RoleGate` con orden estricto noInjected → notConnected → loading → wrong-role → wrong-network → children.** El orden importa: `loading` antes de `wrong-role` evita falsos negativos durante el primer fetch. Reusable para banco/hospital/auditor sin retoques.
+  - **DNI → keccak256 preview en el form.** Mejora la confianza del usuario en que no se sube PII. Acompañado de una nota explícita sobre el salt institucional (Ley 25.326). Se replica en hospital (patient DNI → patient hash) en B.2.
+  - **`splitVolumeOf` query paralela por unidad** después del fetch de unidades. La estructura `useDonations` + parallel reads (Promise.all) sirve como receta general para "lista enriquecida con datos derivados". B.2 la repite para enriquecer inventario de componentes con expiry y temp.
+  - **i18n: `unitStatus` separado del namespace de cada panel.** Los status (Collected/UnderTest/Released/etc.) los traducen todos los paneles; vivían en un namespace propio para no duplicarlos. Para B.2 agregamos `componentStatus` análogo.
+- **Smoke checklist B.1** (re-correrla antes de B.2):
+  1. `./restart.sh` → anvil + deploy.
+  2. PK#0 (admin), aprobar 3 cuentas (PK#1=BANCO_SANGRE, PK#2=LABORATORIO, PK#3=FRACCIONAMIENTO) vía `/connect` + `/dashboard/admin`.
+  3. PK#1: `/dashboard/banco-sangre` → registrar 2 donaciones (DNI cualquiera, 450 ml, una A+ otra O-). Inventario debe mostrarlas como Recolectada.
+  4. PK#2: `/dashboard/laboratorio` → ambas unidades aparecen en la primera cola. Cargar resultado all-negative + ABO confirmado para una; positive HCV para la otra (Chagas en true es el camino interesante regionalmente). Liberar la negativa, cuarentenar la positiva con motivo.
+  5. PK#3: `/dashboard/fraccionamiento` → la liberada aparece con 450 ml disponibles. Producir RBC 200 ml → volumen restante baja a 250. Producir FFP 250 ml → restante 0. Estado del padre transiciona a Processed (visible en banco-sangre inventory).
+- **Pendiente en B.2 (lifecycle tardío):**
+  1. `/dashboard/banco` (inventario de componentes). Hook: `useComponents({ custodian, statuses })` análogo a `useDonations`. Query base: `ComponentProduced` events → getComponent reads → filtrar por custodian.
+  2. `/dashboard/hospital` (cross-match + transfusión). Form patient DNI → hash, dropdown de componentes Produced/InStorage con custodian=msg.sender, llamada a `crossMatch`. Después, lista de Reserved con botón `recordTransfusion`.
+  3. `/dashboard/auditor` (look-back + timeline). Form `reportAdverseEvent` con dropdown de `AdverseKind` (DonorPositive/RecipientReaction/EquipmentFailure) + hash del trigger (DNI donante o ID componente según kind). Lista de eventos recientes derivada de todos los events del contrato.
+- **Tip operativo:** los warnings de Turbopack sobre "multiple lockfiles" se siguen mostrando pero no bloquean. Si llega a fastidiar, set `turbopack: { root: process.cwd() }` en next.config.ts (probado: funciona, pero re-ejecutar `cd web && npm run build` después).
