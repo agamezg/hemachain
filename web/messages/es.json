@@ -197,8 +197,121 @@
     "roleAssigned": {
       "title": "Tu rol está activo",
       "body": "El panel especializado para tu rol estará disponible en la próxima entrega.",
-      "bodyWithName": "Institución registrada: {name} ({country}). El panel especializado para tu rol estará disponible en la próxima entrega.",
-      "placeholder": "Próximamente: acciones específicas del rol (registrar donación, tamizaje, fraccionamiento, custodia, transfusión, hemovigilancia, certificaciones)."
+      "bodyWithName": "Institución registrada: {name} ({country}). Entrá al panel para empezar a operar.",
+      "openPanel": "Abrir mi panel",
+      "placeholder": "Próximamente: acciones específicas de este rol (Capa B.2: hospital, auditor, certificador)."
+    },
+    "gate": {
+      "deniedTitle": "Acceso restringido",
+      "deniedBody": "Esta pantalla requiere el rol {role}.",
+      "wrongNetworkTitle": "Red incorrecta"
+    }
+  },
+  "unitStatus": {
+    "None": "—",
+    "Collected": "Recolectada",
+    "UnderTest": "En tamizaje",
+    "Quarantined": "En cuarentena",
+    "Released": "Liberada",
+    "Processed": "Procesada",
+    "Recalled": "Retirada"
+  },
+  "bancoSangre": {
+    "title": "Banco de Sangre",
+    "subtitle": "Registrá donaciones e inspeccioná tu inventario de unidades.",
+    "form": {
+      "title": "Registrar donación",
+      "subtitle": "Sólo el hash del DNI se asienta on-chain. Producción usa hash con sal institucional secreta (Ley 25.326 / SDD §11.4).",
+      "dni": "DNI del donante",
+      "dniHint": "El sistema computa keccak256(DNI). En producción se suma una sal institucional secreta.",
+      "volume": "Volumen extraído (ml)",
+      "volumeHint": "Típico: 450 ml. Rango aceptado: 100–500.",
+      "abo": "Grupo ABO/Rh",
+      "submit": "Registrar donación",
+      "errors": {
+        "dni": "El DNI debe tener al menos 4 caracteres.",
+        "volume": "Volumen fuera de rango (100–500 ml)."
+      },
+      "toast": {
+        "pending": "Registrando donación…",
+        "success": "Donación registrada.",
+        "errorPrefix": "No se pudo registrar"
+      }
+    },
+    "list": {
+      "title": "Mis donaciones recientes",
+      "subtitle": "Unidades recolectadas por esta institución (derivado de eventos DonationCollected).",
+      "refresh": "Refrescar",
+      "loading": "Consultando logs…",
+      "empty": "Todavía no registraste donaciones."
+    }
+  },
+  "laboratorio": {
+    "title": "Laboratorio de tamizaje",
+    "subtitle": "Cargá resultados serológicos y decidí liberar o cuarentenar cada unidad.",
+    "queue": {
+      "title": "Unidades pendientes de tamizaje",
+      "subtitle": "Estado Collected — esperan recordTestResult con el panel HIV/HBV/HCV/sífilis/HTLV/Chagas.",
+      "refresh": "Refrescar",
+      "empty": "No hay unidades pendientes."
+    },
+    "screen": {
+      "collected": "Recolectada",
+      "aboConfirmed": "ABO confirmado",
+      "submit": "Cargar resultado",
+      "flag": {
+        "hiv": "HIV",
+        "hbv": "HBV",
+        "hcv": "HCV",
+        "syphilis": "Sífilis",
+        "htlv": "HTLV",
+        "chagas": "Chagas"
+      }
+    },
+    "decisions": {
+      "title": "Decisiones post-tamizaje",
+      "subtitle": "Unidades en estado UnderTest esperan liberación o cuarentena.",
+      "empty": "No hay unidades en revisión.",
+      "underTest": "En revisión",
+      "release": "Liberar",
+      "quarantine": "Cuarentenar",
+      "reasonPrompt": "Motivo de cuarentena (queda on-chain en el evento):"
+    },
+    "toast": {
+      "recordPending": "Registrando resultado…",
+      "recordSuccess": "Resultado registrado para unidad #{id}.",
+      "recordError": "No se pudo registrar el resultado",
+      "releasePending": "Liberando unidad…",
+      "releaseSuccess": "Unidad liberada.",
+      "releaseError": "No se pudo liberar",
+      "quarantinePending": "Cuarentenando unidad…",
+      "quarantineSuccess": "Unidad cuarentenada.",
+      "quarantineError": "No se pudo cuarentenar"
+    }
+  },
+  "fraccionamiento": {
+    "title": "Fraccionamiento",
+    "subtitle": "Producí componentes (RBC, FFP, PLT, CRYO) a partir de unidades liberadas.",
+    "queue": {
+      "title": "Unidades disponibles",
+      "subtitle": "Estados Released y Processed. El sistema calcula el volumen restante (splitVolumeOf).",
+      "refresh": "Refrescar",
+      "loading": "Consultando…",
+      "empty": "No hay unidades disponibles para fraccionar.",
+      "totalVolume": "Total: {ml} ml",
+      "remaining": "Disponible: {ml} ml"
+    },
+    "form": {
+      "type": "Tipo de componente",
+      "volume": "Volumen (ml)",
+      "submit": "Producir componente",
+      "errorMin": "El volumen debe ser mayor a 0.",
+      "errorMax": "Supera el volumen restante."
+    },
+    "toast": {
+      "pending": "Produciendo componente…",
+      "success": "Componente generado desde unidad #{id}.",
+      "error": "No se pudo producir el componente"
     }
   },
   "admin": {

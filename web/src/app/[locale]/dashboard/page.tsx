@@ -10,6 +10,17 @@ import { Spinner } from "@/components/ui/Spinner";
 import { useRole } from "@/hooks/useRole";
 import { useWallet } from "@/hooks/useWallet";
 import { shortAddress } from "@/lib/eth";
+import type { RoleKey } from "@/config/roles";
+
+const ROLE_LANDING: Partial<Record<RoleKey | "NONE", { path: string } | null>> = {
+  BANCO_SANGRE: { path: "/dashboard/banco-sangre" },
+  LABORATORIO: { path: "/dashboard/laboratorio" },
+  FRACCIONAMIENTO: { path: "/dashboard/fraccionamiento" },
+  // Capa B.2 pendientes:
+  MEDICINA_TRANSFUSIONAL: null,
+  AUDITOR: null,
+  CERTIFICADOR: null,
+};
 
 export default function DashboardRouter() {
   const t = useTranslations("dashboard");
@@ -94,9 +105,18 @@ export default function DashboardRouter() {
                 : t("roleAssigned.body")}
             </CardDescription>
           </CardHeader>
-          <div className="rounded-2xl border border-dashed border-[var(--color-border-strong)] p-4 text-sm text-[var(--color-fg-muted)]">
-            {t("roleAssigned.placeholder")}
-          </div>
+          {ROLE_LANDING[roleKey] ? (
+            <Link
+              href={`/${locale}${ROLE_LANDING[roleKey]!.path}`}
+              className="contents"
+            >
+              <Button>{t(`roleAssigned.openPanel`)}</Button>
+            </Link>
+          ) : (
+            <div className="rounded-2xl border border-dashed border-[var(--color-border-strong)] p-4 text-sm text-[var(--color-fg-muted)]">
+              {t("roleAssigned.placeholder")}
+            </div>
+          )}
         </Card>
       )}
 
