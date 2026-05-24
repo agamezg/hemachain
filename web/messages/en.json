@@ -582,5 +582,43 @@
         "error": "No se pudo revocar"
       }
     }
+  },
+  "certificateDetail": {
+    "title": "Certificado #{id}",
+    "subtitle": "Verificación pública del certificado NFT. El PDF se re-hashea en tu navegador y se compara con el compromiso on-chain.",
+    "invalidId": "Identificador inválido",
+    "invalidIdBody": "El identificador del certificado debe ser un número.",
+    "notFound": "Certificado no encontrado",
+    "notFoundBody": "No existe un certificado con el id #{id}.",
+    "loading": "Cargando certificado…",
+    "subject": "Institución certificada",
+    "issuer": "Emisor",
+    "issuedAt": "Emitido",
+    "expiresAt": "Expira",
+    "documentHash": "Hash del documento (on-chain)",
+    "cid": "Referencia IPFS",
+    "qrHint": "Escaneá para verificar",
+    "openPdf": "Abrir PDF",
+    "revokedReason": "Motivo de revocación: {reason}",
+    "verify": {
+      "checking": "Verificando el hash del PDF…",
+      "match": "PDF verificado: el hash coincide con el registro on-chain.",
+      "mismatch": "El hash NO coincide — el documento fue alterado.",
+      "error": "No se pudo descargar el PDF para verificar el hash."
+    },
+    "revoke": {
+      "title": "Revocar certificado",
+      "subtitle": "Como Certificador podés revocar este certificado vigente.",
+      "cta": "Revocar certificado",
+      "reason": "Motivo de revocación",
+      "reasonPlaceholder": "Acreditación vencida o comprometida…",
+      "confirm": "Confirmar revocación",
+      "cancel": "Cancelar",
+      "toast": {
+        "pending": "Revocando certificado…",
+        "success": "Certificado revocado.",
+        "error": "No se pudo revocar"
+      }
+    }
   }
 }
