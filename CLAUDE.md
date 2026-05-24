@@ -105,6 +105,7 @@ The first six Anvil accounts map to roles in the demo seed (see `README.md` §5)
 | FRACCIONAMIENTO | 3 |
 | MEDICINA_TRANSFUSIONAL | 4 |
 | AUDITOR | 5 |
+| CERTIFICADOR | 6 (`0x976EA740...0aa9`) |
 
 MetaMask config for Anvil: RPC `http://localhost:8545`, Chain ID `31337`.
 

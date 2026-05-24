@@ -215,6 +215,7 @@ Cuentas de Anvil sugeridas por rol (las primeras seis):
 | FRACCIONAMIENTO | `0x90F79bf6...b906` |
 | MEDICINA_TRANSFUSIONAL | `0x15d34AAf...6A65` |
 | AUDITOR | `0x9965507D...0a4dc` |
+| CERTIFICADOR | `0x976EA740...0aa9` |
 
 ---
 

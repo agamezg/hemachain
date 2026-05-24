@@ -9,7 +9,7 @@
 > - `[~]` tarea en progreso (no terminada — actualizar al retomar)
 > - **★** tarea crítica (bloquea la fase)
 >
-> **Última actualización:** Phase 4 ✅ completa. Lifecycle on-chain end-to-end: donar → tamizar → fraccionar → despachar (cadena de frío) → cross-match → transfundir + hemovigilancia con look-back. Detail pages `/units/[id]` y `/components/[id]` con timelines. **9 sub-dashboards + 2 detalles dinámicos**, 30 rutas SSG + 2 dinámicas. Commits: B.1 `68ba600`, fixes `bf36c56` + `9681316`, B.2 `f18a107`, C `ff5a041`.
+> **Última actualización:** Phase 5 ✅ completa. Certificaciones como NFTs ERC-721 con IPFS **dual-mode** (`/api/upload` → Pinata si hay JWT, si no fallback local content-addressed) y verificación de hash client-side (`keccak256(PDF)` re-computado vs. `documentHash` on-chain). Panel `/dashboard/certificador` (emisión + revocación) y página pública `/certificates/[tokenId]` con `CertificateNFTCard` + `QRVerifyCode`. Seed con CERTIFICADOR dedicado (Anvil #6) + 1 cert válida + 1 revocada. Commits: A `4534874`, B `f66c6e9`, C `44c5535` + seed/docs.
 
 ---
 
@@ -22,8 +22,8 @@
 | 2 — Frontend scaffold & design system | ✅ Completa | Sí (`npm run lint` y `npm run build` verdes; 6 páginas estáticas — `/_not-found`, `/es`, `/pt`, `/en` × layout — + proxy middleware; design tokens + UI lib + header/footer + landing con i18n día 1) | ~150k | ~140k |
 | 3 — Web3 wiring | ✅ Completa | Sí (`npm run lint` + `npm run build` verdes; Web3Provider + RoleProvider; `useWallet`/`useContract`/`useRole`; ABIs por chainId + addresses Anvil deterministas verificadas con `cast`; UI: WalletPill, NetworkBadge, RoleBadge, WrongNetworkBanner) | ~100k | ~110k |
 | 4 — Core pages (role-based) | ✅ Completa | Lifecycle end-to-end on Anvil: 7 paneles rol-específicos + admin + 2 detail pages. Lint+build limpios. Bug-fixes: PositiveScreening gate + splitVolumeOf semantics. | ~300k | ~310k |
-| 5 — Certificates + IPFS | ⬜ No iniciada (próxima) | — | ~100k | — |
-| 6 — Traceability visualization & public verify | ⬜ No iniciada | — | ~150k | — |
+| 5 — Certificates + IPFS | ✅ Completa | Sí (`npm run lint` + `npm run build` verdes; emisión → IPFS dual-mode → verificación de hash → revocación; `/api/upload` smoke-tested; seed con CERTIFICADOR dedicado #6 + 1 cert válida + 1 revocada, validado con `cast`). | ~100k | ~105k |
+| 6 — Traceability visualization & public verify | ⬜ No iniciada (próxima) | — | ~150k | — |
 | 7 — Innovation layer (indexer, MCP, AI) | ⬜ No iniciada | — | ~250k | — |
 | 8 — Polish, test, i18n, deploy, record | ⬜ No iniciada | — | ~200k | — |
 
@@ -202,14 +202,15 @@
 
 ## Phase 5 — Certificates + IPFS *(1 sesión)*
 
-- [ ] **★** Cuenta Pinata + `PINATA_JWT` en `.env.example`
-- [ ] **★** Endpoint `/api/upload` con server-side upload a Pinata
-- [ ] **★** UI de emisión: upload PDF → CID + `keccak256` → `HemaCertificate.issue(...)`
-- [ ] `/certificates/[tokenId]` con verificación de hash antes de renderizar PDF
-- [ ] Flujo de revocación (rol `CERTIFICADOR_ROLE`)
-- [ ] `CertificateNFTCard` con QR de verificación
-- [ ] `tokenURI` JSON compatible con OpenSea
-- **DoD:** Emitir un cert AAHITC para un Hospital, verlo en `/certificates/[id]`, verificar hash, revocarlo.
+- [x] **★** `PINATA_JWT` + `NEXT_PUBLIC_IPFS_GATEWAY` en `.env.example` (cuenta Pinata es opcional gracias al modo dual)
+- [x] **★** Endpoint `/api/upload` **dual-mode**: pinea a Pinata si hay `PINATA_JWT`, si no escribe a `public/cert-uploads/` (content-addressed) — la demo corre sin cuenta externa
+- [x] **★** UI de emisión (`/dashboard/certificador`): upload PDF → CID + `keccak256(PDF)` → `issueCertificate(...)`
+- [x] `/certificates/[tokenId]` con re-hash client-side y comparación contra `documentHash` antes de renderizar (banner match/mismatch/error)
+- [x] Flujo de revocación (rol `CERTIFICADOR_ROLE`) — desde el panel y desde la detail page
+- [x] `CertificateNFTCard` con `QRVerifyCode` (lib `qrcode`, reutilizable en Phase 6 `/verify`)
+- [~] `tokenURI` JSON compatible con OpenSea — **diferido**: `tokenURI` resuelve a `ipfs://<CID-del-PDF>` y el cert se renderiza in-app desde `metadataOf`. El JSON OpenSea (testnet, fuera de contexto del TFM) se evalúa en Phase 8 si hace falta.
+- [x] **Bonus:** seed con CERTIFICADOR dedicado (Anvil #6) + 1 cert válida (verify) + 1 cert revocada (revocación). README/CLAUDE.md tabla de cuentas actualizada.
+- **DoD:** ✅ Emitir cert → IPFS (dual) → ver en `/certificates/[id]` → verificar hash → revocar. `/api/upload` y seed validados (`curl` + `cast`).
 
 ---
 
@@ -478,8 +479,20 @@
   5. CTAs de revocación (`revokeCertificate`).
   6. ROLE_LANDING actualizado: `CERTIFICADOR: { path: "/dashboard/certificador" }`.
 
-
-0x92db14e403b83dfe3df233f83dfa3a0d7096f21ca9b0d6d6b8d88b2b4ec1564e
-
-
-0x4bbbf85ce3377467afe5d46f804f221813b2bb87f24d81f60f1fcdbf7cbf4356
+### Sesión 2026-05-24 — Phase 5 sellada ✅
+- **Tres commits de feature + uno de seed/docs.** Capa A `4534874` (IPFS plumbing), B `f66c6e9` (panel certificador), C `44c5535` (detail page + verificación + QR). ~105k vs. ~100k estimado.
+- **Decisión clave — IPFS dual-mode** (consultada con el usuario). `/api/upload` (route handler Node) pinea a Pinata cuando hay `PINATA_JWT`; si no, escribe el PDF a `public/cert-uploads/<sha256>.pdf` (gitignored) y devuelve `local:<name>`. `lib/ipfs.ts#resolveStorageUrl` resuelve ambos: `ipfs://<cid>` vía gateway, `local:<name>` same-origin. La verificación de hash es idéntica en los dos modos (sólo depende de los bytes). Permite demo offline + upgrade a IPFS real sin tocar código, sólo agregando el JWT.
+  - **Trampa TS/Next 16:** `Buffer` no es asignable a `BlobPart` con strict (riesgo `SharedArrayBuffer`). Solución: pasar el `ArrayBuffer` crudo de `file.arrayBuffer()` al `Blob`, y `Buffer.from(arrayBuffer)` sólo para el branch local (crypto + writeFile). Route handlers usan `Response.json()` web-standard (no `NextResponse`) + `export const runtime = "nodejs"` para fs/crypto.
+- **Patrón de verificación de hash** (reusable Phase 6): `useCertificateDetail` carga `metadataOf`+`statusOf`+`ownerOf`, luego en el mismo effect hace `fetch(resolveStorageUrl(cid))` → `hashFileKeccak(blob)` → compara con `documentHash`. `VerificationState` discriminated union (idle/checking/match/mismatch/error). El `isLoading` se deriva (`data===null && error===null && id!==null`), cero setState en cuerpo de effect — patrón canónico ya consolidado en Phase 4.
+- **`set-state-in-effect` evitado** igual que en detail hooks previos: todo setState va después de un `await` dentro del IIFE async, o en el initializer lazy de `useState` (el `origin` de la verify-URL se toma con `useState(() => window?.location.origin)` para no romper SSR/hidratación).
+- **Decisión de diseño — `tokenURI` apunta al PDF, no a JSON OpenSea.** `ipfsCID` = CID del PDF para que la verificación pueda re-hashearlo. Meter un JSON OpenSea rompería ese flujo (el CID apuntaría al JSON, no al PDF). El cert se renderiza in-app desde `metadataOf`. OpenSea-on-testnet queda diferido a Phase 8 (item `[~]`).
+- **Seed mejorado (sc/):** el cert flow lo emitía el ADMIN (que el router de dashboard enmascara como admin). Ahora hay un **CERTIFICADOR dedicado = Anvil #6** (`0x976EA740…0aa9`, PK estaba stasheada al pie de este TRACK — removida y codificada en `Seed.s.sol`). Emite 1 cert **válida** (subject = banco, para demo de verify) + 1 **revocada** (subject = hospital, para demo de revocación). Validado en anvil throwaway con `cast`: `hasRole(CERTIFICADOR, #6)=true`, `statusOf(1)=0` (Valid), `statusOf(2)=2` (Revoked). README §5 + CLAUDE.md tabla de cuentas: agregado índice 6.
+- **Smoke checklist Phase 5** (rerun antes de Phase 6):
+  1. `./restart.sh` (Deploy.s.sol; o `forge script script/Seed.s.sol` sobre anvil fresco para data demo — mismas direcciones deterministas).
+  2. MetaMask: importar PK#6 (certificador) → `/dashboard` rutea a `/dashboard/certificador`.
+  3. Emitir cert: subject = dirección de un banco/hospital, tipo AAHITC, fecha futura, adjuntar un PDF → toast "modo local" (sin JWT) o "Pinata" → cert aparece en la lista.
+  4. Click "Ver detalle" → `/certificates/[id]` → banner verde "PDF verificado: el hash coincide".
+  5. Como certificador, revocar desde el panel o desde la detail page con motivo → status pasa a Revocado.
+  6. (Opcional) setear `PINATA_JWT` en `web/.env.local` → reiniciar dev → emitir otra → ahora CID real `bafy…`/`Qm…` y `tokenURI` resoluble en gateway público.
+- **Re-leer antes de Phase 6:** `docs/SDD.md` §9.4 (componentes `TraceabilityTimeline`, `ComponentLineageTree`), §9.2 (la ruta `/verify/[id]` es **pública, sin locale, sin wallet** — usar route group `app/(public)/` con su propio layout, ver nota de Phase 2). `QRVerifyCode` ya existe y se reutiliza. Los hooks `useUnitDetail`/`useComponentDetail` se reusan casi sin tocar para la cadena anónima.
+- **Próximo paso (Phase 6):** Traceability visualization & public verify. `TraceabilityTimeline`, `ComponentLineageTree` (Mermaid client-side), `/verify/[id]` locale-less, `QRVerifyCode` apuntando a `/verify/[id]` para unidades, mapa Leaflet (opcional), `ColdChainBadge` con sparkline (recharts).
