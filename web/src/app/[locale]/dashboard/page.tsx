@@ -18,8 +18,7 @@ const ROLE_LANDING: Partial<Record<RoleKey | "NONE", { path: string } | null>> =
   FRACCIONAMIENTO: { path: "/dashboard/fraccionamiento" },
   MEDICINA_TRANSFUSIONAL: { path: "/dashboard/hospital" },
   AUDITOR: { path: "/dashboard/auditor" },
-  // Certificador llega en Phase 5 (NFTs):
-  CERTIFICADOR: null,
+  CERTIFICADOR: { path: "/dashboard/certificador" },
 };
 
 export default function DashboardRouter() {

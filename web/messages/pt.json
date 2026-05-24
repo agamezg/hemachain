@@ -519,5 +519,68 @@
       "rejectSuccess": "Rechazado: {name}",
       "rejectError": "No se pudo rechazar"
     }
+  },
+  "certType": {
+    "AAHITC": "AAHITC",
+    "ISO15189": "ISO 15189",
+    "ANMAT": "ANMAT",
+    "GMP": "GMP",
+    "OTHER": "Otro"
+  },
+  "certStatus": {
+    "Valid": "Vigente",
+    "Expired": "Expirado",
+    "Revoked": "Revocado"
+  },
+  "certificador": {
+    "title": "Panel de Certificación",
+    "subtitle": "Emití certificados de acreditación como NFTs ERC-721. El PDF se ancla en IPFS y su hash queda comprometido on-chain para verificación pública.",
+    "issue": {
+      "title": "Emitir certificado",
+      "subtitle": "El PDF se sube a IPFS y se registra keccak256(PDF) on-chain. Cualquiera puede re-hashear el archivo y comprobar que coincide.",
+      "subject": "Institución certificada (dirección)",
+      "subjectHint": "Dirección Ethereum del actor que recibe el certificado (NFT).",
+      "certType": "Tipo de acreditación",
+      "expiry": "Fecha de expiración",
+      "expiryHint": "El certificado pasa a Expirado automáticamente en esta fecha.",
+      "file": "PDF del certificado",
+      "fileHint": "Sólo PDF, hasta 10 MB. Se calcula su keccak256 antes de subirlo.",
+      "hashPreview": "keccak256 del PDF",
+      "submit": "Emitir certificado",
+      "uploading": "Subiendo PDF…",
+      "modePinata": "PDF anclado en IPFS vía Pinata.",
+      "modeLocal": "Sin PINATA_JWT: el PDF se guardó localmente (modo demo).",
+      "errors": {
+        "subject": "Ingresá una dirección Ethereum válida (0x… 40 hex).",
+        "certType": "Elegí un tipo de acreditación.",
+        "expiry": "La fecha de expiración debe ser futura.",
+        "file": "Adjuntá el PDF del certificado."
+      },
+      "toast": {
+        "pending": "Emitiendo certificado…",
+        "success": "Certificado emitido.",
+        "error": "No se pudo emitir el certificado"
+      }
+    },
+    "list": {
+      "title": "Certificados emitidos",
+      "subtitle": "Certificados que emitiste con esta cuenta.",
+      "empty": "Todavía no emitiste certificados.",
+      "subject": "Institución",
+      "expiresAt": "Expira",
+      "view": "Ver detalle"
+    },
+    "revoke": {
+      "cta": "Revocar",
+      "reason": "Motivo de revocación",
+      "reasonPlaceholder": "Acreditación vencida o comprometida…",
+      "confirm": "Confirmar revocación",
+      "cancel": "Cancelar",
+      "toast": {
+        "pending": "Revocando certificado…",
+        "success": "Certificado revocado.",
+        "error": "No se pudo revocar"
+      }
+    }
   }
 }
