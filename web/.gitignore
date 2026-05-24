@@ -20,6 +20,9 @@
 # production
 /build
 
+# local IPFS fallback (cert PDFs uploaded when PINATA_JWT is unset)
+/public/cert-uploads
+
 # misc
 .DS_Store
 *.pem
