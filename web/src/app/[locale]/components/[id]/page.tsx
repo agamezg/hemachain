@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
 import { Spinner } from "@/components/ui/Spinner";
+import { QRVerifyCode } from "@/components/certificates/QRVerifyCode";
 import { TraceabilityTimeline } from "@/components/traceability/TraceabilityTimeline";
 import { ColdChainBadge } from "@/components/traceability/ColdChainBadge";
 import { useComponentDetail } from "@/hooks/useComponentDetail";
@@ -25,6 +26,11 @@ export default function ComponentDetailPage({ params }: PageProps) {
 
   const componentId = /^\d+$/.test(id) ? BigInt(id) : null;
   const { data, isLoading, error } = useComponentDetail(componentId);
+
+  const [origin] = useState(() =>
+    typeof window !== "undefined" ? window.location.origin : "",
+  );
+  const verifyUrl = origin ? `${origin}/verify/c${id}` : "";
 
   if (componentId === null) {
     return (
@@ -142,6 +148,16 @@ export default function ComponentDetailPage({ params }: PageProps) {
               }
             />
           </Card>
+
+          {verifyUrl ? (
+            <Card className="flex flex-col items-center gap-3 sm:flex-row sm:justify-between">
+              <CardHeader>
+                <CardTitle>{t("qr.title")}</CardTitle>
+                <CardDescription>{t("qr.hint")}</CardDescription>
+              </CardHeader>
+              <QRVerifyCode url={verifyUrl} size={140} />
+            </Card>
+          ) : null}
         </>
       )}
     </Container>

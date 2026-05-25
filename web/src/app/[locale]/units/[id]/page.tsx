@@ -1,12 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { use } from "react";
+import { use, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Badge } from "@/components/ui/Badge";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
 import { Spinner } from "@/components/ui/Spinner";
+import { QRVerifyCode } from "@/components/certificates/QRVerifyCode";
 import { TraceabilityTimeline } from "@/components/traceability/TraceabilityTimeline";
 import { useUnitDetail } from "@/hooks/useUnitDetail";
 import { bytes8ToAboRh } from "@/lib/isbt";
@@ -23,6 +24,11 @@ export default function UnitDetailPage({ params }: PageProps) {
 
   const unitId = /^\d+$/.test(id) ? BigInt(id) : null;
   const { data, isLoading, error } = useUnitDetail(unitId);
+
+  const [origin] = useState(() =>
+    typeof window !== "undefined" ? window.location.origin : "",
+  );
+  const verifyUrl = origin ? `${origin}/verify/u${id}` : "";
 
   if (unitId === null) {
     return (
@@ -154,6 +160,16 @@ export default function UnitDetailPage({ params }: PageProps) {
               emptyLabel={t("timelineEmpty")}
             />
           </Card>
+
+          {verifyUrl ? (
+            <Card className="flex flex-col items-center gap-3 sm:flex-row sm:justify-between">
+              <CardHeader>
+                <CardTitle>{t("qr.title")}</CardTitle>
+                <CardDescription>{t("qr.hint")}</CardDescription>
+              </CardHeader>
+              <QRVerifyCode url={verifyUrl} size={140} />
+            </Card>
+          ) : null}
         </>
       )}
     </Container>

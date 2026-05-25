@@ -43,7 +43,7 @@ export interface LineageChild {
 
 interface Props {
   root: LineageRoot;
-  children: LineageChild[];
+  childComponents: LineageChild[];
   /** Emphasizes the component the visitor arrived to verify. */
   highlightId?: bigint;
   unitHref?: (id: bigint) => string;
@@ -58,7 +58,7 @@ interface Props {
  */
 export function ComponentLineageTree({
   root,
-  children,
+  childComponents,
   highlightId,
   unitHref,
   componentHref,
@@ -92,10 +92,10 @@ export function ComponentLineageTree({
         )}
       </div>
 
-      {children.length > 0 ? (
+      {childComponents.length > 0 ? (
         <ul className="mt-1 flex flex-col">
-          {children.map((c, i) => {
-            const last = i === children.length - 1;
+          {childComponents.map((c, i) => {
+            const last = i === childComponents.length - 1;
             const highlighted = highlightId !== undefined && c.id === highlightId;
             const body = (
               <span

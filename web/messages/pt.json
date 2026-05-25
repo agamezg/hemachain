@@ -121,7 +121,55 @@
     }
   },
   "verify": {
-    "label": "Verificar"
+    "label": "Verificar",
+    "brand": "Verificación pública",
+    "header": {
+      "title": "Verificación de trazabilidad",
+      "subtitle": "Identificador {id} · cadena anonimizada sobre Ethereum."
+    },
+    "search": {
+      "title": "Verificar una unidad o componente",
+      "subtitle": "Ingresá el identificador impreso en el código QR de la bolsa.",
+      "idLabel": "Identificador numérico",
+      "idPlaceholder": "Ej. 3",
+      "unit": "Unidad",
+      "component": "Componente",
+      "cta": "Verificar",
+      "hint": "Sin wallet ni registro: la consulta es pública y de sólo lectura."
+    },
+    "component": {
+      "title": "Componente verificado",
+      "expires": "Vence el {date}"
+    },
+    "origin": {
+      "title": "Donación de origen",
+      "summary": "{volume} ml · recolectada el {collected}",
+      "screeningClear": "Tamizaje completo: todos los marcadores no reactivos",
+      "screeningFindings": "Tamizaje con marcador(es) reactivo(s)",
+      "noScreening": "Tamizaje aún no registrado."
+    },
+    "lineage": {
+      "title": "Linaje de componentes",
+      "subtitle": "Componentes derivados de esta donación."
+    },
+    "timeline": {
+      "title": "Trazabilidad on-chain",
+      "empty": "Sin eventos registrados."
+    },
+    "qr": {
+      "title": "Compartir verificación",
+      "hint": "Escaneá o imprimí este código para volver a esta página."
+    },
+    "anon": "Privacidad por diseño: on-chain sólo hay hashes irreversibles (Ley 25.326). Ningún dato personal del donante o del paciente sale de la institución de origen.",
+    "notFound": {
+      "title": "Sin resultados",
+      "body": "No existe ningún registro para el identificador {id}."
+    },
+    "invalid": {
+      "title": "Identificador inválido",
+      "body": "Usá un número, o el prefijo u/c (por ejemplo u3 para una unidad, c5 para un componente)."
+    },
+    "loading": "Consultando la cadena…"
   },
   "tx": {
     "waiting": "Esperando confirmación on-chain…",
@@ -314,7 +362,11 @@
       "subtitle": "{n} componente(s) generados por fraccionamiento."
     },
     "timeline": "Timeline on-chain",
-    "timelineEmpty": "Sin eventos."
+    "timelineEmpty": "Sin eventos.",
+    "qr": {
+      "title": "Verificación pública",
+      "hint": "Código QR imprimible para la bolsa — apunta a la página pública /verify."
+    }
   },
   "componentDetail": {
     "title": "Componente #{id}",
@@ -334,7 +386,11 @@
     "expired": "Vencido",
     "expiresOn": "Vence {date}",
     "timeline": "Cadena de custodia",
-    "timelineEmpty": "Sin eventos."
+    "timelineEmpty": "Sin eventos.",
+    "qr": {
+      "title": "Verificación pública",
+      "hint": "Código QR imprimible para la bolsa — apunta a la página pública /verify."
+    }
   },
   "traceTimeline": {
     "DonationCollected": "Donación registrada",
