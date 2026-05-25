@@ -31,6 +31,7 @@ mkdir -p "$LOG_DIR"
 
 ANVIL_PORT="${ANVIL_PORT:-8545}"
 WEB_PORT="${WEB_PORT:-3000}"
+INDEXER_PORT="${INDEXER_PORT:-4000}"
 RPC_HOST="${RPC_HOST:-127.0.0.1}"
 RPC_URL="http://${RPC_HOST}:${ANVIL_PORT}"
 # Well-known Anvil deployer key (first account, deterministic)
@@ -124,7 +125,7 @@ if [ "${SKIP_INDEXER:-0}" != "1" ] && [ -f "$REPO_ROOT/indexer/package.json" ]; 
   if [ ! -d "$REPO_ROOT/indexer/node_modules" ]; then
     (cd "$REPO_ROOT/indexer" && npm install --silent)
   fi
-  (cd "$REPO_ROOT/indexer" && npm start > "$LOG_DIR/indexer.log" 2>&1) &
+  (cd "$REPO_ROOT/indexer" && INDEXER_PORT="$INDEXER_PORT" npm start > "$LOG_DIR/indexer.log" 2>&1) &
   INDEXER_PID=$!
   write_pid indexer "$INDEXER_PID"
   echo "  ✓ Indexer starting (pid $INDEXER_PID)"
@@ -136,6 +137,12 @@ echo "✓ HemaChain local stack running:"
 echo "   • Mode      : ${SEED:-0}" | sed 's/0$/Deploy (empty chain)/; s/1$/Seed (deploy + demo data)/'
 echo "   • Anvil RPC : ${RPC_URL}  (chainId 31337)"
 echo "   • Frontend  : http://localhost:${WEB_PORT}"
+if [ "${SKIP_INDEXER:-0}" != "1" ] && [ -f "$REPO_ROOT/indexer/package.json" ]; then
+  echo "   • Indexer   : http://localhost:${INDEXER_PORT}/health  (live SSE on /stream)"
+fi
+if [ "${SEED:-0}" = "1" ]; then
+  echo "   • Demo      : http://localhost:${WEB_PORT}/verify/c1 (cold-chain + recall) · /verify/u1 · /es/certificates/2 (revoked)"
+fi
 echo "   • Logs      : ${LOG_DIR}/"
 echo "   • PIDs      : ${PID_FILE}"
 echo "   • Stop with : ./stop.sh"
