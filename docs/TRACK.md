@@ -2,6 +2,7 @@
 
 > Tracker operativo de fases y tareas. Cada vez que volvemos al proyecto, este archivo dice exactamente dónde estamos.
 > El plan completo y la justificación de cada decisión están en [`SDD.md`](./SDD.md) y en el plan original `~/.claude/plans/imperative-juggling-candy.md`.
+> **Pendientes del usuario** (claves, cuentas, tareas manuales: `ANTHROPIC_API_KEY`, `PINATA_JWT`, deploy Sepolia, video, screenshots) → [`PENDIENTES-USUARIO.md`](./PENDIENTES-USUARIO.md).
 >
 > **Convenciones:**
 > - `[x]` tarea completada
