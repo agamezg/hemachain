@@ -638,10 +638,10 @@ function tokenURI(uint256 tokenId) public view override returns (string memory);
 
 ### 9.4. Librería de componentes propia
 
-| Categoría | Componentes |
-|---|---|
-| Base | `Button`, `Card`, `Badge`, `Container`, `InputField`, `Spinner`, `Dialog`, `Sheet`, `Tabs`, `Toast` |
-| Web3 | `WalletPill`, `NetworkBadge`, `RoleGuard` |
+| Categoría                      | Componentes                                                                                                                                                |
+| ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Base                           | `Button`, `Card`, `Badge`, `Container`, `InputField`, `Spinner`, `Dialog`, `Sheet`, `Tabs`, `Toast`                                                        |
+| Web3                           | `WalletPill`, `NetworkBadge`, `RoleGuard`                                                                                                                  |
 | Industriales (diferenciadores) | `TraceabilityTimeline`, `ComponentLineageTree`, `CertificateNFTCard`, `ColdChainBadge`, `ISBTCodeBadge`, `QRVerifyCode`, `FacilityMap`, `AdverseEventForm` |
 
 ### 9.5. Tokens de diseño
