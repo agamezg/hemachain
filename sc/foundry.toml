@@ -43,4 +43,15 @@ include_push_bytes = true
 runs = 256
 max_test_rejects = 65536
 
+# Sepolia deploy + Etherscan verification (Phase 8). Values come from env vars,
+# never hardcoded — set SEPOLIA_RPC_URL and ETHERSCAN_API_KEY (see
+# docs/PENDIENTES-USUARIO.md). Deploy + verify with:
+#   forge script script/Deploy.s.sol --rpc-url sepolia \
+#     --private-key $DEPLOYER_PRIVATE_KEY --broadcast --verify
+[rpc_endpoints]
+sepolia = "${SEPOLIA_RPC_URL}"
+
+[etherscan]
+sepolia = {key = "${ETHERSCAN_API_KEY}", chain = 11155111}
+
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
