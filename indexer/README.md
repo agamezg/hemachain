@@ -1,23 +1,37 @@
 # @hemachain/indexer
 
-> **Status:** placeholder. Implementation scheduled for **Phase 7 — Innovation Layer** (see `../docs/TRACK.md`).
+Event-driven indexer that subscribes to HemaChain contract events on Anvil/Sepolia, persists them to SQLite, and streams them to the dashboards over Server-Sent Events. Implements SDD §10.2.
 
-Event-driven indexer that subscribes to HemaChain contract events on Anvil/Sepolia and feeds the frontend with live updates.
+## Responsibilities
 
-## Planned responsibilities (per `../docs/SDD.md` §10.2)
+- Subscribes (ethers `WebSocketProvider`) to events from `HemaTraceability`, `HemaCertificate`, and `HemaRegistry`. Backfills historical events on startup, then listens live.
+- Persists every event to `indexer.db` (SQLite, gitignored), de-duplicated by `(tx, log_index)`.
+- Exposes an HTTP API:
+  - `GET /stream` — Server-Sent Events; one `data:` frame per new event.
+  - `GET /events?limit=N` — most recent events as JSON (initial dashboard load).
+  - `GET /health` — `{ ok, events, clients }`.
+- Runs an **alert daemon**: tags each event with a `severity` (`info|ok|warn|critical`) for dashboard toasts, and raises a synthetic `ExpiryWarning` once per component as it crosses into the 48h-to-expiry window (skipping transfused/recalled ones).
 
-- Subscribe to all events emitted by `HemaRegistry`, `HemaTraceability`, and `HemaCertificate` via an `ethers` WebSocketProvider.
-- Persist events to a local SQLite database (`indexer.db`, gitignored).
-- Expose a Server-Sent Events endpoint (`GET /stream`) that dashboards consume for real-time toasts.
-- Drive the cold-chain alert daemon and the expiry-reminder cron.
+## Run
 
-## Planned stack
+```bash
+npm install
+npm start          # node src/index.js → SSE on http://localhost:4000
+```
+
+`restart.sh` starts it automatically as part of the local stack. Reads the deterministic Anvil addresses by default; override per env:
+
+| Var | Default |
+|---|---|
+| `INDEXER_RPC_WS` | `ws://127.0.0.1:8545` |
+| `INDEXER_PORT` | `4000` |
+| `INDEXER_TRACEABILITY_ADDRESS` / `INDEXER_CERTIFICATE_ADDRESS` / `INDEXER_REGISTRY_ADDRESS` | deterministic Deploy.s.sol addresses |
+
+ABIs are read from `../web/src/contracts/` so the indexer never drifts from what the frontend decodes.
+
+## Stack
 
 - Node.js ≥ 20 (ESM)
-- `ethers@^6`
+- `ethers@^6` (`WebSocketProvider`)
 - `better-sqlite3`
-- An HTTP server (`fastify` or `hono`)
-
-## Why a placeholder now?
-
-Keeps the monorepo shape visible from day one and lets `restart.sh` / the pre-push hook treat the directory uniformly without special-casing. Will be `npm init`'d and filled in when Phase 7 starts.
+- Node's built-in `http` for the SSE/REST surface (no framework)

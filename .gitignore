@@ -98,6 +98,8 @@ web/next-env.d.ts.bak
 
 # Indexer
 indexer/*.db
+indexer/*.db-shm
+indexer/*.db-wal
 indexer/*.sqlite
 
 # MCP server

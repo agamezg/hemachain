@@ -1,12 +1,18 @@
 {
   "name": "@hemachain/indexer",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
-  "description": "Event indexer for HemaChain contracts — placeholder, implementation in Phase 7 (innovation layer)",
+  "type": "module",
+  "description": "Event indexer for HemaChain contracts — ethers WS subscription + SQLite + SSE stream + alert daemon (SDD §10.2)",
+  "main": "src/index.js",
   "scripts": {
-    "start": "echo 'indexer/ — not yet implemented. See ../docs/TRACK.md Phase 7.' && exit 0"
+    "start": "node src/index.js"
   },
   "engines": {
     "node": ">=20"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.8.1",
+    "ethers": "^6.13.4"
   }
 }
