@@ -9,23 +9,23 @@
 > - `[~]` tarea en progreso (no terminada — actualizar al retomar)
 > - **★** tarea crítica (bloquea la fase)
 >
-> **Última actualización:** Phase 5 ✅ completa. Certificaciones como NFTs ERC-721 con IPFS **dual-mode** (`/api/upload` → Pinata si hay JWT, si no fallback local content-addressed) y verificación de hash client-side (`keccak256(PDF)` re-computado vs. `documentHash` on-chain). Panel `/dashboard/certificador` (emisión + revocación) y página pública `/certificates/[tokenId]` con `CertificateNFTCard` + `QRVerifyCode`. Seed con CERTIFICADOR dedicado (Anvil #6) + 1 cert válida + 1 revocada. Commits: A `4534874`, B `f66c6e9`, C `44c5535` + seed/docs.
+> **Última actualización:** Phase 6 ✅ completa. Capa de visualización de trazabilidad + verificación pública. `TraceabilityTimeline` (timeline localizado icon-led, reemplaza el `Timeline` dev), `ComponentLineageTree` **hand-rolled (sin Mermaid)**, `ColdChainBadge` **SVG inline (sin recharts)**, y `FacilityMap` (Leaflet + react-leaflet 5, coords off-chain en `config/facilities.ts`). Ruta pública **`/verify/[id]`** wallet-less + locale-less vía route group `app/(public)/` con root layout propio (locale desde cookie `NEXT_LOCALE`, Web3 read-only); parsea `u<n>`/`c<n>`. QR imprimible (→ `/verify`) embebido en las detail pages. Excluido `verify` del matcher del proxy next-intl. Commits: A `3051f90`, B `34ffed9`, C `61faa9b`.
 
 ---
 
 ## Resumen ejecutivo del estado
 
-| Fase | Estado | DoD alcanzada | Tokens estim. | Tokens reales |
-|---|---|:-:|---:|---:|
-| 0 — Setup, SDD, scaffolding | ✅ Completa | Sí (`forge build` y `npm run build` verdes; documentación inicial escrita; ambos remotes pusheados) | ~120k | ~180k† |
-| 1 — Smart contracts | ✅ Completa | Sí (`forge test` 110/110 verdes; invariantes + fuzz; Deploy/Seed smoke-tested en Anvil; gas snapshot capturado) | ~400k | ~550k† |
-| 2 — Frontend scaffold & design system | ✅ Completa | Sí (`npm run lint` y `npm run build` verdes; 6 páginas estáticas — `/_not-found`, `/es`, `/pt`, `/en` × layout — + proxy middleware; design tokens + UI lib + header/footer + landing con i18n día 1) | ~150k | ~140k |
-| 3 — Web3 wiring | ✅ Completa | Sí (`npm run lint` + `npm run build` verdes; Web3Provider + RoleProvider; `useWallet`/`useContract`/`useRole`; ABIs por chainId + addresses Anvil deterministas verificadas con `cast`; UI: WalletPill, NetworkBadge, RoleBadge, WrongNetworkBanner) | ~100k | ~110k |
-| 4 — Core pages (role-based) | ✅ Completa | Lifecycle end-to-end on Anvil: 7 paneles rol-específicos + admin + 2 detail pages. Lint+build limpios. Bug-fixes: PositiveScreening gate + splitVolumeOf semantics. | ~300k | ~310k |
-| 5 — Certificates + IPFS | ✅ Completa | Sí (`npm run lint` + `npm run build` verdes; emisión → IPFS dual-mode → verificación de hash → revocación; `/api/upload` smoke-tested; seed con CERTIFICADOR dedicado #6 + 1 cert válida + 1 revocada, validado con `cast`). | ~100k | ~105k |
-| 6 — Traceability visualization & public verify | ⬜ No iniciada (próxima) | — | ~150k | — |
-| 7 — Innovation layer (indexer, MCP, AI) | ⬜ No iniciada | — | ~250k | — |
-| 8 — Polish, test, i18n, deploy, record | ⬜ No iniciada | — | ~200k | — |
+| Fase                                           | Estado        |                                                                                                                    DoD alcanzada                                                                                                                     | Tokens estim. | Tokens reales |
+| ---------------------------------------------- | ------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | ------------: | ------------: |
+| 0 — Setup, SDD, scaffolding                    | ✅ Completa    |                                                                         Sí (`forge build` y `npm run build` verdes; documentación inicial escrita; ambos remotes pusheados)                                                                          |         ~120k |        ~180k† |
+| 1 — Smart contracts                            | ✅ Completa    |                                                                   Sí (`forge test` 110/110 verdes; invariantes + fuzz; Deploy/Seed smoke-tested en Anvil; gas snapshot capturado)                                                                    |         ~400k |        ~550k† |
+| 2 — Frontend scaffold & design system          | ✅ Completa    |                        Sí (`npm run lint` y `npm run build` verdes; 6 páginas estáticas — `/_not-found`, `/es`, `/pt`, `/en` × layout — + proxy middleware; design tokens + UI lib + header/footer + landing con i18n día 1)                         |         ~150k |         ~140k |
+| 3 — Web3 wiring                                | ✅ Completa    | Sí (`npm run lint` + `npm run build` verdes; Web3Provider + RoleProvider; `useWallet`/`useContract`/`useRole`; ABIs por chainId + addresses Anvil deterministas verificadas con `cast`; UI: WalletPill, NetworkBadge, RoleBadge, WrongNetworkBanner) |         ~100k |         ~110k |
+| 4 — Core pages (role-based)                    | ✅ Completa    |                                         Lifecycle end-to-end on Anvil: 7 paneles rol-específicos + admin + 2 detail pages. Lint+build limpios. Bug-fixes: PositiveScreening gate + splitVolumeOf semantics.                                          |         ~300k |         ~310k |
+| 5 — Certificates + IPFS                        | ✅ Completa    |             Sí (`npm run lint` + `npm run build` verdes; emisión → IPFS dual-mode → verificación de hash → revocación; `/api/upload` smoke-tested; seed con CERTIFICADOR dedicado #6 + 1 cert válida + 1 revocada, validado con `cast`).             |         ~100k |         ~105k |
+| 6 — Traceability visualization & public verify | ✅ Completa    |                                                   Sí (`npm run lint` + `npm run build` verdes; `/verify` 200 locale-less; árbol de linaje hand-rolled + ColdChainBadge SVG + FacilityMap Leaflet)                                                    |         ~150k |         ~150k |
+| 7 — Innovation layer (indexer, MCP, AI)        | ⬜ No iniciada |                                                                                                                          —                                                                                                                           |         ~250k |             — |
+| 8 — Polish, test, i18n, deploy, record         | ⬜ No iniciada |                                                                                                                          —                                                                                                                           |         ~200k |             — |
 
 > **Notas sobre las columnas de tokens.**
 > - "Tokens estim." es el presupuesto forward que vamos a apuntar por fase (input + output sumados, en miles de tokens del modelo principal — Opus 4.7).
@@ -216,13 +216,13 @@
 
 ## Phase 6 — Traceability visualization & public verify *(1–2 sesiones)*
 
-- [ ] **★** `TraceabilityTimeline` (timeline vertical de custody + process)
-- [ ] **★** `ComponentLineageTree` (Mermaid client-side)
-- [ ] **★** `/verify/[id]` — **pública, sin wallet, sin locale lock** — cadena anonimizada
-- [ ] **★** `QRVerifyCode` apuntando a `/verify/[id]` — imprimible
-- [ ] Mapa con Leaflet de instituciones (registro off-chain de coordenadas)
-- [ ] `ColdChainBadge` con sparkline (recharts)
-- **DoD:** Imprimir un QR → escanear con el móvil → `/verify/[id]` muestra la cadena anónima.
+- [x] **★** `TraceabilityTimeline` (timeline vertical localizado, icon-led; reemplaza el `Timeline` dev en `/units/[id]` y `/components/[id]`)
+- [x] **★** `ComponentLineageTree` — **hecho a mano (CSS/SVG), sin Mermaid** (decidido con el usuario). Árbol plano unidad → componentes, fiel al modelo on-chain (`Component` sólo referencia `parentUnitId`; Crio es hermano, no nieto almacenado)
+- [x] **★** `/verify/[id]` — **pública, sin wallet, sin locale lock** — cadena anonimizada (route group `app/(public)/` con root layout propio)
+- [x] **★** `QRVerifyCode` apuntando a `/verify/u<id>` / `/verify/c<id>` — imprimible (embebido en las detail pages de unidad y componente)
+- [x] Mapa con Leaflet de instituciones (`FacilityMap` + `config/facilities.ts` con coords off-chain; `NetworkSection` en el landing)
+- [x] `ColdChainBadge` con sparkline (**SVG inline, sin recharts**; lee temps de los logs `ComponentCustodyTransferred`; surfaced en `/components/[id]` y `/verify`)
+- **DoD:** ✅ `npm run lint` + `npm run build` verdes; `/verify` sirve 200 locale-less (sin redirección de locale) mientras `/` sigue redirigiendo a `/es`; SSR-safe (Leaflet client-only). Commits A `3051f90`, B `34ffed9`, C `61faa9b`.
 
 ---
 
@@ -496,3 +496,25 @@
   6. (Opcional) setear `PINATA_JWT` en `web/.env.local` → reiniciar dev → emitir otra → ahora CID real `bafy…`/`Qm…` y `tokenURI` resoluble en gateway público.
 - **Re-leer antes de Phase 6:** `docs/SDD.md` §9.4 (componentes `TraceabilityTimeline`, `ComponentLineageTree`), §9.2 (la ruta `/verify/[id]` es **pública, sin locale, sin wallet** — usar route group `app/(public)/` con su propio layout, ver nota de Phase 2). `QRVerifyCode` ya existe y se reutiliza. Los hooks `useUnitDetail`/`useComponentDetail` se reusan casi sin tocar para la cadena anónima.
 - **Próximo paso (Phase 6):** Traceability visualization & public verify. `TraceabilityTimeline`, `ComponentLineageTree` (Mermaid client-side), `/verify/[id]` locale-less, `QRVerifyCode` apuntando a `/verify/[id]` para unidades, mapa Leaflet (opcional), `ColdChainBadge` con sparkline (recharts).
+### Sesión 2026-05-25 — Phase 6 sellada ✅
+- **Tres commits de feature.** A `3051f90` (primitivas de viz), B `34ffed9` (ruta pública `/verify`), C `61faa9b` (mapa Leaflet). ~150k vs. ~150k estimado.
+- **Decisión consultada con el usuario — `ComponentLineageTree` hand-rolled, sin Mermaid.** El linaje real es chico (1 unidad → ≤4 componentes); un árbol CSS/SVG propio es más liviano, themeado con nuestros tokens y dark-mode nativo. **Importante de fidelidad al dominio:** el `Component` on-chain sólo guarda `parentUnitId` (no hay puntero a componente padre), así que **Crio es hermano de PFC, no nieto almacenado**. El árbol refleja el storage (plano, un nivel), no una jerarquía inventada. El "nieto" del SDD/recall es conceptual.
+- **Decisión — `ColdChainBadge` con SVG inline, sin recharts.** Sparkline a mano (polyline + banda segura + puntos coloreados por dentro/fuera de rango) construido desde `args[3]` (temperatureC) de los logs `ComponentCustodyTransferred`. Cero dep nueva. El mismo gate que el contrato aplica en `INV_ColdChainGate`.
+- **`TraceabilityTimeline` reemplaza al `Timeline` dev.** Un solo timeline (menos duplicación): localizado, icon-led, con tono por evento; mantiene una referencia `tx`/`block` sutil para verificabilidad. Borrado `components/dashboard/Timeline.tsx` y su namespace i18n `timeline`. Acepta `tempRange?` opcional para colorear las temps de custodia en rojo cuando salen de rango (vista de componente).
+- **Ruta pública locale-less + wallet-less — patrón de "segundo root layout".** `app/(public)/layout.tsx` renderiza su propio `<html>`/`<body>` (Next permite múltiples root layouts vía route groups cuando no hay `app/layout.tsx`; ya teníamos `[locale]/layout.tsx` como root de facto). El layout público:
+  - resuelve el idioma desde la cookie `NEXT_LOCALE` (que setea el lado localizado), fallback `defaultLocale`; pasa `locale`+`messages` explícitos a `NextIntlClientProvider` (no usa `getRequestConfig`, que para una ruta sin `[locale]` siempre caería a `es`).
+  - incluye `Web3Provider` **read-only** (sin RoleProvider, sin SiteHeader). "Wallet-less" = funciona sin MetaMask: el `readProvider` (JsonRpcProvider al `DEFAULT_CHAIN`) sirve los reads. `PublicHeader` minimalista (marca + ThemeToggle, sin wallet/rol/locale switch).
+  - import de mensajes con depth `../../../messages/${locale}.json` (desde `app/(public)/`).
+- **Proxy matcher:** agregado `verify` a la lista de exclusión → `"/((?!api|verify|_next|_vercel|.*\\..*).*)"`. Sin esto, next-intl redirige `/verify` a `/es/verify`.
+- **Esquema de id en `/verify/[id]`:** `c<n>` = componente, `u<n>` o número pelado = unidad. Regex `^([uc]?)(\d+)$/i`. Para un componente se renderiza el linaje de su **unidad madre** (hermanos + highlight del componente escaneado) — segundo `useUnitDetail(comp.parentUnitId)`. Hooks `useUnitDetail`/`useComponentDetail` reusados sin tocar.
+- **Trampa de React resuelta:** la prop de datos del árbol se llama `childComponents` (no `children`) para no colisionar con la prop reservada de React.
+- **Leaflet + Next 16:** `FacilityMapInner` (react-leaflet 5, React 19) lazy-loaded vía `next/dynamic({ssr:false})` desde `FacilityMap` (Leaflet toca `window` al importar). `CircleMarker` (SVG puro) en vez de markers PNG → evita el problema de asset-path del ícono default de Leaflet. Wrapper con `isolate z-0` para que los panes de alto z-index de Leaflet no tapen el header sticky. Smoke: `/es` no tiene `leaflet-container` en el HTML SSR (correcto, client-only).
+- **Smoke checklist Phase 6** (rerun manual antes de Phase 7 — requiere browser + `./restart.sh` con seed):
+  1. `./restart.sh` (o `forge script script/Seed.s.sol` sobre anvil fresco para data demo — mismas direcciones deterministas) + `cd web && npm run dev`.
+  2. En la detail page de una unidad (`/es/units/1`) o componente (`/es/components/1`): aparece la card "Verificación pública" con un QR. Escanearlo (o copiar la URL) → abre `/verify/u1` / `/verify/c1` **sin** prefijo de locale y **sin** wallet conectada.
+  3. `/verify/c<id>` de un componente con excursión térmica (el seed tiene 1): `ColdChainBadge` muestra "Excursión térmica" con el punto rojo fuera de la banda; el `TraceabilityTimeline` muestra la transferencia de custodia en rojo + el recall.
+  4. `/verify/u<id>` de la unidad con look-back: el linaje muestra los componentes en estado `Recalled`; el resumen de tamizaje indica "con hallazgos" o "todos no reactivos".
+  5. Landing `/es`: scroll hasta "Red nacional de instituciones" → mapa Leaflet con 6 marcadores (CABA, La Plata, Córdoba, Rosario, Mendoza, Tucumán); hover muestra tooltip con nombre + rol + ciudad + address corta.
+  6. Toggle dark/light en el header público de `/verify` — el árbol, el badge y el timeline respetan los tokens.
+- **Diferido conscientemente:** ruta `/[locale]/traceability/[id]` con Mermaid full (SDD §9.2) — no es entregable de Phase 6; el árbol hand-rolled cubre el linaje. Tiles de Leaflet en dark mode quedan OSM estándar (claras) — suficiente para el demo; un tile CARTO dark se evalúa en Phase 8 si molesta en el video.
+- **Próximo paso (Phase 7 — Innovation layer):** indexer (Node + ethers WS + SQLite + SSE), MCP server (wrapper Foundry CLI), agente "Ask HemaChain". Re-leer `docs/SDD.md` §10 (componentes off-chain) y `indexer/` + `mcp-server/` (placeholders). Los eventos que el indexer debe escuchar ya están estables y documentados en los hooks de detalle (`UNIT_EVENT_NAMES`, `COMPONENT_EVENT_NAMES`).
