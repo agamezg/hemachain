@@ -29,6 +29,7 @@ Run from repo root unless noted. The repo uses a **3-process local stack** (Anvi
 ```bash
 ./restart.sh        # stop everything, anvil :8545, deploy, copy ABIs to web/, next dev :3000, indexer
 ./stop.sh           # three-layer cleanup: .pids file → pkill by pattern → port kill
+SEED=1 ./restart.sh          # run Seed.s.sol instead of Deploy.s.sol (deploy + demo data: look-back, cold-chain excursion, revoked cert) — same deterministic addresses
 SKIP_DEPLOY=1 ./restart.sh   # bypass forge deploy
 SKIP_WEB=1 ./restart.sh      # anvil only
 SKIP_INDEXER=1 ./restart.sh  # no indexer

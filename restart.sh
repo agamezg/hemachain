@@ -14,6 +14,11 @@
 #   ANVIL_PORT=8545  WEB_PORT=3000  RPC_HOST=127.0.0.1
 #
 # Bypass with SKIP_DEPLOY=1 or SKIP_WEB=1 or SKIP_INDEXER=1.
+#
+# SEED=1 runs script/Seed.s.sol instead of Deploy.s.sol — deploys the contracts
+# AND loads the demo scenario (look-back recall, cold-chain excursion, valid +
+# revoked cert) at the same deterministic addresses, so one command brings up a
+# data-rich stack. The indexer then backfills the seed cleanly (no toast flood).
 
 set -euo pipefail
 
@@ -65,11 +70,21 @@ if ! kill -0 "$ANVIL_PID" 2>/dev/null; then
 fi
 echo "  ✓ Anvil up (pid $ANVIL_PID)"
 
-# ── 3. Deploy contracts ──────────────────────────────────────────────
-if [ "${SKIP_DEPLOY:-0}" != "1" ] && [ -f "$REPO_ROOT/sc/foundry.toml" ] && [ -f "$REPO_ROOT/sc/script/Deploy.s.sol" ]; then
-  echo "→ Deploying contracts to Anvil..."
-  if ! (cd "$REPO_ROOT/sc" && forge script script/Deploy.s.sol --rpc-url "$RPC_URL" --private-key "$ANVIL_PK" --broadcast > "$LOG_DIR/deploy.log" 2>&1); then
-    echo "✖ Deploy failed. See $LOG_DIR/deploy.log"
+# ── 3. Deploy (or seed) contracts ────────────────────────────────────
+# SEED=1 swaps Deploy.s.sol → Seed.s.sol. Only one ever runs, so the
+# deterministic addresses (account 0, nonces 0/1/2) stay stable either way.
+if [ "${SEED:-0}" = "1" ]; then
+  DEPLOY_SCRIPT="script/Seed.s.sol"
+  DEPLOY_LABEL="Seeding contracts (deploy + demo data)"
+else
+  DEPLOY_SCRIPT="script/Deploy.s.sol"
+  DEPLOY_LABEL="Deploying contracts"
+fi
+
+if [ "${SKIP_DEPLOY:-0}" != "1" ] && [ -f "$REPO_ROOT/sc/foundry.toml" ] && [ -f "$REPO_ROOT/sc/$DEPLOY_SCRIPT" ]; then
+  echo "→ ${DEPLOY_LABEL} on Anvil..."
+  if ! (cd "$REPO_ROOT/sc" && forge script "$DEPLOY_SCRIPT" --rpc-url "$RPC_URL" --private-key "$ANVIL_PK" --broadcast > "$LOG_DIR/deploy.log" 2>&1); then
+    echo "✖ ${DEPLOY_LABEL} failed. See $LOG_DIR/deploy.log"
     exit 1
   fi
 
@@ -118,6 +133,7 @@ fi
 # ── 7. Summary ───────────────────────────────────────────────────────
 echo ""
 echo "✓ HemaChain local stack running:"
+echo "   • Mode      : ${SEED:-0}" | sed 's/0$/Deploy (empty chain)/; s/1$/Seed (deploy + demo data)/'
 echo "   • Anvil RPC : ${RPC_URL}  (chainId 31337)"
 echo "   • Frontend  : http://localhost:${WEB_PORT}"
 echo "   • Logs      : ${LOG_DIR}/"
