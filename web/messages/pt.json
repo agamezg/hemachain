@@ -336,8 +336,31 @@
     "timeline": "Cadena de custodia",
     "timelineEmpty": "Sin eventos."
   },
-  "timeline": {
-    "hidden": "Lista de eventos"
+  "traceTimeline": {
+    "DonationCollected": "Donación registrada",
+    "TestResultRecorded": "Tamizaje serológico",
+    "UnitReleased": "Unidad liberada",
+    "UnitQuarantined": "Unidad en cuarentena",
+    "UnitRecalled": "Unidad retirada (recall)",
+    "ComponentProduced": "Componente fraccionado",
+    "ComponentCustodyTransferred": "Transferencia de custodia",
+    "ComponentCrossMatched": "Prueba cruzada",
+    "ComponentRecalled": "Componente retirado (recall)",
+    "Transfused": "Transfusión registrada",
+    "volumeMl": "{volume} ml",
+    "testReactive": "Marcador(es) reactivo(s) detectado(s)",
+    "testClear": "Todos los marcadores no reactivos",
+    "reason": "Motivo: {reason}",
+    "custodyDetail": "{temp} °C · {from} → {to}",
+    "patient": "Paciente {hash}",
+    "txRef": "bloque #{block} · tx {tx}"
+  },
+  "coldChain": {
+    "noData": "Sin lecturas de temperatura",
+    "intact": "Cadena de frío íntegra",
+    "breached": "Excursión térmica",
+    "range": "rango {min}…{max} °C",
+    "aria": "Última lectura {last} °C"
   },
   "componentStatus": {
     "None": "—",

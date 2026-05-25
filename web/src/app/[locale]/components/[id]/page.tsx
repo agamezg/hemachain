@@ -7,7 +7,8 @@ import { Badge } from "@/components/ui/Badge";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
 import { Spinner } from "@/components/ui/Spinner";
-import { Timeline } from "@/components/dashboard/Timeline";
+import { TraceabilityTimeline } from "@/components/traceability/TraceabilityTimeline";
+import { ColdChainBadge } from "@/components/traceability/ColdChainBadge";
 import { useComponentDetail } from "@/hooks/useComponentDetail";
 import { COMPONENT_TYPES } from "@/lib/isbt";
 import { shortAddress } from "@/lib/eth";
@@ -43,6 +44,11 @@ export default function ComponentDetailPage({ params }: PageProps) {
     : undefined;
   const expiryMs = data ? Number(data.expiresAt) * 1000 : 0;
   const expired = data ? now > expiryMs : false;
+  const custodyTemps = data
+    ? data.events
+        .filter((e) => e.name === "ComponentCustodyTransferred")
+        .map((e) => Number(e.args[3]))
+    : [];
 
   return (
     <Container className="max-w-4xl py-12 sm:py-16 flex flex-col gap-6">
@@ -114,13 +120,27 @@ export default function ComponentDetailPage({ params }: PageProps) {
                 </>
               ) : null}
             </dl>
+            {def ? (
+              <div className="rounded-2xl border border-[var(--color-border)] p-3">
+                <ColdChainBadge
+                  readings={custodyTemps}
+                  range={{ min: def.tempMin, max: def.tempMax }}
+                />
+              </div>
+            ) : null}
           </Card>
 
           <Card className="flex flex-col gap-3">
             <CardHeader>
               <CardTitle>{t("timeline")}</CardTitle>
             </CardHeader>
-            <Timeline events={data.events} emptyLabel={t("timelineEmpty")} />
+            <TraceabilityTimeline
+              events={data.events}
+              emptyLabel={t("timelineEmpty")}
+              tempRange={
+                def ? { min: def.tempMin, max: def.tempMax } : undefined
+              }
+            />
           </Card>
         </>
       )}

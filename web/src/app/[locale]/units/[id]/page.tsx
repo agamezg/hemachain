@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
 import { Spinner } from "@/components/ui/Spinner";
-import { Timeline } from "@/components/dashboard/Timeline";
+import { TraceabilityTimeline } from "@/components/traceability/TraceabilityTimeline";
 import { useUnitDetail } from "@/hooks/useUnitDetail";
 import { bytes8ToAboRh } from "@/lib/isbt";
 import { shortAddress } from "@/lib/eth";
@@ -149,7 +149,10 @@ export default function UnitDetailPage({ params }: PageProps) {
             <CardHeader>
               <CardTitle>{t("timeline")}</CardTitle>
             </CardHeader>
-            <Timeline events={data.events} emptyLabel={t("timelineEmpty")} />
+            <TraceabilityTimeline
+              events={data.events}
+              emptyLabel={t("timelineEmpty")}
+            />
           </Card>
         </>
       )}
