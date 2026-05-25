@@ -703,5 +703,31 @@
         "error": "No se pudo revocar"
       }
     }
+  },
+  "live": {
+    "connected": "En vivo · conectado al indexador",
+    "expiryDetail": "Componente #{id} vence en ~{hours} h",
+    "events": {
+      "DonationCollected": "Nueva donación registrada",
+      "TestResultRecorded": "Tamizaje cargado",
+      "UnitReleased": "Unidad liberada",
+      "UnitQuarantined": "Unidad en cuarentena",
+      "UnitRecalled": "Unidad retirada (recall)",
+      "ComponentProduced": "Componente fraccionado",
+      "ComponentCustodyTransferred": "Custodia transferida",
+      "ComponentCrossMatched": "Prueba cruzada",
+      "ComponentRecalled": "Componente retirado (recall)",
+      "Transfused": "Transfusión registrada",
+      "AdverseEventReported": "Evento adverso reportado",
+      "LookBackTriggered": "Look-back disparado",
+      "CertificateIssued": "Certificado emitido",
+      "CertificateRevoked": "Certificado revocado",
+      "RoleRequested": "Solicitud de rol",
+      "RoleApproved": "Rol aprobado",
+      "RoleRejected": "Rol rechazado",
+      "RoleRevoked": "Rol revocado",
+      "ActorRegistered": "Actor registrado",
+      "ExpiryWarning": "Componente próximo a vencer"
+    }
   }
 }
