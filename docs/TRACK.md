@@ -9,7 +9,9 @@
 > - `[~]` tarea en progreso (no terminada — actualizar al retomar)
 > - **★** tarea crítica (bloquea la fase)
 >
-> **Última actualización:** Phase 6 ✅ completa. Capa de visualización de trazabilidad + verificación pública. `TraceabilityTimeline` (timeline localizado icon-led, reemplaza el `Timeline` dev), `ComponentLineageTree` **hand-rolled (sin Mermaid)**, `ColdChainBadge` **SVG inline (sin recharts)**, y `FacilityMap` (Leaflet + react-leaflet 5, coords off-chain en `config/facilities.ts`). Ruta pública **`/verify/[id]`** wallet-less + locale-less vía route group `app/(public)/` con root layout propio (locale desde cookie `NEXT_LOCALE`, Web3 read-only); parsea `u<n>`/`c<n>`. QR imprimible (→ `/verify`) embebido en las detail pages. Excluido `verify` del matcher del proxy next-intl. Commits: A `3051f90`, B `34ffed9`, C `61faa9b`.
+> **Última actualización:** Phase 7 🟡 **en progreso (3/4 capas)** — sesión cortada por límite diario del usuario. ✅ Indexer (`indexer/`: ethers WS backfill+live, SQLite, SSE `/stream`+`/events`+`/health`, alert daemon expiry/cold-chain, `168abc6`). ✅ Toasts en vivo en dashboards (`useEventStream`+`LiveActivity`+dashboard layout, `8b798f9`). ✅ MCP server (`mcp-server/`: stdio, tools `forge_test`/`cast_call`/`trace_query`/`recent_events`, `docs/MCP.md`, `c273bfa`). ⬜ **PENDIENTE: agente IA "Ask HemaChain"** (Capa D, modo dual — decidido con el usuario). Todo lo entregado validado en Anvil+seed. Ver "Sesión 2026-05-25 — Phase 7 (parcial)" al pie. **Phase 6 ✅ completa** abajo.
+>
+> **Phase 6 ✅ completa.** Capa de visualización de trazabilidad + verificación pública. `TraceabilityTimeline` (timeline localizado icon-led, reemplaza el `Timeline` dev), `ComponentLineageTree` **hand-rolled (sin Mermaid)**, `ColdChainBadge` **SVG inline (sin recharts)**, y `FacilityMap` (Leaflet + react-leaflet 5, coords off-chain en `config/facilities.ts`). Ruta pública **`/verify/[id]`** wallet-less + locale-less vía route group `app/(public)/` con root layout propio (locale desde cookie `NEXT_LOCALE`, Web3 read-only); parsea `u<n>`/`c<n>`. QR imprimible (→ `/verify`) embebido en las detail pages. Excluido `verify` del matcher del proxy next-intl. Commits: A `3051f90`, B `34ffed9`, C `61faa9b`.
 
 ---
 
@@ -24,7 +26,7 @@
 | 4 — Core pages (role-based)                    | ✅ Completa    |                                         Lifecycle end-to-end on Anvil: 7 paneles rol-específicos + admin + 2 detail pages. Lint+build limpios. Bug-fixes: PositiveScreening gate + splitVolumeOf semantics.                                          |         ~300k |         ~310k |
 | 5 — Certificates + IPFS                        | ✅ Completa    |             Sí (`npm run lint` + `npm run build` verdes; emisión → IPFS dual-mode → verificación de hash → revocación; `/api/upload` smoke-tested; seed con CERTIFICADOR dedicado #6 + 1 cert válida + 1 revocada, validado con `cast`).             |         ~100k |         ~105k |
 | 6 — Traceability visualization & public verify | ✅ Completa    |                                                   Sí (`npm run lint` + `npm run build` verdes; `/verify` 200 locale-less; árbol de linaje hand-rolled + ColdChainBadge SVG + FacilityMap Leaflet)                                                    |         ~150k |         ~150k |
-| 7 — Innovation layer (indexer, MCP, AI)        | ⬜ No iniciada |                                                                                                                          —                                                                                                                           |         ~250k |             — |
+| 7 — Innovation layer (indexer, MCP, AI) | 🟡 En progreso (indexer ✅, toasts SSE ✅, MCP ✅; **falta agente IA**) | Parcial | ~250k | ~150k (A+B+C, sesión cortada por límite diario) |
 | 8 — Polish, test, i18n, deploy, record         | ⬜ No iniciada |                                                                                                                          —                                                                                                                           |         ~200k |             — |
 
 > **Notas sobre las columnas de tokens.**
@@ -228,14 +230,14 @@
 
 ## Phase 7 — Innovation layer (indexer, MCP, AI) *(1–2 sesiones, paralelizable)*
 
-- [ ] Indexador: Node + ethers WS + SQLite + endpoint SSE
-- [ ] Dashboards consumen SSE → toasts en vivo
-- [ ] Daemon de alertas (expiry + cold-chain)
-- [ ] MCP server: wrappers de `anvil`, `forge`, `cast`, `trace_query`
-- [ ] Documento `docs/MCP.md`
-- [ ] Agente IA flotante "Ask HemaChain" en el dashboard, llamando MCP via Claude API tool-use
-- [ ] Demo seed enriquece el escenario
-- **DoD:** Demo en vivo de toast tras tx + respuesta del agente IA a "¿cuántos GR expiran en 48h?".
+- [x] Indexador: Node + ethers WS + SQLite + endpoint SSE (`indexer/` real; backfill + live `WebSocketProvider`; `/stream` `/events` `/health` con CORS) — commit `168abc6`
+- [x] Dashboards consumen SSE → toasts en vivo (`useEventStream` + `LiveActivity` + dashboard layout + pill "en vivo") — commit `8b798f9`
+- [x] Daemon de alertas (expiry + cold-chain) — severidad por evento + `ExpiryWarning` sintético una vez por componente al entrar en ventana 48h (en el indexer) — commit `168abc6`
+- [x] MCP server: wrappers de `forge_test`, `cast_call`, `trace_query`, `recent_events` (stdio, `@modelcontextprotocol/sdk` 1.29) — commit `c273bfa`
+- [x] Documento `docs/MCP.md` (tools + registro en Claude Code/Desktop) — commit `c273bfa`
+- [ ] **★ PENDIENTE** Agente IA flotante "Ask HemaChain" en el dashboard, Claude API tool-use (modo dual: hint sin `ANTHROPIC_API_KEY`, en vivo con key). **Decidido con el usuario: construir en modo dual.** Sesión cortada acá por límite diario — retomar este ítem.
+- [~] Demo seed enriquece el escenario — el seed de Phase 5 ya tiene look-back + excursión térmica + revocación; suficiente para los toasts. Ampliar sólo si el agente IA lo necesita.
+- **DoD (parcial):** ✅ Indexer + toasts en vivo + alert daemon + MCP server validados en Anvil+seed (backfill 43 eventos, live `cast` → frame SSE, `trace_query u1` → linaje). ⬜ Falta el agente IA (Capa D) para cerrar el DoD completo ("respuesta del agente a '¿cuántos GR expiran en 48h?'").
 
 ---
 
@@ -518,3 +520,22 @@
   6. Toggle dark/light en el header público de `/verify` — el árbol, el badge y el timeline respetan los tokens.
 - **Diferido conscientemente:** ruta `/[locale]/traceability/[id]` con Mermaid full (SDD §9.2) — no es entregable de Phase 6; el árbol hand-rolled cubre el linaje. Tiles de Leaflet en dark mode quedan OSM estándar (claras) — suficiente para el demo; un tile CARTO dark se evalúa en Phase 8 si molesta en el video.
 - **Próximo paso (Phase 7 — Innovation layer):** indexer (Node + ethers WS + SQLite + SSE), MCP server (wrapper Foundry CLI), agente "Ask HemaChain". Re-leer `docs/SDD.md` §10 (componentes off-chain) y `indexer/` + `mcp-server/` (placeholders). Los eventos que el indexer debe escuchar ya están estables y documentados en los hooks de detalle (`UNIT_EVENT_NAMES`, `COMPONENT_EVENT_NAMES`).
+
+### Sesión 2026-05-25 — Phase 7 (parcial, 3/4 capas) — cortada por límite diario
+- **El usuario pidió parar después del entregable en curso (MCP server) para evaluar mañana si seguimos.** Tareas marcadas para trazabilidad. **Nada pusheado** (4 commits locales sobre `main`).
+- **Decisión consultada:** el agente IA se construye en **modo dual** (hint sin `ANTHROPIC_API_KEY`, en vivo con key) — pendiente de implementar.
+- **Capa A — Indexer (`168abc6`) ✅.** `indexer/` real (Node ESM): `config.js` (addresses determinísticas + ABIs leídas de `web/src/contracts`), `db.js` (better-sqlite3, dedup por `(tx,log_index)`, WAL), `server.js` (`node:http`: `/stream` SSE, `/events`, `/health`, CORS), `index.js` (backfill `queryFilter` → live `contract.on`; alert daemon). Dep nueva: `better-sqlite3` (compila nativo en Node 22 ✓), `ethers`.
+  - **Bug encontrado y arreglado:** `LookBackTriggered` tiene `uint256[]` → el serializador de args debía recursar en arrays (no sólo bigints top-level). Fix `toJsonable` recursivo.
+  - **Validado:** anvil + `forge script Seed` (mismas addresses determinísticas) → 43 eventos backfilled sin errores; `cast send registerDonation` (PK#1) → frame `DonationCollected` llegó por `/stream` a un cliente conectado en vivo.
+  - `restart.sh` ya arranca el indexer (paso 6) sin cambios; pero `restart.sh` corre `Deploy.s.sol` (sin data demo) — para el escenario rico correr `forge script script/Seed.s.sol` sobre anvil. El indexer escucha en **:4000**.
+- **Capa B — Toasts en vivo (`8b798f9`) ✅.** `useEventStream` (EventSource a `${NEXT_PUBLIC_INDEXER_URL}/stream`, default `http://localhost:4000`; sólo eventos *después* de conectar, sin replay del backlog). `LiveActivity` → toast sonner por severidad (`critical→error`, `warn→warning`, `ok→success`, `info→info`) + pill "en vivo". Montado en `app/[locale]/dashboard/layout.tsx` (sólo dashboards, no público/landing). Namespace i18n `live` (es/pt/en) con todos los nombres de evento + `ExpiryWarning`. `NEXT_PUBLIC_INDEXER_URL` en `.env.example`. Lint+build verdes. **Pendiente de smoke visual** (requiere browser): abrir un dashboard → ver la pill + un toast tras una tx.
+- **Capa C — MCP server (`c273bfa`) ✅.** `mcp-server/` real (Node ESM, `@modelcontextprotocol/sdk` 1.29 + `ethers` + `execa` + `zod`). Tools: `forge_test`, `cast_call`, `trace_query(u<n>|c<n>)` (Markdown de linaje), `recent_events`. stdio transport. `docs/MCP.md` con tools + registro en Claude Code (`claude mcp add hemachain -- node …/mcp-server/src/index.js`) y Claude Desktop (`claude_desktop_config.json`).
+  - **API SDK confirmada en runtime:** `server.registerTool(name, {title, description, inputSchema: zodRawShape}, handler)`; `StdioServerTransport` desde `@modelcontextprotocol/sdk/server/stdio.js`; handler devuelve `{ content: [{type:"text", text}] }` (`isError:true` en fallo).
+  - **Validado:** stdio handshake (initialize → tools/list devuelve los 4) + `trace_query u1` → Markdown del unit #1 (Recalled, 2 componentes Recalled, screening no reactivo).
+- **⬜ Capa D — Agente IA "Ask HemaChain" (PENDIENTE, próximo paso al retomar):**
+  1. `web/src/app/api/ask/route.ts` (runtime nodejs): lee `ANTHROPIC_API_KEY`. **Sin key → respuesta JSON con hint de configuración (modo dual, no rompe).** Con key → `@anthropic-ai/sdk` (modelo `claude-opus-4-7`) con tool-use + **prompt caching** sobre system prompt + tools (ver skill `claude-api`). Tools del lado servidor implementados con ethers `JsonRpcProvider` (no via MCP, para auto-contención): `count_expiring_components(hours)`, `trace_lineage(id)`, `recent_events(limit)`, `get_unit`/`get_component`. Loop tool_use → tool_result → respuesta final.
+  2. `web/src/components/ai/AskHemaChain.tsx`: panel flotante (botón → chat) que postea a `/api/ask` y renderiza la respuesta. Montar en el dashboard layout (junto a `LiveActivity`).
+  3. i18n namespace `ai` (es/pt/en). Añadir dep `@anthropic-ai/sdk` en `web/`.
+  4. DoD a cerrar: el agente responde "¿cuántos GR (RBC) expiran en las próximas 48h?" usando `count_expiring_components`.
+  - **Nota:** no podré probar el camino en vivo sin la key del usuario; el modo-hint sí es testeable.
+- **Estado para retomar:** anvil/seed/indexer fueron levantados para validar y luego detenidos (`./stop.sh`). Para continuar: `./restart.sh` + `forge script script/Seed.s.sol …` + (opcional) setear `ANTHROPIC_API_KEY` en `web/.env.local`. 4 commits Phase 7 locales sin pushear: `168abc6`, `8b798f9`, `c273bfa` (+ este doc).
