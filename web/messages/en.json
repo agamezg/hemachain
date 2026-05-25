@@ -104,6 +104,10 @@
       "body": "El Ministerio de Salud argentino moderniza el Sistema Nacional de Sangre y exige trazabilidad informatizada en todos los centros de hemoterapia, con un plazo de implementación de dos años. HemaChain constituye una implementación de referencia técnica, compatible con el estándar global ISBT 128.",
       "link": "Ver fuentes en el SDD"
     },
+    "network": {
+      "title": "Red nacional de instituciones",
+      "subtitle": "Bancos de sangre, laboratorios, centros de fraccionamiento, servicios de medicina transfusional, hemovigilancia y acreditación conectados a un mismo libro mayor. Coordenadas off-chain (la cadena sólo guarda hashes de geolocalización)."
+    },
     "cta": {
       "title": "¿Listo para explorar?",
       "body": "Conectá tu wallet, pedí un rol y empezá a recorrer el ciclo de vida completo de una unidad de sangre.",

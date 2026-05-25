@@ -3,6 +3,7 @@ import { Hero } from "@/components/landing/Hero";
 import { StatsSection } from "@/components/landing/StatsSection";
 import { InnovationSection } from "@/components/landing/InnovationSection";
 import { RegulatorySection } from "@/components/landing/RegulatorySection";
+import { NetworkSection } from "@/components/landing/NetworkSection";
 import { CtaSection } from "@/components/landing/CtaSection";
 
 export default async function LocaleHome({
@@ -19,6 +20,7 @@ export default async function LocaleHome({
       <StatsSection />
       <InnovationSection />
       <RegulatorySection />
+      <NetworkSection />
       <CtaSection />
     </>
   );
