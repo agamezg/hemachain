@@ -729,5 +729,21 @@
       "ActorRegistered": "Actor registrado",
       "ExpiryWarning": "Componente próximo a vencer"
     }
+  },
+  "ai": {
+    "title": "Ask HemaChain",
+    "subtitle": "Trazabilidad en lenguaje natural",
+    "open": "Abrir asistente Ask HemaChain",
+    "close": "Cerrar",
+    "placeholder": "Preguntá sobre unidades, componentes o vencimientos…",
+    "send": "Enviar",
+    "thinking": "Consultando la cadena…",
+    "emptyTitle": "¿En qué puedo ayudarte?",
+    "emptyHint": "Leo el estado on-chain: vencimientos, el linaje de una unidad o componente, y los eventos recientes.",
+    "exampleLabel": "Probá:",
+    "example": "¿Cuántos glóbulos rojos (GR) vencen en las próximas 48 horas?",
+    "hintMessage": "El asistente en vivo necesita configurar ANTHROPIC_API_KEY en web/.env.local. Sin la clave funciona en modo demostración. Configurá la clave y reiniciá el servidor para obtener respuestas en vivo sobre la cadena.",
+    "error": "No pude procesar la consulta. Reintentá en unos segundos.",
+    "disclaimer": "Sólo lee datos on-chain anonimizados (hashes)."
   }
 }
