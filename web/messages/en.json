@@ -1,606 +1,606 @@
 {
   "metadata": {
-    "title": "HemaChain · Trazabilidad de donaciones de sangre",
-    "description": "Trazabilidad inmutable, auditable e interoperable de donaciones de sangre sobre Ethereum. Implementación de referencia de la Resolución 536/2026 del Ministerio de Salud argentino."
+    "title": "HemaChain · Blood donation traceability",
+    "description": "Immutable, auditable and interoperable traceability of blood donations on Ethereum. A reference implementation of Resolution 536/2026 of Argentina's Ministry of Health."
   },
   "nav": {
-    "home": "Inicio",
-    "verify": "Verificar unidad",
-    "dashboard": "Panel",
-    "connect": "Conectar wallet",
+    "home": "Home",
+    "verify": "Verify unit",
+    "dashboard": "Dashboard",
+    "connect": "Connect wallet",
     "github": "GitHub"
   },
   "header": {
     "brand": "HemaChain",
     "networkLocal": "Anvil · 31337",
     "networkSepolia": "Sepolia · 11155111",
-    "themeToggle": "Cambiar tema",
-    "roleStub": "Sin rol"
+    "themeToggle": "Toggle theme",
+    "roleStub": "No role"
   },
   "wallet": {
-    "connect": "Conectar wallet",
-    "connecting": "Conectando…",
-    "noWallet": "MetaMask no detectada",
-    "disconnect": "Desconectar",
-    "copyAddress": "Copiar dirección",
-    "copied": "Copiado",
-    "address": "Dirección"
+    "connect": "Connect wallet",
+    "connecting": "Connecting…",
+    "noWallet": "MetaMask not detected",
+    "disconnect": "Disconnect",
+    "copyAddress": "Copy address",
+    "copied": "Copied",
+    "address": "Address"
   },
   "network": {
     "anvil": "Anvil · 31337",
     "sepolia": "Sepolia",
-    "unknown": "Red desconocida",
-    "disconnected": "Sin red"
+    "unknown": "Unknown network",
+    "disconnected": "No network"
   },
   "role": {
-    "NONE": "Sin rol",
-    "ADMIN": "Administrador",
-    "BANCO_SANGRE": "Banco de Sangre",
-    "LABORATORIO": "Laboratorio",
-    "FRACCIONAMIENTO": "Fraccionamiento",
-    "MEDICINA_TRANSFUSIONAL": "Medicina Transfusional",
+    "NONE": "No role",
+    "ADMIN": "Administrator",
+    "BANCO_SANGRE": "Blood Bank",
+    "LABORATORIO": "Laboratory",
+    "FRACCIONAMIENTO": "Fractionation",
+    "MEDICINA_TRANSFUSIONAL": "Transfusion Medicine",
     "AUDITOR": "Auditor",
-    "CERTIFICADOR": "Certificador"
+    "CERTIFICADOR": "Certifier"
   },
   "banner": {
-    "wrongNetwork": "Estás en una red distinta a {expected}.",
-    "switch": "Cambiar a {network}",
-    "noInjected": "No detectamos MetaMask u otra wallet inyectada. Instalá una extensión Ethereum para conectarte."
+    "wrongNetwork": "You're on a network other than {expected}.",
+    "switch": "Switch to {network}",
+    "noInjected": "We didn't detect MetaMask or another injected wallet. Install an Ethereum extension to connect."
   },
   "locale": {
-    "label": "Idioma",
+    "label": "Language",
     "es": "Español",
     "pt": "Português",
     "en": "English"
   },
   "landing": {
     "hero": {
-      "eyebrow": "Trabajo Final de Máster · CodeCrypto Academy 2026",
-      "title": "Trazabilidad de donaciones de sangre en Ethereum.",
-      "subtitle": "Del donante al receptor, cada evento queda asentado en un contrato inmutable. Look-back automatizado, cadena de frío auditada, certificaciones como NFTs.",
-      "ctaPrimary": "Verificar una unidad",
-      "ctaSecondary": "Conectar wallet"
+      "eyebrow": "Master's Final Project · CodeCrypto Academy 2026",
+      "title": "Blood donation traceability on Ethereum.",
+      "subtitle": "From donor to recipient, every event is recorded in an immutable contract. Automated look-back, audited cold chain, certifications as NFTs.",
+      "ctaPrimary": "Verify a unit",
+      "ctaSecondary": "Connect wallet"
     },
     "stats": {
-      "title": "Estado del sistema",
-      "subtitle": "Valores de demostración (Anvil local). En producción se actualizan en tiempo real vía indexador.",
-      "donations": "Donaciones registradas",
-      "components": "Componentes en custodia",
-      "certificates": "Certificados emitidos",
-      "lookbacks": "Look-back ejecutados"
+      "title": "System status",
+      "subtitle": "Demo values (local Anvil). In production they update in real time via the indexer.",
+      "donations": "Donations recorded",
+      "components": "Components in custody",
+      "certificates": "Certificates issued",
+      "lookbacks": "Look-backs executed"
     },
     "innovation": {
-      "title": "Por qué HemaChain",
-      "subtitle": "Diferenciadores vs. un sistema legacy o un esqueleto genérico de trazabilidad.",
+      "title": "Why HemaChain",
+      "subtitle": "Differentiators vs. a legacy system or a generic traceability skeleton.",
       "cards": {
         "lookback": {
-          "title": "Look-back automatizado",
-          "body": "Una sola llamada on-chain marca como Recalled todos los componentes derivados de un donante con resultado adverso posterior."
+          "title": "Automated look-back",
+          "body": "A single on-chain call marks as Recalled every component derived from a donor with a later adverse result."
         },
         "coldChain": {
-          "title": "Cadena de frío auditada",
-          "body": "Cada transferencia registra temperatura; un desvío fuera de rango dispara el cambio automático a estado Recalled."
+          "title": "Audited cold chain",
+          "body": "Each transfer records temperature; a reading out of range triggers the automatic switch to the Recalled state."
         },
         "certificates": {
-          "title": "Certificados como NFTs",
-          "body": "ERC-721 con hash del PDF anclado en IPFS. Verificación criptográfica antes de renderizar."
+          "title": "Certificates as NFTs",
+          "body": "ERC-721 with the PDF hash anchored on IPFS. Cryptographic verification before rendering."
         },
         "privacy": {
-          "title": "Privacidad por diseño",
-          "body": "Ninguna PII on-chain. Sólo hashes (keccak256 con salt institucional). Compatible con la Ley 25.326."
+          "title": "Privacy by design",
+          "body": "No PII on-chain. Only hashes (keccak256 with an institutional salt). Compliant with Ley 25.326."
         },
         "chagas": {
-          "title": "Tamizaje argentino",
-          "body": "Chagas obligatorio en el panel serológico. Especificidad regional, no replicable copiando un modelo genérico."
+          "title": "Argentine screening panel",
+          "body": "Chagas is mandatory in the serology panel. Regional specificity, not replicable by copying a generic model."
         },
         "public": {
-          "title": "Verificación pública",
-          "body": "QR impreso en la unidad apunta a /verify/[id] — accesible sin wallet, sin login, en cualquier dispositivo."
+          "title": "Public verification",
+          "body": "A QR printed on the unit points to /verify/[id] — accessible without a wallet, without login, on any device."
         }
       }
     },
     "regulatory": {
-      "title": "Anclada en la Resolución 536/2026",
-      "body": "El Ministerio de Salud argentino moderniza el Sistema Nacional de Sangre y exige trazabilidad informatizada en todos los centros de hemoterapia, con un plazo de implementación de dos años. HemaChain constituye una implementación de referencia técnica, compatible con el estándar global ISBT 128.",
-      "link": "Ver fuentes en el SDD"
+      "title": "Anchored in Resolution 536/2026",
+      "body": "Argentina's Ministry of Health is modernizing the National Blood System and requires computerized traceability across every hemotherapy center, with a two-year implementation deadline. HemaChain is a technical reference implementation, compatible with the global ISBT 128 standard.",
+      "link": "See sources in the SDD"
     },
     "network": {
-      "title": "Red nacional de instituciones",
-      "subtitle": "Bancos de sangre, laboratorios, centros de fraccionamiento, servicios de medicina transfusional, hemovigilancia y acreditación conectados a un mismo libro mayor. Coordenadas off-chain (la cadena sólo guarda hashes de geolocalización)."
+      "title": "National network of institutions",
+      "subtitle": "Blood banks, laboratories, fractionation centers, transfusion-medicine services, hemovigilance and accreditation connected to a single ledger. Off-chain coordinates (the chain only stores geolocation hashes)."
     },
     "cta": {
-      "title": "¿Listo para explorar?",
-      "body": "Conectá tu wallet, pedí un rol y empezá a recorrer el ciclo de vida completo de una unidad de sangre.",
-      "primary": "Conectar wallet",
-      "secondary": "Leer el SDD"
+      "title": "Ready to explore?",
+      "body": "Connect your wallet, request a role and start walking through the full lifecycle of a blood unit.",
+      "primary": "Connect wallet",
+      "secondary": "Read the SDD"
     }
   },
   "footer": {
-    "tagline": "Implementación de referencia · MIT · adaptable a cualquier servicio de hemoterapia.",
-    "academy": "CodeCrypto Academy · Cohorte 2026",
+    "tagline": "Reference implementation · MIT · adaptable to any hemotherapy service.",
+    "academy": "CodeCrypto Academy · 2026 cohort",
     "links": {
-      "github": "Código en GitHub",
-      "sdd": "Diseño técnico (SDD)",
+      "github": "Code on GitHub",
+      "sdd": "Technical design (SDD)",
       "readme": "README"
     }
   },
   "verify": {
-    "label": "Verificar",
-    "brand": "Verificación pública",
+    "label": "Verify",
+    "brand": "Public verification",
     "header": {
-      "title": "Verificación de trazabilidad",
-      "subtitle": "Identificador {id} · cadena anonimizada sobre Ethereum."
+      "title": "Traceability verification",
+      "subtitle": "Identifier {id} · anonymized chain on Ethereum."
     },
     "search": {
-      "title": "Verificar una unidad o componente",
-      "subtitle": "Ingresá el identificador impreso en el código QR de la bolsa.",
-      "idLabel": "Identificador numérico",
-      "idPlaceholder": "Ej. 3",
-      "unit": "Unidad",
-      "component": "Componente",
-      "cta": "Verificar",
-      "hint": "Sin wallet ni registro: la consulta es pública y de sólo lectura."
+      "title": "Verify a unit or component",
+      "subtitle": "Enter the identifier printed on the bag's QR code.",
+      "idLabel": "Numeric identifier",
+      "idPlaceholder": "E.g. 3",
+      "unit": "Unit",
+      "component": "Component",
+      "cta": "Verify",
+      "hint": "No wallet or sign-up: the query is public and read-only."
     },
     "component": {
-      "title": "Componente verificado",
-      "expires": "Vence el {date}"
+      "title": "Verified component",
+      "expires": "Expires on {date}"
     },
     "origin": {
-      "title": "Donación de origen",
-      "summary": "{volume} ml · recolectada el {collected}",
-      "screeningClear": "Tamizaje completo: todos los marcadores no reactivos",
-      "screeningFindings": "Tamizaje con marcador(es) reactivo(s)",
-      "noScreening": "Tamizaje aún no registrado."
+      "title": "Source donation",
+      "summary": "{volume} ml · collected on {collected}",
+      "screeningClear": "Screening complete: all markers non-reactive",
+      "screeningFindings": "Screening with reactive marker(s)",
+      "noScreening": "Screening not recorded yet."
     },
     "lineage": {
-      "title": "Linaje de componentes",
-      "subtitle": "Componentes derivados de esta donación."
+      "title": "Component lineage",
+      "subtitle": "Components derived from this donation."
     },
     "timeline": {
-      "title": "Trazabilidad on-chain",
-      "empty": "Sin eventos registrados."
+      "title": "On-chain traceability",
+      "empty": "No events recorded."
     },
     "qr": {
-      "title": "Compartir verificación",
-      "hint": "Escaneá o imprimí este código para volver a esta página."
+      "title": "Share verification",
+      "hint": "Scan or print this code to return to this page."
     },
-    "anon": "Privacidad por diseño: on-chain sólo hay hashes irreversibles (Ley 25.326). Ningún dato personal del donante o del paciente sale de la institución de origen.",
+    "anon": "Privacy by design: on-chain there are only irreversible hashes (Ley 25.326). No personal data of the donor or patient ever leaves the originating institution.",
     "notFound": {
-      "title": "Sin resultados",
-      "body": "No existe ningún registro para el identificador {id}."
+      "title": "No results",
+      "body": "There is no record for identifier {id}."
     },
     "invalid": {
-      "title": "Identificador inválido",
-      "body": "Usá un número, o el prefijo u/c (por ejemplo u3 para una unidad, c5 para un componente)."
+      "title": "Invalid identifier",
+      "body": "Use a number, or the u/c prefix (for example u3 for a unit, c5 for a component)."
     },
-    "loading": "Consultando la cadena…"
+    "loading": "Querying the chain…"
   },
   "tx": {
-    "waiting": "Esperando confirmación on-chain…",
-    "unknown": "Error desconocido en la transacción"
+    "waiting": "Waiting for on-chain confirmation…",
+    "unknown": "Unknown transaction error"
   },
   "connect": {
     "hero": {
-      "title": "Solicitá tu rol en HemaChain",
-      "subtitle": "Identificate como Banco de Sangre, Laboratorio u otra institución. Un Administrador revisa tu solicitud y aprueba el rol. Una vez aprobado, accedés al panel correspondiente."
+      "title": "Request your role in HemaChain",
+      "subtitle": "Identify yourself as a Blood Bank, Laboratory or another institution. An Administrator reviews your request and approves the role. Once approved, you gain access to the corresponding dashboard."
     },
     "form": {
-      "title": "Solicitud de rol institucional",
-      "subtitle": "La solicitud queda registrada on-chain. Sólo el Admin puede aprobarla.",
-      "role": "Rol solicitado",
-      "name": "Nombre de la institución",
+      "title": "Institutional role request",
+      "subtitle": "The request is recorded on-chain. Only the Admin can approve it.",
+      "role": "Requested role",
+      "name": "Institution name",
       "namePlaceholder": "Hospital de Clínicas — CABA",
-      "country": "País (ISO-2)",
-      "countryHint": "Código de dos letras, ej. AR, BR, UY.",
-      "submit": "Enviar solicitud",
-      "networkOk": "Conectado a la red correcta.",
-      "networkWarning": "Cambiá a la red configurada antes de enviar."
+      "country": "Country (ISO-2)",
+      "countryHint": "Two-letter code, e.g. AR, BR, UY.",
+      "submit": "Submit request",
+      "networkOk": "Connected to the correct network.",
+      "networkWarning": "Switch to the configured network before submitting."
     },
     "errors": {
-      "name": "El nombre debe tener al menos 2 caracteres.",
-      "country": "Usá exactamente dos letras (ISO-3166 alfa-2)."
+      "name": "The name must be at least 2 characters.",
+      "country": "Use exactly two letters (ISO-3166 alpha-2)."
     },
     "toast": {
-      "pending": "Enviando solicitud…",
-      "success": "Solicitud registrada. Esperá la aprobación.",
-      "errorPrefix": "No se pudo solicitar el rol"
+      "pending": "Submitting request…",
+      "success": "Request recorded. Wait for approval.",
+      "errorPrefix": "Could not request the role"
     },
     "blocked": {
       "noInjected": {
-        "title": "Wallet no detectada",
-        "body": "Instalá MetaMask u otra extensión Ethereum para solicitar un rol."
+        "title": "Wallet not detected",
+        "body": "Install MetaMask or another Ethereum extension to request a role."
       },
       "notConnected": {
-        "title": "Conectá tu wallet",
-        "body": "Necesitamos tu dirección para registrar la solicitud on-chain.",
-        "cta": "Conectar wallet"
+        "title": "Connect your wallet",
+        "body": "We need your address to record the request on-chain.",
+        "cta": "Connect wallet"
       },
       "alreadyHasRole": {
-        "title": "Ya tenés un rol asignado",
-        "body": "Tu rol actual es {role}. No podés solicitar otro mientras éste esté activo.",
-        "cta": "Ir al panel"
+        "title": "You already have a role",
+        "body": "Your current role is {role}. You can't request another while it's active.",
+        "cta": "Go to dashboard"
       }
     }
   },
   "dashboard": {
-    "title": "Panel",
-    "subtitle": "Acciones disponibles según tu rol activo.",
-    "loading": "Resolviendo rol…",
-    "wrongNetworkHint": "Estás en una red distinta a la configurada — algunas acciones quedan bloqueadas hasta cambiar.",
+    "title": "Dashboard",
+    "subtitle": "Actions available based on your active role.",
+    "loading": "Resolving role…",
+    "wrongNetworkHint": "You're on a network other than the configured one — some actions stay blocked until you switch.",
     "noInjected": {
-      "title": "Wallet no detectada",
-      "body": "Instalá MetaMask u otra extensión Ethereum para usar el panel."
+      "title": "Wallet not detected",
+      "body": "Install MetaMask or another Ethereum extension to use the dashboard."
     },
     "connect": {
-      "title": "Conectá tu wallet",
-      "body": "Necesitamos tu dirección para resolver tu rol on-chain.",
-      "cta": "Conectar wallet"
+      "title": "Connect your wallet",
+      "body": "We need your address to resolve your role on-chain.",
+      "cta": "Connect wallet"
     },
     "noRole": {
-      "title": "Aún no tenés un rol",
-      "body": "Solicitá uno y esperá que el Admin lo apruebe.",
-      "cta": "Solicitar un rol"
+      "title": "You don't have a role yet",
+      "body": "Request one and wait for the Admin to approve it.",
+      "cta": "Request a role"
     },
     "admin": {
-      "title": "Sos Administrador",
-      "body": "Podés aprobar o rechazar solicitudes de rol pendientes.",
-      "cta": "Abrir cola de aprobación"
+      "title": "You're an Administrator",
+      "body": "You can approve or reject pending role requests.",
+      "cta": "Open approval queue"
     },
     "roleAssigned": {
-      "title": "Tu rol está activo",
-      "body": "El panel especializado para tu rol estará disponible en la próxima entrega.",
-      "bodyWithName": "Institución registrada: {name} ({country}). Entrá al panel para empezar a operar.",
-      "openPanel": "Abrir mi panel",
-      "placeholder": "Próximamente: acciones específicas de este rol (Capa B.2: hospital, auditor, certificador)."
+      "title": "Your role is active",
+      "body": "The specialized dashboard for your role will be available in the next release.",
+      "bodyWithName": "Registered institution: {name} ({country}). Enter the dashboard to start operating.",
+      "openPanel": "Open my dashboard",
+      "placeholder": "Coming soon: actions specific to this role (Layer B.2: hospital, auditor, certifier)."
     },
     "gate": {
-      "deniedTitle": "Acceso restringido",
-      "deniedBody": "Esta pantalla requiere el rol {role}.",
-      "wrongNetworkTitle": "Red incorrecta"
+      "deniedTitle": "Restricted access",
+      "deniedBody": "This screen requires the {role} role.",
+      "wrongNetworkTitle": "Wrong network"
     }
   },
   "unitStatus": {
     "None": "—",
-    "Collected": "Recolectada",
-    "UnderTest": "En tamizaje",
-    "Quarantined": "En cuarentena",
-    "Released": "Liberada",
-    "Processed": "Procesada",
-    "Recalled": "Retirada"
+    "Collected": "Collected",
+    "UnderTest": "Under screening",
+    "Quarantined": "Quarantined",
+    "Released": "Released",
+    "Processed": "Processed",
+    "Recalled": "Recalled"
   },
   "bancoSangre": {
-    "title": "Banco de Sangre",
-    "subtitle": "Registrá donaciones e inspeccioná tu inventario de unidades.",
+    "title": "Blood Bank",
+    "subtitle": "Record donations and inspect your unit inventory.",
     "form": {
-      "title": "Registrar donación",
-      "subtitle": "Sólo el hash del DNI se asienta on-chain. Producción usa hash con sal institucional secreta (Ley 25.326 / SDD §11.4).",
-      "dni": "DNI del donante",
-      "dniHint": "El sistema computa keccak256(DNI). En producción se suma una sal institucional secreta.",
-      "volume": "Volumen extraído (ml)",
-      "volumeHint": "Típico: 450 ml. Rango aceptado: 100–500.",
-      "abo": "Grupo ABO/Rh",
-      "submit": "Registrar donación",
+      "title": "Record donation",
+      "subtitle": "Only the hash of the ID number is stored on-chain. Production uses a hash with a secret institutional salt (Ley 25.326 / SDD §11.4).",
+      "dni": "Donor ID (DNI)",
+      "dniHint": "The system computes keccak256(DNI). In production a secret institutional salt is added.",
+      "volume": "Volume collected (ml)",
+      "volumeHint": "Typical: 450 ml. Accepted range: 100–500.",
+      "abo": "ABO/Rh group",
+      "submit": "Record donation",
       "errors": {
-        "dni": "El DNI debe tener al menos 4 caracteres.",
-        "volume": "Volumen fuera de rango (100–500 ml)."
+        "dni": "The ID number must be at least 4 characters.",
+        "volume": "Volume out of range (100–500 ml)."
       },
       "toast": {
-        "pending": "Registrando donación…",
-        "success": "Donación registrada.",
-        "errorPrefix": "No se pudo registrar"
+        "pending": "Recording donation…",
+        "success": "Donation recorded.",
+        "errorPrefix": "Could not record"
       }
     },
     "list": {
-      "title": "Mis donaciones recientes",
-      "subtitle": "Unidades recolectadas por esta institución (derivado de eventos DonationCollected).",
-      "refresh": "Refrescar",
-      "loading": "Consultando logs…",
-      "empty": "Todavía no registraste donaciones."
+      "title": "My recent donations",
+      "subtitle": "Units collected by this institution (derived from DonationCollected events).",
+      "refresh": "Refresh",
+      "loading": "Querying logs…",
+      "empty": "You haven't recorded any donations yet."
     },
-    "navStorage": "Ir al inventario de componentes →"
+    "navStorage": "Go to component inventory →"
   },
   "laboratorio": {
-    "title": "Laboratorio de tamizaje",
-    "subtitle": "Cargá resultados serológicos y decidí liberar o cuarentenar cada unidad.",
+    "title": "Screening laboratory",
+    "subtitle": "Record serology results and decide whether to release or quarantine each unit.",
     "queue": {
-      "title": "Unidades pendientes de tamizaje",
-      "subtitle": "Estado Collected — esperan recordTestResult con el panel HIV/HBV/HCV/sífilis/HTLV/Chagas.",
-      "refresh": "Refrescar",
-      "empty": "No hay unidades pendientes."
+      "title": "Units pending screening",
+      "subtitle": "Collected status — awaiting recordTestResult with the HIV/HBV/HCV/syphilis/HTLV/Chagas panel.",
+      "refresh": "Refresh",
+      "empty": "No pending units."
     },
     "screen": {
-      "collected": "Recolectada",
-      "aboConfirmed": "ABO confirmado",
-      "submit": "Cargar resultado",
+      "collected": "Collected",
+      "aboConfirmed": "ABO confirmed",
+      "submit": "Record result",
       "flag": {
         "hiv": "HIV",
         "hbv": "HBV",
         "hcv": "HCV",
-        "syphilis": "Sífilis",
+        "syphilis": "Syphilis",
         "htlv": "HTLV",
         "chagas": "Chagas"
       }
     },
     "decisions": {
-      "title": "Decisiones post-tamizaje",
-      "subtitle": "Unidades en estado UnderTest esperan liberación o cuarentena.",
-      "empty": "No hay unidades en revisión.",
-      "underTest": "En revisión",
-      "release": "Liberar",
-      "quarantine": "Cuarentenar",
-      "reasonPrompt": "Motivo de cuarentena (queda on-chain en el evento):",
-      "loadingResult": "Cargando resultado…",
-      "allNegative": "Todos negativos",
-      "mustQuarantine": "Hay marcadores positivos: el contrato bloquea la liberación, sólo se puede cuarentenar."
+      "title": "Post-screening decisions",
+      "subtitle": "Units in UnderTest status await release or quarantine.",
+      "empty": "No units under review.",
+      "underTest": "Under review",
+      "release": "Release",
+      "quarantine": "Quarantine",
+      "reasonPrompt": "Quarantine reason (recorded on-chain in the event):",
+      "loadingResult": "Loading result…",
+      "allNegative": "All negative",
+      "mustQuarantine": "Positive markers present: the contract blocks release; quarantine only."
     },
     "toast": {
-      "recordPending": "Registrando resultado…",
-      "recordSuccess": "Resultado registrado para unidad #{id}.",
-      "recordError": "No se pudo registrar el resultado",
-      "releasePending": "Liberando unidad…",
-      "releaseSuccess": "Unidad liberada.",
-      "releaseError": "No se pudo liberar",
-      "quarantinePending": "Cuarentenando unidad…",
-      "quarantineSuccess": "Unidad cuarentenada.",
-      "quarantineError": "No se pudo cuarentenar"
+      "recordPending": "Recording result…",
+      "recordSuccess": "Result recorded for unit #{id}.",
+      "recordError": "Could not record the result",
+      "releasePending": "Releasing unit…",
+      "releaseSuccess": "Unit released.",
+      "releaseError": "Could not release",
+      "quarantinePending": "Quarantining unit…",
+      "quarantineSuccess": "Unit quarantined.",
+      "quarantineError": "Could not quarantine"
     }
   },
   "unitDetail": {
-    "title": "Unidad #{id}",
-    "subtitle": "Trazabilidad completa de la donación.",
-    "loading": "Cargando estado…",
-    "invalidId": "Identificador inválido",
-    "invalidIdBody": "El ID de unidad debe ser numérico.",
-    "notFound": "Unidad no encontrada",
-    "notFoundBody": "No existe ninguna unidad con id #{id}.",
-    "summary": "{volume} ml · recolectada {collected}",
-    "donorHash": "Hash del donante",
-    "collection": "Banco de recolección",
-    "custodian": "Custodia actual",
+    "title": "Unit #{id}",
+    "subtitle": "Full traceability of the donation.",
+    "loading": "Loading state…",
+    "invalidId": "Invalid identifier",
+    "invalidIdBody": "The unit ID must be numeric.",
+    "notFound": "Unit not found",
+    "notFoundBody": "There is no unit with id #{id}.",
+    "summary": "{volume} ml · collected {collected}",
+    "donorHash": "Donor hash",
+    "collection": "Collection bank",
+    "custodian": "Current custody",
     "test": {
-      "title": "Resultado de tamizaje",
-      "byLab": "Procesado por {lab} el {at}"
+      "title": "Screening result",
+      "byLab": "Processed by {lab} on {at}"
     },
     "children": {
-      "title": "Componentes derivados",
-      "subtitle": "{n} componente(s) generados por fraccionamiento."
+      "title": "Derived components",
+      "subtitle": "{n} component(s) generated by fractionation."
     },
-    "timeline": "Timeline on-chain",
-    "timelineEmpty": "Sin eventos.",
+    "timeline": "On-chain timeline",
+    "timelineEmpty": "No events.",
     "qr": {
-      "title": "Verificación pública",
-      "hint": "Código QR imprimible para la bolsa — apunta a la página pública /verify."
+      "title": "Public verification",
+      "hint": "Printable QR code for the bag — points to the public /verify page."
     }
   },
   "componentDetail": {
-    "title": "Componente #{id}",
-    "subtitle": "Cadena de custodia, expiración y trazabilidad inversa.",
-    "loading": "Cargando estado…",
-    "invalidId": "Identificador inválido",
-    "invalidIdBody": "El ID de componente debe ser numérico.",
-    "notFound": "Componente no encontrado",
-    "notFoundBody": "No existe ningún componente con id #{id}.",
-    "summary": "{volume} ml · derivado de unidad #{parent}",
-    "parent": "Unidad madre",
-    "processor": "Fraccionador",
-    "custodian": "Custodia actual",
-    "tempRange": "Rango de temperatura",
-    "shelfLife": "Vida útil",
-    "days": "días",
-    "expired": "Vencido",
-    "expiresOn": "Vence {date}",
-    "timeline": "Cadena de custodia",
-    "timelineEmpty": "Sin eventos.",
+    "title": "Component #{id}",
+    "subtitle": "Custody chain, expiry and reverse traceability.",
+    "loading": "Loading state…",
+    "invalidId": "Invalid identifier",
+    "invalidIdBody": "The component ID must be numeric.",
+    "notFound": "Component not found",
+    "notFoundBody": "There is no component with id #{id}.",
+    "summary": "{volume} ml · derived from unit #{parent}",
+    "parent": "Parent unit",
+    "processor": "Fractionator",
+    "custodian": "Current custody",
+    "tempRange": "Temperature range",
+    "shelfLife": "Shelf life",
+    "days": "days",
+    "expired": "Expired",
+    "expiresOn": "Expires {date}",
+    "timeline": "Custody chain",
+    "timelineEmpty": "No events.",
     "qr": {
-      "title": "Verificación pública",
-      "hint": "Código QR imprimible para la bolsa — apunta a la página pública /verify."
+      "title": "Public verification",
+      "hint": "Printable QR code for the bag — points to the public /verify page."
     }
   },
   "traceTimeline": {
-    "DonationCollected": "Donación registrada",
-    "TestResultRecorded": "Tamizaje serológico",
-    "UnitReleased": "Unidad liberada",
-    "UnitQuarantined": "Unidad en cuarentena",
-    "UnitRecalled": "Unidad retirada (recall)",
-    "ComponentProduced": "Componente fraccionado",
-    "ComponentCustodyTransferred": "Transferencia de custodia",
-    "ComponentCrossMatched": "Prueba cruzada",
-    "ComponentRecalled": "Componente retirado (recall)",
-    "Transfused": "Transfusión registrada",
+    "DonationCollected": "Donation recorded",
+    "TestResultRecorded": "Serology screening",
+    "UnitReleased": "Unit released",
+    "UnitQuarantined": "Unit quarantined",
+    "UnitRecalled": "Unit recalled",
+    "ComponentProduced": "Component fractionated",
+    "ComponentCustodyTransferred": "Custody transfer",
+    "ComponentCrossMatched": "Cross-match",
+    "ComponentRecalled": "Component recalled",
+    "Transfused": "Transfusion recorded",
     "volumeMl": "{volume} ml",
-    "testReactive": "Marcador(es) reactivo(s) detectado(s)",
-    "testClear": "Todos los marcadores no reactivos",
-    "reason": "Motivo: {reason}",
+    "testReactive": "Reactive marker(s) detected",
+    "testClear": "All markers non-reactive",
+    "reason": "Reason: {reason}",
     "custodyDetail": "{temp} °C · {from} → {to}",
-    "patient": "Paciente {hash}",
-    "txRef": "bloque #{block} · tx {tx}"
+    "patient": "Patient {hash}",
+    "txRef": "block #{block} · tx {tx}"
   },
   "coldChain": {
-    "noData": "Sin lecturas de temperatura",
-    "intact": "Cadena de frío íntegra",
-    "breached": "Excursión térmica",
-    "range": "rango {min}…{max} °C",
-    "aria": "Última lectura {last} °C"
+    "noData": "No temperature readings",
+    "intact": "Cold chain intact",
+    "breached": "Temperature excursion",
+    "range": "range {min}…{max} °C",
+    "aria": "Last reading {last} °C"
   },
   "componentStatus": {
     "None": "—",
-    "Produced": "Producido",
-    "InStorage": "En almacén",
-    "Reserved": "Reservado",
-    "Transfused": "Transfundido",
-    "Recalled": "Retirado"
+    "Produced": "Produced",
+    "InStorage": "In storage",
+    "Reserved": "Reserved",
+    "Transfused": "Transfused",
+    "Recalled": "Recalled"
   },
   "inventory": {
-    "refresh": "Refrescar",
-    "loading": "Consultando componentes…",
-    "empty": "No hay componentes en tu custodia.",
-    "expired": "Vencido",
-    "expiresOn": "Vence {date}"
+    "refresh": "Refresh",
+    "loading": "Querying components…",
+    "empty": "No components in your custody.",
+    "expired": "Expired",
+    "expiresOn": "Expires {date}"
   },
   "banco": {
-    "title": "Banco / Almacén",
-    "subtitle": "Inventario de componentes en custodia y despacho con cadena de frío.",
-    "navDonations": "← Volver a donaciones",
+    "title": "Bank / Warehouse",
+    "subtitle": "Inventory of components in custody and dispatch with cold chain.",
+    "navDonations": "← Back to donations",
     "inventory": {
-      "title": "Inventario en custodia",
-      "subtitle": "Componentes cuya custodia actual es tu wallet."
+      "title": "Inventory in custody",
+      "subtitle": "Components whose current custody is your wallet."
     },
     "transfer": {
-      "title": "Transferir custodia",
-      "subtitle": "El contrato registra la temperatura. Fuera de rango → la unidad pasa automáticamente a Recalled (cadena de frío rota).",
-      "component": "Componente",
-      "componentPlaceholder": "Elegí un componente…",
-      "to": "Destino",
-      "toHint": "Address de otra institución registrada y activa.",
-      "temperature": "Temperatura (°C)",
-      "location": "Ubicación",
-      "locationHint": "Se hashea en client → gpsHash (demo).",
-      "handoff": "Nota de entrega",
-      "handoffHint": "Se hashea en client → signedHandoffHash (demo).",
-      "submit": "Transferir",
-      "submitRecall": "Transferir (forzará recall)",
-      "tempWarning": "Temperatura fuera del rango admitido — el contrato disparará un recall.",
+      "title": "Transfer custody",
+      "subtitle": "The contract records the temperature. Out of range → the unit automatically moves to Recalled (broken cold chain).",
+      "component": "Component",
+      "componentPlaceholder": "Choose a component…",
+      "to": "Destination",
+      "toHint": "Address of another registered, active institution.",
+      "temperature": "Temperature (°C)",
+      "location": "Location",
+      "locationHint": "Hashed client-side → gpsHash (demo).",
+      "handoff": "Handoff note",
+      "handoffHint": "Hashed client-side → signedHandoffHash (demo).",
+      "submit": "Transfer",
+      "submitRecall": "Transfer (will force recall)",
+      "tempWarning": "Temperature out of the accepted range — the contract will trigger a recall.",
       "errors": {
-        "componentId": "Elegí un componente.",
-        "to": "Address inválida (0x… 40 hex)."
+        "componentId": "Choose a component.",
+        "to": "Invalid address (0x… 40 hex)."
       },
       "toast": {
-        "pending": "Transfiriendo custodia…",
-        "success": "Custodia transferida.",
-        "successButRecalled": "Transferencia OK pero la temperatura disparó un recall.",
-        "error": "No se pudo transferir"
+        "pending": "Transferring custody…",
+        "success": "Custody transferred.",
+        "successButRecalled": "Transfer OK but the temperature triggered a recall.",
+        "error": "Could not transfer"
       }
     }
   },
   "hospital": {
-    "title": "Medicina Transfusional",
-    "subtitle": "Prueba cruzada y registro de transfusiones.",
+    "title": "Transfusion Medicine",
+    "subtitle": "Cross-match and transfusion recording.",
     "inventory": {
-      "title": "Componentes recibidos",
-      "subtitle": "Componentes cuya custodia actual es este hospital."
+      "title": "Components received",
+      "subtitle": "Components whose current custody is this hospital."
     },
     "crossMatch": {
-      "title": "Prueba cruzada",
-      "subtitle": "Reserva un componente Produced/InStorage para un paciente identificado por hash.",
-      "component": "Componente",
-      "componentPlaceholder": "Elegí un componente disponible…",
-      "noneAvailable": "Sin componentes disponibles. Pedile al banco que transfiera la custodia.",
-      "patient": "Identificador del paciente",
-      "patientHint": "Historia clínica o DNI. Se hashea en client (producción: + sal institucional).",
-      "submit": "Reservar para paciente",
+      "title": "Cross-match",
+      "subtitle": "Reserves a Produced/InStorage component for a patient identified by hash.",
+      "component": "Component",
+      "componentPlaceholder": "Choose an available component…",
+      "noneAvailable": "No components available. Ask the bank to transfer custody.",
+      "patient": "Patient identifier",
+      "patientHint": "Medical record or ID number. Hashed client-side (production: + institutional salt).",
+      "submit": "Reserve for patient",
       "errors": {
-        "componentId": "Elegí un componente.",
-        "patient": "El identificador debe tener al menos 4 caracteres."
+        "componentId": "Choose a component.",
+        "patient": "The identifier must be at least 4 characters."
       },
       "toast": {
-        "pending": "Reservando componente…",
-        "success": "Componente reservado para el paciente.",
-        "error": "No se pudo reservar"
+        "pending": "Reserving component…",
+        "success": "Component reserved for the patient.",
+        "error": "Could not reserve"
       }
     },
     "transfuse": {
-      "title": "Componentes reservados",
-      "subtitle": "Listos para transfundir.",
-      "reserved": "Reservado",
-      "empty": "No hay componentes reservados.",
-      "cta": "Registrar transfusión",
+      "title": "Reserved components",
+      "subtitle": "Ready to transfuse.",
+      "reserved": "Reserved",
+      "empty": "No reserved components.",
+      "cta": "Record transfusion",
       "toast": {
-        "pending": "Registrando transfusión…",
-        "success": "Transfusión registrada para componente #{id}.",
-        "error": "No se pudo registrar la transfusión"
+        "pending": "Recording transfusion…",
+        "success": "Transfusion recorded for component #{id}.",
+        "error": "Could not record the transfusion"
       }
     }
   },
   "auditor": {
-    "title": "Hemovigilancia",
-    "subtitle": "Reportar eventos adversos y auditar la actividad on-chain.",
+    "title": "Hemovigilance",
+    "subtitle": "Report adverse events and audit on-chain activity.",
     "form": {
-      "title": "Reportar evento adverso",
-      "subtitle": "Para DonorPositive, el contrato dispara look-back y marca como Recalled todas las unidades/componentes derivados.",
-      "kind": "Tipo de evento",
+      "title": "Report adverse event",
+      "subtitle": "For DonorPositive, the contract triggers look-back and marks as Recalled every derived unit/component.",
+      "kind": "Event type",
       "kinds": {
-        "DonorPositive": "Donante positivo (post-donación)",
-        "RecipientReaction": "Reacción del receptor",
-        "EquipmentFailure": "Fallo de equipamiento"
+        "DonorPositive": "Donor positive (post-donation)",
+        "RecipientReaction": "Recipient reaction",
+        "EquipmentFailure": "Equipment failure"
       },
-      "trigger": "Identificador del trigger",
-      "triggerPlaceholder": "DNI del donante o referencia",
+      "trigger": "Trigger identifier",
+      "triggerPlaceholder": "Donor ID number or reference",
       "triggerHints": {
-        "DonorPositive": "DNI del donante — el hash debe coincidir con los donorIdHash de las donaciones a recall-ear.",
-        "RecipientReaction": "Referencia del paciente (sólo se loguea on-chain, sin recall propagado).",
-        "EquipmentFailure": "ID del equipamiento o serie (sólo log, sin recall propagado)."
+        "DonorPositive": "Donor ID number — the hash must match the donorIdHash of the donations to recall.",
+        "RecipientReaction": "Patient reference (only logged on-chain, no propagated recall).",
+        "EquipmentFailure": "Equipment ID or serial (log only, no propagated recall)."
       },
-      "submit": "Reportar evento",
+      "submit": "Report event",
       "errors": {
-        "trigger": "El identificador debe tener al menos 4 caracteres."
+        "trigger": "The identifier must be at least 4 characters."
       },
       "toast": {
-        "pending": "Reportando evento…",
-        "success": "Evento adverso registrado.",
-        "error": "No se pudo reportar"
+        "pending": "Reporting event…",
+        "success": "Adverse event recorded.",
+        "error": "Could not report"
       }
     },
     "timeline": {
-      "title": "Timeline reciente",
-      "subtitle": "Últimos 40 eventos del contrato, ordenados desde el bloque más reciente.",
-      "refresh": "Refrescar",
-      "loading": "Consultando logs…",
-      "empty": "Sin actividad on-chain todavía."
+      "title": "Recent timeline",
+      "subtitle": "Last 40 contract events, ordered from the most recent block.",
+      "refresh": "Refresh",
+      "loading": "Querying logs…",
+      "empty": "No on-chain activity yet."
     }
   },
   "fraccionamiento": {
-    "title": "Fraccionamiento",
-    "subtitle": "Producí componentes (RBC, FFP, PLT, CRYO) a partir de unidades liberadas.",
+    "title": "Fractionation",
+    "subtitle": "Produce components (RBC, FFP, PLT, CRYO) from released units.",
     "queue": {
-      "title": "Unidades disponibles",
-      "subtitle": "Estados Released y Processed. El sistema calcula el volumen restante (splitVolumeOf).",
-      "refresh": "Refrescar",
-      "loading": "Consultando…",
-      "empty": "No hay unidades disponibles para fraccionar.",
+      "title": "Available units",
+      "subtitle": "Released and Processed statuses. The system computes the remaining volume (splitVolumeOf).",
+      "refresh": "Refresh",
+      "loading": "Querying…",
+      "empty": "No units available to fractionate.",
       "totalVolume": "Total: {ml} ml",
-      "remaining": "Disponible: {ml} ml"
+      "remaining": "Available: {ml} ml"
     },
     "form": {
-      "type": "Tipo de componente",
-      "volume": "Volumen (ml)",
-      "submit": "Producir componente",
-      "errorMin": "El volumen debe ser mayor a 0.",
-      "errorMax": "Supera el volumen restante."
+      "type": "Component type",
+      "volume": "Volume (ml)",
+      "submit": "Produce component",
+      "errorMin": "The volume must be greater than 0.",
+      "errorMax": "Exceeds the remaining volume."
     },
     "toast": {
-      "pending": "Produciendo componente…",
-      "success": "Componente generado desde unidad #{id}.",
-      "error": "No se pudo producir el componente"
+      "pending": "Producing component…",
+      "success": "Component generated from unit #{id}.",
+      "error": "Could not produce the component"
     }
   },
   "admin": {
-    "title": "Panel del Administrador",
-    "subtitle": "Aprobación y revocación de roles institucionales.",
-    "loading": "Cargando estado…",
+    "title": "Administrator Dashboard",
+    "subtitle": "Approval and revocation of institutional roles.",
+    "loading": "Loading state…",
     "denied": {
-      "title": "Acceso restringido",
-      "body": "Sólo direcciones con DEFAULT_ADMIN_ROLE pueden acceder a esta pantalla.",
-      "connect": "Conectá tu wallet de administrador para continuar.",
-      "cta": "Conectar wallet",
-      "back": "Volver al panel"
+      "title": "Restricted access",
+      "body": "Only addresses with DEFAULT_ADMIN_ROLE can access this screen.",
+      "connect": "Connect your administrator wallet to continue.",
+      "cta": "Connect wallet",
+      "back": "Back to dashboard"
     },
     "queue": {
-      "title": "Solicitudes pendientes",
-      "subtitle": "Se construye desde los eventos RoleRequested/Approved/Rejected (Phase 7 lo cambiará por SSE del indexador).",
-      "refresh": "Refrescar",
-      "loading": "Consultando logs…",
-      "empty": "No hay solicitudes pendientes.",
-      "country": "País: {country}",
-      "approve": "Aprobar",
-      "reject": "Rechazar"
+      "title": "Pending requests",
+      "subtitle": "Built from RoleRequested/Approved/Rejected events (Phase 7 will switch it to the indexer's SSE).",
+      "refresh": "Refresh",
+      "loading": "Querying logs…",
+      "empty": "No pending requests.",
+      "country": "Country: {country}",
+      "approve": "Approve",
+      "reject": "Reject"
     },
     "toast": {
-      "approvePending": "Aprobando rol…",
-      "approveSuccess": "Aprobado: {name}",
-      "approveError": "No se pudo aprobar",
-      "rejectPending": "Rechazando solicitud…",
-      "rejectSuccess": "Rechazado: {name}",
-      "rejectError": "No se pudo rechazar"
+      "approvePending": "Approving role…",
+      "approveSuccess": "Approved: {name}",
+      "approveError": "Could not approve",
+      "rejectPending": "Rejecting request…",
+      "rejectSuccess": "Rejected: {name}",
+      "rejectError": "Could not reject"
     }
   },
   "certType": {
@@ -608,142 +608,142 @@
     "ISO15189": "ISO 15189",
     "ANMAT": "ANMAT",
     "GMP": "GMP",
-    "OTHER": "Otro"
+    "OTHER": "Other"
   },
   "certStatus": {
-    "Valid": "Vigente",
-    "Expired": "Expirado",
-    "Revoked": "Revocado"
+    "Valid": "Valid",
+    "Expired": "Expired",
+    "Revoked": "Revoked"
   },
   "certificador": {
-    "title": "Panel de Certificación",
-    "subtitle": "Emití certificados de acreditación como NFTs ERC-721. El PDF se ancla en IPFS y su hash queda comprometido on-chain para verificación pública.",
+    "title": "Certification Dashboard",
+    "subtitle": "Issue accreditation certificates as ERC-721 NFTs. The PDF is anchored on IPFS and its hash is committed on-chain for public verification.",
     "issue": {
-      "title": "Emitir certificado",
-      "subtitle": "El PDF se sube a IPFS y se registra keccak256(PDF) on-chain. Cualquiera puede re-hashear el archivo y comprobar que coincide.",
-      "subject": "Institución certificada (dirección)",
-      "subjectHint": "Dirección Ethereum del actor que recibe el certificado (NFT).",
-      "certType": "Tipo de acreditación",
-      "expiry": "Fecha de expiración",
-      "expiryHint": "El certificado pasa a Expirado automáticamente en esta fecha.",
-      "file": "PDF del certificado",
-      "fileHint": "Sólo PDF, hasta 10 MB. Se calcula su keccak256 antes de subirlo.",
-      "hashPreview": "keccak256 del PDF",
-      "submit": "Emitir certificado",
-      "uploading": "Subiendo PDF…",
-      "modePinata": "PDF anclado en IPFS vía Pinata.",
-      "modeLocal": "Sin PINATA_JWT: el PDF se guardó localmente (modo demo).",
+      "title": "Issue certificate",
+      "subtitle": "The PDF is uploaded to IPFS and keccak256(PDF) is recorded on-chain. Anyone can re-hash the file and check that it matches.",
+      "subject": "Certified institution (address)",
+      "subjectHint": "Ethereum address of the actor receiving the certificate (NFT).",
+      "certType": "Accreditation type",
+      "expiry": "Expiry date",
+      "expiryHint": "The certificate automatically becomes Expired on this date.",
+      "file": "Certificate PDF",
+      "fileHint": "PDF only, up to 10 MB. Its keccak256 is computed before uploading.",
+      "hashPreview": "keccak256 of the PDF",
+      "submit": "Issue certificate",
+      "uploading": "Uploading PDF…",
+      "modePinata": "PDF anchored on IPFS via Pinata.",
+      "modeLocal": "No PINATA_JWT: the PDF was stored locally (demo mode).",
       "errors": {
-        "subject": "Ingresá una dirección Ethereum válida (0x… 40 hex).",
-        "certType": "Elegí un tipo de acreditación.",
-        "expiry": "La fecha de expiración debe ser futura.",
-        "file": "Adjuntá el PDF del certificado."
+        "subject": "Enter a valid Ethereum address (0x… 40 hex).",
+        "certType": "Choose an accreditation type.",
+        "expiry": "The expiry date must be in the future.",
+        "file": "Attach the certificate PDF."
       },
       "toast": {
-        "pending": "Emitiendo certificado…",
-        "success": "Certificado emitido.",
-        "error": "No se pudo emitir el certificado"
+        "pending": "Issuing certificate…",
+        "success": "Certificate issued.",
+        "error": "Could not issue the certificate"
       }
     },
     "list": {
-      "title": "Certificados emitidos",
-      "subtitle": "Certificados que emitiste con esta cuenta.",
-      "empty": "Todavía no emitiste certificados.",
-      "subject": "Institución",
-      "expiresAt": "Expira",
-      "view": "Ver detalle"
+      "title": "Issued certificates",
+      "subtitle": "Certificates you issued with this account.",
+      "empty": "You haven't issued any certificates yet.",
+      "subject": "Institution",
+      "expiresAt": "Expires",
+      "view": "View detail"
     },
     "revoke": {
-      "cta": "Revocar",
-      "reason": "Motivo de revocación",
-      "reasonPlaceholder": "Acreditación vencida o comprometida…",
-      "confirm": "Confirmar revocación",
-      "cancel": "Cancelar",
+      "cta": "Revoke",
+      "reason": "Revocation reason",
+      "reasonPlaceholder": "Accreditation expired or compromised…",
+      "confirm": "Confirm revocation",
+      "cancel": "Cancel",
       "toast": {
-        "pending": "Revocando certificado…",
-        "success": "Certificado revocado.",
-        "error": "No se pudo revocar"
+        "pending": "Revoking certificate…",
+        "success": "Certificate revoked.",
+        "error": "Could not revoke"
       }
     }
   },
   "certificateDetail": {
-    "title": "Certificado #{id}",
-    "subtitle": "Verificación pública del certificado NFT. El PDF se re-hashea en tu navegador y se compara con el compromiso on-chain.",
-    "invalidId": "Identificador inválido",
-    "invalidIdBody": "El identificador del certificado debe ser un número.",
-    "notFound": "Certificado no encontrado",
-    "notFoundBody": "No existe un certificado con el id #{id}.",
-    "loading": "Cargando certificado…",
-    "subject": "Institución certificada",
-    "issuer": "Emisor",
-    "issuedAt": "Emitido",
-    "expiresAt": "Expira",
-    "documentHash": "Hash del documento (on-chain)",
-    "cid": "Referencia IPFS",
-    "qrHint": "Escaneá para verificar",
-    "openPdf": "Abrir PDF",
-    "revokedReason": "Motivo de revocación: {reason}",
+    "title": "Certificate #{id}",
+    "subtitle": "Public verification of the NFT certificate. The PDF is re-hashed in your browser and compared against the on-chain commitment.",
+    "invalidId": "Invalid identifier",
+    "invalidIdBody": "The certificate identifier must be a number.",
+    "notFound": "Certificate not found",
+    "notFoundBody": "There is no certificate with id #{id}.",
+    "loading": "Loading certificate…",
+    "subject": "Certified institution",
+    "issuer": "Issuer",
+    "issuedAt": "Issued",
+    "expiresAt": "Expires",
+    "documentHash": "Document hash (on-chain)",
+    "cid": "IPFS reference",
+    "qrHint": "Scan to verify",
+    "openPdf": "Open PDF",
+    "revokedReason": "Revocation reason: {reason}",
     "verify": {
-      "checking": "Verificando el hash del PDF…",
-      "match": "PDF verificado: el hash coincide con el registro on-chain.",
-      "mismatch": "El hash NO coincide — el documento fue alterado.",
-      "error": "No se pudo descargar el PDF para verificar el hash."
+      "checking": "Verifying the PDF hash…",
+      "match": "PDF verified: the hash matches the on-chain record.",
+      "mismatch": "The hash does NOT match — the document was altered.",
+      "error": "Could not download the PDF to verify the hash."
     },
     "revoke": {
-      "title": "Revocar certificado",
-      "subtitle": "Como Certificador podés revocar este certificado vigente.",
-      "cta": "Revocar certificado",
-      "reason": "Motivo de revocación",
-      "reasonPlaceholder": "Acreditación vencida o comprometida…",
-      "confirm": "Confirmar revocación",
-      "cancel": "Cancelar",
+      "title": "Revoke certificate",
+      "subtitle": "As a Certifier you can revoke this valid certificate.",
+      "cta": "Revoke certificate",
+      "reason": "Revocation reason",
+      "reasonPlaceholder": "Accreditation expired or compromised…",
+      "confirm": "Confirm revocation",
+      "cancel": "Cancel",
       "toast": {
-        "pending": "Revocando certificado…",
-        "success": "Certificado revocado.",
-        "error": "No se pudo revocar"
+        "pending": "Revoking certificate…",
+        "success": "Certificate revoked.",
+        "error": "Could not revoke"
       }
     }
   },
   "live": {
-    "connected": "En vivo · conectado al indexador",
-    "expiryDetail": "Componente #{id} vence en ~{hours} h",
+    "connected": "Live · connected to the indexer",
+    "expiryDetail": "Component #{id} expires in ~{hours} h",
     "events": {
-      "DonationCollected": "Nueva donación registrada",
-      "TestResultRecorded": "Tamizaje cargado",
-      "UnitReleased": "Unidad liberada",
-      "UnitQuarantined": "Unidad en cuarentena",
-      "UnitRecalled": "Unidad retirada (recall)",
-      "ComponentProduced": "Componente fraccionado",
-      "ComponentCustodyTransferred": "Custodia transferida",
-      "ComponentCrossMatched": "Prueba cruzada",
-      "ComponentRecalled": "Componente retirado (recall)",
-      "Transfused": "Transfusión registrada",
-      "AdverseEventReported": "Evento adverso reportado",
-      "LookBackTriggered": "Look-back disparado",
-      "CertificateIssued": "Certificado emitido",
-      "CertificateRevoked": "Certificado revocado",
-      "RoleRequested": "Solicitud de rol",
-      "RoleApproved": "Rol aprobado",
-      "RoleRejected": "Rol rechazado",
-      "RoleRevoked": "Rol revocado",
-      "ActorRegistered": "Actor registrado",
-      "ExpiryWarning": "Componente próximo a vencer"
+      "DonationCollected": "New donation recorded",
+      "TestResultRecorded": "Screening recorded",
+      "UnitReleased": "Unit released",
+      "UnitQuarantined": "Unit quarantined",
+      "UnitRecalled": "Unit recalled",
+      "ComponentProduced": "Component fractionated",
+      "ComponentCustodyTransferred": "Custody transferred",
+      "ComponentCrossMatched": "Cross-match",
+      "ComponentRecalled": "Component recalled",
+      "Transfused": "Transfusion recorded",
+      "AdverseEventReported": "Adverse event reported",
+      "LookBackTriggered": "Look-back triggered",
+      "CertificateIssued": "Certificate issued",
+      "CertificateRevoked": "Certificate revoked",
+      "RoleRequested": "Role request",
+      "RoleApproved": "Role approved",
+      "RoleRejected": "Role rejected",
+      "RoleRevoked": "Role revoked",
+      "ActorRegistered": "Actor registered",
+      "ExpiryWarning": "Component nearing expiry"
     }
   },
   "ai": {
     "title": "Ask HemaChain",
-    "subtitle": "Trazabilidad en lenguaje natural",
-    "open": "Abrir asistente Ask HemaChain",
-    "close": "Cerrar",
-    "placeholder": "Preguntá sobre unidades, componentes o vencimientos…",
-    "send": "Enviar",
-    "thinking": "Consultando la cadena…",
-    "emptyTitle": "¿En qué puedo ayudarte?",
-    "emptyHint": "Leo el estado on-chain: vencimientos, el linaje de una unidad o componente, y los eventos recientes.",
-    "exampleLabel": "Probá:",
-    "example": "¿Cuántos glóbulos rojos (GR) vencen en las próximas 48 horas?",
-    "hintMessage": "El asistente en vivo necesita configurar ANTHROPIC_API_KEY en web/.env.local. Sin la clave funciona en modo demostración. Configurá la clave y reiniciá el servidor para obtener respuestas en vivo sobre la cadena.",
-    "error": "No pude procesar la consulta. Reintentá en unos segundos.",
-    "disclaimer": "Sólo lee datos on-chain anonimizados (hashes)."
+    "subtitle": "Traceability in natural language",
+    "open": "Open the Ask HemaChain assistant",
+    "close": "Close",
+    "placeholder": "Ask about units, components or expiries…",
+    "send": "Send",
+    "thinking": "Querying the chain…",
+    "emptyTitle": "How can I help you?",
+    "emptyHint": "I read on-chain state: expiries, the lineage of a unit or component, and recent events.",
+    "exampleLabel": "Try:",
+    "example": "How many red blood cell (RBC) units expire in the next 48 hours?",
+    "hintMessage": "The live assistant needs ANTHROPIC_API_KEY configured in web/.env.local. Without the key it runs in demo mode. Set the key and restart the server to get live answers about the chain.",
+    "error": "I couldn't process the query. Try again in a few seconds.",
+    "disclaimer": "Reads only anonymized on-chain data (hashes)."
   }
 }
