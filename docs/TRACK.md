@@ -267,10 +267,11 @@
 - [ ] `07-etherscan-tx.png`
 
 ### 8.4. i18n — capa de traducción
-- [ ] Configurar `next-intl` con locales `es` (default), `pt`, `en`
-- [ ] Verificar que toda string vive en `messages/{es,pt,en}.json`
-- [ ] Selector de idioma en el header
-- [ ] QA: cambiar a `pt` y `en` y verificar que ningún string queda hardcoded
+- [x] Configurar `next-intl` con locales `es` (default), `pt`, `en` — hecho en Phase 2 (routing + proxy)
+- [x] Verificar que toda string vive en `messages/{es,pt,en}.json` — 515 claves hoja, paridad total verificada por script (sin keys faltantes/extra, sin mismatches de placeholders)
+- [x] Selector de idioma en el header — `LocaleSwitch` (Phase 2)
+- [x] **★** Traducir realmente `pt.json` (português) y `en.json` (English) — antes eran copias del español. Commit `aba136b`. `lint`+`build` verdes.
+- [~] QA: cambiar a `pt` y `en` y verificar que ningún string queda hardcoded — validado por paridad de claves + build; **falta el QA visual en el navegador** (parte de la sesión de grabación/screenshots).
 - [ ] (opcional) `README.pt.md` y `README.en.md` con resumen ejecutivo
 
 ### 8.5. Video
@@ -550,3 +551,10 @@
 - **Validación:** `npm run lint` + `npm run build` verdes. Smoke con `curl` en `next dev :3100` (sin key en el entorno): body válido → `{"mode":"hint"}`; `messages:[]` → 400; JSON malformado → 400. Log del dev: `POST /api/ask 200` + dos `400`, sin errores. **No pude probar el camino en vivo** (sin `ANTHROPIC_API_KEY`); queda para el usuario.
 - **DoD cerrado** salvo el live-run que depende de la key del usuario. Para verificarlo: `./restart.sh` (o `SEED=1 ./restart.sh` para data rica) + `ANTHROPIC_API_KEY=… ` en `web/.env.local` + reiniciar dev → abrir un dashboard → botón flotante (Sparkles, bottom-right) → la pregunta sembrada "¿Cuántos GR vencen en 48h?" debería disparar `count_expiring_components` y responder en español.
 - **Próximo paso (Phase 8 — Polish/deploy/video):** deploy a Sepolia + verificación Etherscan, finalizar README/SDD/IA.md, screenshots, cierre i18n (traducir pt/en — el namespace `ai` y todos los demás ya tienen las claves), y grabar el video Loom ≤5min. Re-leer `docs/PENDIENTES-USUARIO.md` (claves/cuentas/tareas manuales del usuario).
+
+### Sesión 2026-05-26 — Phase 8 arrancada: tareas "que se ven en cámara" antes del video
+- **Decisión de secuencia (consultada con el usuario):** grabar el video **al final**, después de dejar lista todo lo que aparece en pantalla — re-grabar un Loom ≤5min es el redo más caro. Orden acordado: (1) tareas demo-affecting → (2) video + 7 screenshots en una sola sesión → (3) docs de texto (README/SDD/IA.md) + checklist, que de todos modos referencian video/screenshots/addresses y no pueden cerrarse antes.
+- **i18n pt/en (8.4) ✅ — commit `aba136b`.** `pt.json` y `en.json` eran copias del español; ahora son traducciones completas (português / English). Preservados verbatim: claves, placeholders ICU (`{id}`/`{hours}`/`{volume}`/`{role}`/…), nombres propios y enums on-chain (HemaChain, ISBT 128, ERC-721, keccak256, Chagas, RBC/FFP/PLT/CRYO, Recalled…). Validación por script: **515 claves hoja, paridad total, 0 mismatches de placeholders** en ambos locales. `lint`+`build` verdes. La multilingüe ya es mostrable en cámara (switch `LocaleSwitch` + traducciones reales). Pendiente sólo el QA visual (se hace en la sesión de grabación).
+- **Sepolia deploy/verify (8.1): wiring confirmado turnkey, sin cambios de código.** `sc/foundry.toml` ya tiene `[rpc_endpoints] sepolia="${SEPOLIA_RPC_URL}"` + `[etherscan] sepolia={key="${ETHERSCAN_API_KEY}", chain=11155111}` (commit `0fc0939`); `Deploy.s.sol` lee `DEPLOYER_PRIVATE_KEY` vía `vm.envOr` (fallback Anvil PK#0); `sc/.env.example` documenta el comando único (commit `e1f07c3`). **Bloqueado sólo por los secretos del usuario** (RPC, key de deploy fondeada, Etherscan key → `docs/PENDIENTES-USUARIO.md`). Runbook desde `sc/`: `cp .env.example .env` (completar 3 valores) → `forge script script/Deploy.s.sol --rpc-url sepolia --private-key "$DEPLOYER_PRIVATE_KEY" --broadcast --verify`. Las addresses quedan en `broadcast/Deploy.s.sol/11155111/`; copiarlas al README §6 y a `web/.env.local` (`NEXT_PUBLIC_*_ADDRESS_SEPOLIA`).
+- **Estado del agente IA en cámara:** para mostrarlo en vivo en el video, setear `ANTHROPIC_API_KEY` en `web/.env.local` antes de grabar (sin key cae a modo-hint, que no luce en demo). Es un diferenciador fuerte — vale un beat de ~15-20s.
+- **Próximo (para el usuario, antes de grabar):** (a) deploy Sepolia + verify, (b) setear `ANTHROPIC_API_KEY`, (c) opcional polish visual. Después: grabar video + 7 screenshots, y recién ahí cerrar README/SDD/IA.md/checklist.
