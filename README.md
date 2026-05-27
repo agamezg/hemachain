@@ -221,15 +221,15 @@ Cuentas de Anvil sugeridas por rol (las primeras seis):
 
 ## 6. Smart contracts desplegados
 
-> ⏳ **Pendiente Phase 8.** Las direcciones definitivas en Sepolia se publican aquí tras la verificación en Etherscan.
+> ✅ **Desplegado y verificado en Sepolia** (chain id `11155111`, mayo 2026). Las direcciones de Anvil son deterministas (cuenta 0, nonces 0/1/2 de `Deploy.s.sol`).
 
-| Contrato | Anvil (local) | Sepolia |
+| Contrato | Anvil (local) | Sepolia (verificado en Etherscan) |
 |---|---|---|
-| `HemaRegistry.sol` | `0x...` *(generado en deploy)* | *(Pendiente)* |
-| `HemaTraceability.sol` | `0x...` | *(Pendiente)* |
-| `HemaCertificate.sol` (ERC-721) | `0x...` | *(Pendiente)* |
+| `HemaRegistry.sol` | `0x5FbDB2315678afecb367f032d93F642f64180aa3` | [`0xFfFeD3c8d864D1A5c39F7BA1292a2162ED616ecF`](https://sepolia.etherscan.io/address/0xFfFeD3c8d864D1A5c39F7BA1292a2162ED616ecF#code) |
+| `HemaTraceability.sol` | `0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512` | [`0x7b92DcD02c6F04b5FA3937d7769586D44F5D2953`](https://sepolia.etherscan.io/address/0x7b92DcD02c6F04b5FA3937d7769586D44F5D2953#code) |
+| `HemaCertificate.sol` (ERC-721) | `0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0` | [`0xADc6C4731c318a1CD5C5fAccFE8EAE6CdaEE791E`](https://sepolia.etherscan.io/address/0xADc6C4731c318a1CD5C5fAccFE8EAE6CdaEE791E#code) |
 
-Tras el deploy se publicarán enlaces de Etherscan con código fuente verificado.
+Los tres contratos tienen su **código fuente verificado** en Etherscan (Solidity 0.8.24, EVM cancun, optimizer runs=200). El admin del registro es la wallet de deploy `0xa49aA91a06a58c9D29Ac1314626aD51314004947`.
 
 ---
 

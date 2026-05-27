@@ -6,9 +6,26 @@
 
 ---
 
-## ⏸️ Dónde quedamos — sesión 2026-05-26 (retomar acá mañana)
+## ✅ Deploy a Sepolia COMPLETO — sesión 2026-05-27
 
-**Hecho y verificado hoy (ya está en `sc/.env`, que es gitignored):**
+El bloqueo de gas se resolvió: el deployer fue recargado a **0.10 Sepolia ETH** y el base fee bajó a ~3 gwei. Los 3 contratos están **desplegados y verificados en Etherscan**:
+
+| Contrato | Sepolia | Etherscan |
+|---|---|---|
+| `HemaRegistry` | `0xFfFeD3c8d864D1A5c39F7BA1292a2162ED616ecF` | [verificado #code](https://sepolia.etherscan.io/address/0xFfFeD3c8d864D1A5c39F7BA1292a2162ED616ecF#code) |
+| `HemaTraceability` | `0x7b92DcD02c6F04b5FA3937d7769586D44F5D2953` | [verificado #code](https://sepolia.etherscan.io/address/0x7b92DcD02c6F04b5FA3937d7769586D44F5D2953#code) |
+| `HemaCertificate` | `0xADc6C4731c318a1CD5C5fAccFE8EAE6CdaEE791E` | [verificado #code](https://sepolia.etherscan.io/address/0xADc6C4731c318a1CD5C5fAccFE8EAE6CdaEE791E#code) |
+
+- **Costo real:** ~0.0172 ETH (gas ~3 gwei). Quedan ~0.0828 ETH en el deployer.
+- **Cableado hecho:** README §6 (tabla + links), `web/.env.local` (`NEXT_PUBLIC_*_ADDRESS_SEPOLIA`; chain default sigue en Anvil para la demo local).
+- **Fix del gotcha:** la clave en `.env` está sin prefijo `0x` (64 chars) → `vm.envOr(uint256)` no la tomaba y caía al fallback Anvil. El deploy se corrió exportando `DEPLOYER_PRIVATE_KEY` **con** `0x`. Si querés el one-liner directo, dejá la línea como `DEPLOYER_PRIVATE_KEY=0x...` (con `0x`, sin espacios).
+- **Pendiente opcional:** re-seed sobre Sepolia (la demo en vivo del video corre sobre Anvil+seed, no hace falta).
+
+---
+
+## ⏸️ (Histórico) Dónde quedamos — sesión 2026-05-26
+
+**Hecho y verificado (ya está en `sc/.env`, que es gitignored):**
 - ✅ `SEPOLIA_RPC_URL` — Alchemy, endpoint **Ethereum Sepolia** (chain id 11155111, verificado en vivo). *No* usar las URLs de "World Chain".
 - ✅ `DEPLOYER_PRIVATE_KEY` — wallet dedicada, dirección pública `0xa49aA91a06a58c9D29Ac1314626aD51314004947`.
 - ✅ `ETHERSCAN_API_KEY` — cargada (34 chars).

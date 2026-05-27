@@ -245,10 +245,10 @@
 ## Phase 8 — Polish, test, i18n, deploy, record *(2 sesiones)*
 
 ### 8.1. Deploy + verificación
-- [ ] **★** Deploy a Sepolia con private key segura
-- [ ] **★** Verificación en Etherscan de los 3 contratos
-- [ ] Actualizar tabla §6 del README con direcciones reales
-- [ ] Re-run del seed sobre Sepolia (cantidad reducida, suficiente para video)
+- [x] **★** Deploy a Sepolia con private key segura — los 3 contratos desplegados desde `0xa49a…4947` (2026-05-27), costo real ~0.0172 ETH
+- [x] **★** Verificación en Etherscan de los 3 contratos — `All (3) contracts were verified!` (Solidity 0.8.24, cancun, runs=200)
+- [x] Actualizar tabla §6 del README con direcciones reales — direcciones Anvil + Sepolia con links Etherscan `#code`
+- [ ] Re-run del seed sobre Sepolia (cantidad reducida, suficiente para video) — opcional; la demo en vivo corre sobre Anvil+seed
 
 ### 8.2. Documentación
 - [ ] **★** Finalizar `README.md` (revisar todos los placeholders)
