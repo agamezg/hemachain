@@ -1,0 +1,117 @@
+1
+00:00:00,000 --> 00:00:06,500
+Hola. Esto es HemaChain: trazabilidad de
+donaciones de sangre sobre Ethereum,
+
+2
+00:00:06,500 --> 00:00:14,000
+el trabajo final de mi máster en blockchain.
+
+3
+00:00:14,000 --> 00:00:22,000
+Hoy los registros de sangre están fragmentados
+entre bancos, laboratorios y hospitales.
+
+4
+00:00:22,000 --> 00:00:30,000
+La Resolución 536/2026 obliga a informatizar la
+trazabilidad en todos los centros de hemoterapia.
+
+5
+00:00:30,000 --> 00:00:40,000
+La arquitectura son tres contratos en Solidity
+con Foundry: roles, ciclo de vida y certificados NFT.
+
+6
+00:00:40,000 --> 00:00:52,000
+El frontend es Next.js; por fuera, un indexador en
+tiempo real y un servidor MCP que expone la cadena a Claude.
+
+7
+00:00:52,000 --> 00:01:01,000
+La privacidad es estructural: on-chain sólo viajan
+hashes irreversibles, nunca un dato personal.
+
+8
+00:01:01,000 --> 00:01:10,000
+Y no es una maqueta: 110 tests en Foundry,
+incluidas las 7 invariantes del diseño.
+
+9
+00:01:10,000 --> 00:01:25,000
+Está en tres idiomas desde el día uno: español,
+portugués e inglés, pensado para el MERCOSUR.
+
+10
+00:01:25,000 --> 00:01:31,000
+Vamos a la demo en vivo, corriendo en local
+con datos de prueba.
+
+11
+00:01:31,000 --> 00:01:42,000
+Entro como Banco de Sangre y registro una donación.
+El documento del donante se convierte en un hash.
+
+12
+00:01:42,000 --> 00:01:52,000
+Al confirmarse la transacción, aparece este aviso en vivo:
+
+13
+00:01:52,000 --> 00:02:09,000
+el indexador la detectó por WebSocket y la empujó
+al dashboard en tiempo real, sin recargar.
+
+14
+00:02:09,000 --> 00:02:22,000
+Abro la página pública de verificación, sin wallet:
+es la que apunta el QR impreso en la bolsa.
+
+15
+00:02:22,000 --> 00:02:38,000
+Acá está el árbol de linaje, el timeline y la cadena
+de frío. Una excursión de temperatura lo marcó retirado.
+
+16
+00:02:38,000 --> 00:02:57,000
+Y por el look-back: al reportar al donante como positivo,
+todos los componentes derivados quedaron retirados en bloque.
+
+17
+00:02:57,000 --> 00:03:09,000
+Los certificados de acreditación son NFT: el PDF se ancla
+en IPFS y su hash queda comprometido on-chain.
+
+18
+00:03:09,000 --> 00:03:21,000
+El navegador re-calcula el hash y lo compara.
+Este certificado está revocado, con su motivo.
+
+19
+00:03:21,000 --> 00:03:36,000
+Embebí un agente de IA: le pregunto, en lenguaje natural,
+cuántos glóbulos rojos vencen en 48 horas.
+
+20
+00:03:36,000 --> 00:03:53,000
+El agente consulta el estado on-chain con tool-use
+y responde leyendo la cadena de verdad.
+
+21
+00:03:53,000 --> 00:04:08,000
+Y no queda sólo en local: los tres contratos están
+desplegados y verificados en Sepolia.
+
+22
+00:04:08,000 --> 00:04:20,000
+Partí de un esqueleto genérico y construí algo
+para un sector regulado real.
+
+23
+00:04:20,000 --> 00:04:32,000
+Look-back automático, cadena de frío on-chain, QR público,
+NFT, indexador en vivo, MCP y agente de IA, en tres idiomas.
+
+24
+00:04:32,000 --> 00:04:48,000
+La visión: semilla para el Sistema Nacional de Sangre
+bajo la Resolución 536. Gracias.

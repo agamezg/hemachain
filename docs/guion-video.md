@@ -17,12 +17,12 @@
 
 > Desplegados y verificados (chain `11155111`, 2026-05-27). Para el video, **mostrá la pestaña "Contract" con el check verde "Verified"** — el más vistoso es `HemaTraceability` (el contrato grande, con todo el ciclo de vida).
 
-| Qué mostrar | Enlace |
-|---|---|
-| **`HemaTraceability`** ★ (recomendado — núcleo) | `https://sepolia.etherscan.io/address/0x7b92DcD02c6F04b5FA3937d7769586D44F5D2953#code` |
-| `HemaRegistry` | `https://sepolia.etherscan.io/address/0xFfFeD3c8d864D1A5c39F7BA1292a2162ED616ecF#code` |
-| `HemaCertificate` (ERC-721) | `https://sepolia.etherscan.io/address/0xADc6C4731c318a1CD5C5fAccFE8EAE6CdaEE791E#code` |
-| Wallet de deploy (muestra las 3 creaciones de contrato) | `https://sepolia.etherscan.io/address/0xa49aA91a06a58c9D29Ac1314626aD51314004947` |
+| Qué mostrar                                             | Enlace                                                                                 |
+| ------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| **`HemaTraceability`** ★ (recomendado — núcleo)         | `https://sepolia.etherscan.io/address/0x7b92DcD02c6F04b5FA3937d7769586D44F5D2953#code` |
+| `HemaRegistry`                                          | `https://sepolia.etherscan.io/address/0xFfFeD3c8d864D1A5c39F7BA1292a2162ED616ecF#code` |
+| `HemaCertificate` (ERC-721)                             | `https://sepolia.etherscan.io/address/0xADc6C4731c318a1CD5C5fAccFE8EAE6CdaEE791E#code` |
+| Wallet de deploy (muestra las 3 creaciones de contrato) | `https://sepolia.etherscan.io/address/0xa49aA91a06a58c9D29Ac1314626aD51314004947`      |
 
 ---
 
