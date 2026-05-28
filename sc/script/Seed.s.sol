@@ -31,6 +31,7 @@ contract Seed is Script {
 
     bytes32 internal constant DONOR_ALPHA = keccak256("dni-alpha:salt-AR");
     bytes32 internal constant DONOR_BETA = keccak256("dni-beta:salt-AR");
+    bytes32 internal constant DONOR_GAMMA = keccak256("dni-gamma:salt-AR");
 
     HemaRegistry internal registry;
     HemaTraceability internal trace;
@@ -89,7 +90,16 @@ contract Seed is Script {
         trace.reportAdverseEvent(HemaTraceability.AdverseKind.DonorPositive, DONOR_ALPHA);
         vm.stopBroadcast();
 
+        // Near-expiry inventory for the Beat 4 AI agent demo: a 4th donation
+        // produces an RBC that stays `Produced` (no custody transfer, no recall,
+        // no transfusion). restart.sh then warps Anvil's clock forward so this
+        // RBC's `expiresAt` falls inside the 48 h window the agent queries.
+        uint256 u4 = _donateAndRelease(DONOR_GAMMA, 450, A_POS);
+        uint256 c4 = _splitOneComponent(u4, Codes.ComponentType.RBC, 280);
+
         u2; // silence unused
+        u4; // silence unused
+        c4; // silence unused
     }
 
     function _donateAndRelease(bytes32 donor, uint16 vol, bytes8 abo) internal returns (uint256 unitId) {

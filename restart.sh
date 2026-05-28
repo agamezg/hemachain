@@ -100,6 +100,27 @@ if [ "${SKIP_DEPLOY:-0}" != "1" ] && [ -f "$REPO_ROOT/sc/foundry.toml" ] && [ -f
       fi
     done
   fi
+
+  # ── 4b. Warp Anvil's clock (seed mode only) ─────────────────────────
+  # The seed produces a 4th RBC component that stays in `Produced` state. By
+  # advancing the chain ~41 days after the seed, that RBC's `expiresAt`
+  # (producedAt + 42 d) falls inside the 48 h window the "Ask HemaChain"
+  # agent queries in Beat 4 of the video demo. Existing terminal components
+  # (Recalled/Transfused) and certificates (365 d shelf) are unaffected.
+  if [ "${SEED:-0}" = "1" ]; then
+    ADVANCE_SECONDS=$((41 * 86400))
+    echo "→ Advancing Anvil clock by 41 days (so the demo RBC expires within 48 h)..."
+    if command -v cast &>/dev/null; then
+      if cast rpc --rpc-url "$RPC_URL" evm_increaseTime "$ADVANCE_SECONDS" > "$LOG_DIR/warp.log" 2>&1 \
+         && cast rpc --rpc-url "$RPC_URL" evm_mine >> "$LOG_DIR/warp.log" 2>&1; then
+        echo "  ✓ Chain time advanced — Beat 4 demo question will return matches"
+      else
+        echo "  ⚠ Time warp failed (see $LOG_DIR/warp.log); the AI Beat 4 demo question will return zero matches"
+      fi
+    else
+      echo "  ⚠ cast not found — skipping time warp; AI Beat 4 demo will return zero matches"
+    fi
+  fi
 else
   echo "ℹ sc/ not scaffolded yet — skipping contract deploy"
 fi

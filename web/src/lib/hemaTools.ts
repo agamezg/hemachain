@@ -38,6 +38,14 @@ const COMPONENT_TYPE = ["Unknown", "RBC", "FFP", "PLT", "CRYO"] as const;
 const LIVE_STATUSES = new Set(["Produced", "InStorage", "Reserved"]);
 
 let cached: Contract | null = null;
+let cachedProvider: JsonRpcProvider | null = null;
+
+function getProvider(): JsonRpcProvider {
+  if (cachedProvider) return cachedProvider;
+  const rpc = process.env.ASK_RPC_URL ?? DEFAULT_CHAIN.rpcUrl;
+  cachedProvider = new JsonRpcProvider(rpc);
+  return cachedProvider;
+}
 
 function traceability(): Contract {
   if (cached) return cached;
@@ -47,12 +55,7 @@ function traceability(): Contract {
       `No HemaTraceability address configured for chain ${DEFAULT_CHAIN_ID}`,
     );
   }
-  const rpc = process.env.ASK_RPC_URL ?? DEFAULT_CHAIN.rpcUrl;
-  cached = new Contract(
-    address,
-    HemaTraceabilityArtifact.abi,
-    new JsonRpcProvider(rpc),
-  );
+  cached = new Contract(address, HemaTraceabilityArtifact.abi, getProvider());
   return cached;
 }
 
@@ -134,7 +137,12 @@ async function countExpiring(hours: number, type?: string): Promise<string> {
   )) as EventLog[];
   const ids = [...new Set(produced.map((e) => e.args[0] as bigint))];
 
-  const now = Math.floor(Date.now() / 1000);
+  // Measure against chain time, not wall-clock: `expiresAt` is set on-chain
+  // from `block.timestamp`, so on a warped local Anvil (or any chain whose
+  // clock drifts from the host) wall-clock would systematically disagree with
+  // what the contract considers "now".
+  const latest = await getProvider().getBlock("latest");
+  const now = latest ? Number(latest.timestamp) : Math.floor(Date.now() / 1000);
   const cutoff = now + hours * 3600;
   const wanted = type?.toUpperCase();
 
