@@ -274,15 +274,25 @@ Tipos incluidos: C4 (Contexto, Contenedor, Componente), Secuencias (flujo feliz,
 
 ## 10. Video demo
 
-> ⏳ **Pendiente Phase 8.** Loom, ≤ 5 minutos, en español.
+📺 **4:08 · español · MP4 15 MB** — producción híbrida (slides + TTS + demo grabada). El archivo vive en el repo en [`docs/video/hemachain-video.mp4`](./docs/video/hemachain-video.mp4); GitHub y GitLab lo renderizan inline desde la ruta relativa.
 
-Guion previsto:
-- **0:00–0:30** — introducción: problema, Res. 536/2026 como ancla regulatoria
-- **0:30–1:30** — tecnología y arquitectura (Foundry + Next.js + IPFS + MCP + AI)
-- **1:30–4:00** — demo en vivo: registro → tamizaje → fraccionamiento → almacenamiento → transfusión → verificación pública
-- **4:00–5:00** — innovaciones vs esqueleto, visión de adopción estatal, conclusiones
+<video src="docs/video/hemachain-video.mp4" controls width="100%" poster="screenshots/01.1-landing.png">
+  Tu visor de Markdown no embebe video — descargá el archivo desde
+  <a href="./docs/video/hemachain-video.mp4">docs/video/hemachain-video.mp4</a>
+  o usá el espejo público de abajo.
+</video>
 
-Enlace público: *(pendiente)*
+▶️ **Espejo público (GitHub Release):** [reproducir / descargar MP4](https://github.com/agamezg/hemachain/releases/download/v1.0.0/hemachain-video.mp4) · [página `v1.0.0`](https://github.com/agamezg/hemachain/releases/tag/v1.0.0)
+
+Estructura del video (paquete editorial en [`docs/video/`](./docs/video/) — `deck.md`, `narracion.md`, `ensamblar.sh`):
+
+| Tramo | Tiempo | Contenido |
+|---|---|---|
+| Slides 1–5 + TTS | 0:00–1:25 | Introducción + Res. 536/2026 + arquitectura (3 contratos + Next.js + indexer + MCP) + privacidad por diseño + 110 tests con 7 invariantes + multilenguaje (ES/PT/EN) |
+| Demo en vivo | 1:25–4:00 | **Beat 1** — registro on-chain + toast del indexador SSE · **Beat 2** — `/verify/c1` público con linaje, cadena de frío y look-back · **Beat 3** — certificado NFT con hash verificado · **Beat 4** — agente IA "Ask HemaChain" con tool-use (Claude `claude-opus-4-7`) |
+| Slides 7–8 + TTS | 4:00–4:08 | Innovaciones vs el esqueleto + Sepolia + cierre |
+
+> El video corre sobre Anvil + seed determinístico para que las txs sean instantáneas y gratis. Los **mismos** contratos están **desplegados y verificados** en Sepolia — ver §6 para los links de Etherscan.
 
 ---
 

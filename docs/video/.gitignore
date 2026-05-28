@@ -6,3 +6,8 @@ demo.mp4
 *.mp4
 *.mp3
 *.aiff
+
+# Excepción: el video final ENSAMBLADO se commitea para que el README lo
+# embeba con ruta relativa (lo que el revisor académico en GitLab necesita
+# para verlo inline sin depender de release-assets externos).
+!hemachain-video.mp4
