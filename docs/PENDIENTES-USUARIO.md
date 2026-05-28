@@ -88,6 +88,8 @@ Tras deployar: copio las 3 direcciones al **README §6** (con links de Etherscan
   NEXT_PUBLIC_IPFS_GATEWAY=https://gateway.pinata.cloud
   ```
 
+> ✅ **JWT verificado y funcionando contra la API de Pinata** (2026-05-27): auth 200, pin/unpin de prueba OK, CID resoluble en el gateway. La credencial vive **sólo** en `web/.env.local` (gitignored). **No** se pegan claves reales acá — este archivo es tracked y el repo es público en GitHub.
+
 ## 3. Bundle de deploy a Sepolia (Phase 8)
 
 > Estas tres se usan juntas para publicar los contratos en la testnet. ✅ El wiring en `sc/foundry.toml` (`[rpc_endpoints]` + `[etherscan]`) **ya está hecho**; las tres claves ya están cargadas en `sc/.env`. **Sólo falta gas suficiente** (ver el bloque "Dónde quedamos" arriba).
