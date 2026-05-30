@@ -276,6 +276,10 @@ Tipos incluidos: C4 (Contexto, Contenedor, Componente), Secuencias (flujo feliz,
 
 📺 **4:08 · español · MP4 15 MB** — producción híbrida (slides + TTS + demo grabada). El archivo vive en el repo en [`docs/video/hemachain-video.mp4`](./docs/video/hemachain-video.mp4); GitHub y GitLab lo renderizan inline desde la ruta relativa.
 
+▶️ **Ver en YouTube:** [youtu.be/F5i8FSizgIM](https://www.youtube.com/watch?v=F5i8FSizgIM)
+
+<a href="https://www.youtube.com/watch?v=F5i8FSizgIM"><img src="https://img.youtube.com/vi/F5i8FSizgIM/maxresdefault.jpg" alt="HemaChain — video demo en YouTube" width="100%"></a>
+
 <video src="docs/video/hemachain-video.mp4" controls width="100%" poster="screenshots/01.1-landing.png">
   Tu visor de Markdown no embebe video — descargá el archivo desde
   <a href="./docs/video/hemachain-video.mp4">docs/video/hemachain-video.mp4</a>

@@ -275,13 +275,14 @@
 - [ ] (opcional) `README.pt.md` y `README.en.md` con resumen ejecutivo
 
 ### 8.5. Video
-- [ ] **★** Grabar Loom en español ≤ 5 min
+- [x] **★** Grabar video en español ≤ 5 min — producción híbrida (slides + TTS + demo grabada), 4:08. Paquete editorial en `docs/video/` (`deck.md`, `narracion.md`, `subtitulos.srt`, `ensamblar.sh`)
   - 0:00–0:30 — intro: problema + Res. 536/2026
   - 0:30–1:30 — arquitectura técnica
   - 1:30–4:00 — demo en vivo end-to-end
   - 4:00–5:00 — innovaciones, visión de adopción estatal
-- [ ] Verificar permisos "Anyone with link" en Loom
-- [ ] Añadir link al README §10
+- [x] Publicado en YouTube — https://www.youtube.com/watch?v=F5i8FSizgIM
+- [x] Metadatos YouTube (título/descripción/capítulos) en `docs/video/youtube.md` + thumbnail 1280×720 (`thumbnail.html`/`thumbnail.png`)
+- [x] Añadir link al README §10 (YouTube + embed MP4 del repo + espejo GitHub Release)
 
 ### 8.6. Pre-submission checklist
 - [ ] Repo GitHub público
