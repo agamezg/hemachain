@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<title>HemaChain — thumbnail YouTube (1280×720)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=JetBrains+Mono:wght@600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --primary:#2563eb;
+    --primary-hover:#1d4ed8;
+    --blood:#dc2626;
+    --blood-deep:#7f1d1d;
+    --ok:#22c55e;
+    --warn:#f59e0b;
+    --slate-50:#f8fafc;
+    --slate-300:#cbd5e1;
+    --slate-400:#94a3b8;
+    --slate-800:#1e293b;
+    --slate-900:#0f172a;
+    --slate-950:#020617;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{background:#000;display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:Inter,system-ui,sans-serif}
+
+  /* The exact YouTube thumbnail frame. Screenshot THIS element at 1280×720. */
+  .thumb{
+    position:relative;
+    width:1280px;height:720px;
+    overflow:hidden;
+    background:
+      radial-gradient(1200px 700px at 78% 28%, rgba(37,99,235,.28), transparent 60%),
+      radial-gradient(900px 600px at 14% 84%, rgba(220,38,38,.30), transparent 58%),
+      linear-gradient(135deg,#0b1220 0%, var(--slate-900) 48%, var(--slate-950) 100%);
+    color:var(--slate-50);
+  }
+
+  /* faint chain/grid texture */
+  .grid{
+    position:absolute;inset:0;
+    background-image:
+      linear-gradient(rgba(148,163,184,.05) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(148,163,184,.05) 1px,transparent 1px);
+    background-size:48px 48px;
+    mask-image:radial-gradient(1000px 700px at 70% 40%, #000 30%, transparent 78%);
+  }
+
+  .content{position:absolute;inset:0;padding:52px 78px 56px;display:flex;flex-direction:column;justify-content:space-between}
+
+  /* top row: brand + TFM badge */
+  .top{display:flex;align-items:center;justify-content:space-between}
+  .brand{display:flex;align-items:center;gap:18px}
+  .drop{filter:drop-shadow(0 10px 28px rgba(220,38,38,.55))}
+  .brand-name{font-weight:900;font-size:46px;letter-spacing:-.02em}
+  .brand-name b{color:#fff}
+  .brand-name span{color:#fca5a5}
+  .tfm{
+    font-size:20px;font-weight:700;letter-spacing:.02em;
+    color:var(--slate-300);
+    border:1.5px solid rgba(148,163,184,.35);
+    padding:12px 20px;border-radius:999px;
+    background:rgba(15,23,42,.5);
+    backdrop-filter:blur(4px);
+  }
+
+  /* headline */
+  .mid{margin-top:4px}
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:12px;
+    font-size:21px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+    color:#93c5fd;margin-bottom:18px;
+  }
+  .eyebrow .pulse{width:13px;height:13px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 6px rgba(34,197,94,.18)}
+  .headline{
+    font-weight:900;font-size:94px;line-height:.95;letter-spacing:-.03em;
+    text-shadow:0 6px 40px rgba(0,0,0,.5);
+  }
+  .headline .em{
+    background:linear-gradient(90deg,#f87171,#dc2626);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .sub{margin-top:24px;font-size:32px;font-weight:600;color:var(--slate-300);max-width:980px;line-height:1.25}
+
+  /* bottom feature chips */
+  .chips{display:flex;gap:16px;flex-wrap:wrap}
+  .chip{
+    font-size:24px;font-weight:700;
+    padding:14px 26px;border-radius:16px;
+    background:rgba(30,41,59,.7);
+    border:1.5px solid rgba(148,163,184,.22);
+    color:#e2e8f0;
+    display:inline-flex;align-items:center;gap:12px;
+  }
+  .chip .dot{width:12px;height:12px;border-radius:50%}
+  .chip .dot.blue{background:var(--primary)}
+  .chip .dot.red{background:var(--blood)}
+  .chip .dot.green{background:var(--ok)}
+  .chip .dot.amber{background:var(--warn)}
+  .chip.mono{font-family:"JetBrains Mono",monospace;font-weight:600;color:#cbd5e1}
+</style>
+</head>
+<body>
+  <div class="thumb">
+    <div class="grid"></div>
+    <div class="content">
+
+      <div class="top">
+        <div class="brand">
+          <svg class="drop" width="62" height="62" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2C12 2 5 10.5 5 15.5C5 19.6421 8.13401 22.5 12 22.5C15.866 22.5 19 19.6421 19 15.5C19 10.5 12 2 12 2Z"
+                  fill="url(#bg)" stroke="#fecaca" stroke-width="1"/>
+            <path d="M10 13.5h1.4v2.2H13.6v-2.2H15v5.6h-1.4v-2.2H11.4v2.2H10v-5.6Z" fill="#fff" opacity=".92"/>
+            <defs>
+              <linearGradient id="bg" x1="12" y1="2" x2="12" y2="22.5" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#ef4444"/><stop offset="1" stop-color="#991b1b"/>
+              </linearGradient>
+            </defs>
+          </svg>
+          <div class="brand-name"><b>Hema</b><span>Chain</span></div>
+        </div>
+        <div class="tfm">TFM · Máster en Blockchain · 2026</div>
+      </div>
+
+      <div class="mid">
+        <div class="eyebrow"><span class="pulse"></span> Trazabilidad · On-chain · Demo en vivo</div>
+        <div class="headline">Donaciones de sangre<br><span class="em">en blockchain</span></div>
+        <div class="sub">Del donante a la transfusión, registrado de forma inmutable sobre Ethereum.</div>
+      </div>
+
+      <div class="chips">
+        <div class="chip"><span class="dot blue"></span>Ethereum + Foundry</div>
+        <div class="chip"><span class="dot red"></span>Look-back &amp; cadena de frío</div>
+        <div class="chip"><span class="dot green"></span>Certificados NFT + IPFS</div>
+        <div class="chip"><span class="dot amber"></span>Agente IA</div>
+        <div class="chip mono">ES · PT · EN</div>
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>
